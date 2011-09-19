@@ -39,7 +39,6 @@ public class TouchImageView extends ImageView {
     static final int CLICK = 3;
     float saveScale = 1f;
     float right, bottom, origWidth, origHeight, bmWidth, bmHeight;
-    boolean snapEquilibrium = false;
     
     ScaleGestureDetector mScaleDetector;
     
@@ -117,7 +116,6 @@ public class TouchImageView extends ImageView {
 	            		
 	            	case MotionEvent.ACTION_POINTER_UP:
 	            		mode = NONE;
-	            		snapEquilibrium = false;
 	            		break;
             	}
                 setImageMatrix(matrix);
@@ -162,23 +160,6 @@ public class TouchImageView extends ImageView {
         	right = width * saveScale - width - (2 * redundantXSpace * saveScale);
             bottom = height * saveScale - height - (2 * redundantYSpace * saveScale);
         	if (origWidth * saveScale <= width || origHeight * saveScale <= height) {
-        		if (snapEquilibrium) {
-        			matrix.getValues(m);
-        			float x = m[Matrix.MTRANS_X];
-                	float y = m[Matrix.MTRANS_Y];
-        			if (origScale * origWidth > width && saveScale * origWidth <= width) {
-        				saveScale = width / origWidth;
-        				mScaleFactor = saveScale / origScale;
-        				matrix.postTranslate(-x, 0);
-        			} else {
-        				saveScale = height / origHeight;
-        				mScaleFactor = saveScale / origScale;
-        				matrix.postTranslate(0, -y);
-        			}
-        			matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
-        			snapEquilibrium = false;
-        			return true;
-        		}
         		matrix.postScale(mScaleFactor, mScaleFactor, width / 2, height / 2);
             	if (mScaleFactor < 1) {
             		matrix.getValues(m);
@@ -199,7 +180,6 @@ public class TouchImageView extends ImageView {
                 	}
             	}
         	} else {
-        		snapEquilibrium = true;
             	matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
             	matrix.getValues(m);
             	float x = m[Matrix.MTRANS_X];
