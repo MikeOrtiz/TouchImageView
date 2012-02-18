@@ -1,6 +1,7 @@
 /*
  * TouchImageView.java
  * By: Michael Ortiz
+ * Updated By: Patrick Lackemacher
  * -------------------
  * Extends Android ImageView to include pinch zooming and panning.
  */
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -44,10 +46,18 @@ public class TouchImageView extends ImageView {
     
     Context context;
 
-
     public TouchImageView(Context context) {
         super(context);
-        super.setClickable(true);
+        sharedConstructing(context);
+    }
+    
+    public TouchImageView(Context context, AttributeSet attrs) {
+    	super(context, attrs);
+    	sharedConstructing(context);
+    }
+    
+    private void sharedConstructing(Context context) {
+    	super.setClickable(true);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         matrix.setTranslate(1f, 1f);
@@ -129,8 +139,10 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageBitmap(Bitmap bm) { 
         super.setImageBitmap(bm);
-        bmWidth = bm.getWidth();
-        bmHeight = bm.getHeight();
+        if(bm != null) {
+        	bmWidth = bm.getWidth();
+        	bmHeight = bm.getHeight();
+        }
     }
     
     public void setMaxZoom(float x)
