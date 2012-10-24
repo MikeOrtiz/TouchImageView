@@ -31,7 +31,7 @@ public class TouchImageView extends ImageView {
     // Remember some things for zooming
     PointF last = new PointF();
     PointF start = new PointF();
-    float minScale = 1f;
+    float minScale = 0.5f;
     float maxScale = 3f;
     float[] m;
     
@@ -84,34 +84,8 @@ public class TouchImageView extends ImageView {
 	                    break;
 	            	case MotionEvent.ACTION_MOVE:
 	            		if (mode == DRAG) {
-	            			float deltaX = curr.x - last.x;
-	            			float deltaY = curr.y - last.y;
-	            			float scaleWidth = Math.round(origWidth * saveScale);
-	            			float scaleHeight = Math.round(origHeight * saveScale);
-            				if (scaleWidth < width) {
-	            				deltaX = 0;
-	            				if (y + deltaY > 0)
-		            				deltaY = -y;
-	            				else if (y + deltaY < -bottom)
-		            				deltaY = -(y + bottom); 
-            				} else if (scaleHeight < height) {
-	            				deltaY = 0;
-	            				if (x + deltaX > 0)
-		            				deltaX = -x;
-		            			else if (x + deltaX < -right)
-		            				deltaX = -(x + right);
-            				} else {
-	            				if (x + deltaX > 0)
-		            				deltaX = -x;
-		            			else if (x + deltaX < -right)
-		            				deltaX = -(x + right);
-		            			
-	            				if (y + deltaY > 0)
-		            				deltaY = -y;
-		            			else if (y + deltaY < -bottom)
-		            				deltaY = -(y + bottom);
-	            			}
-                        	matrix.postTranslate(deltaX, deltaY);
+                        	matrix.postTranslate(curr.x - last.x, curr.y - last.y);
+                            fixTrans();
                         	last.set(curr.x, curr.y);
 	                    }
 	            		break;
@@ -156,61 +130,61 @@ public class TouchImageView extends ImageView {
     		mode = ZOOM;
     		return true;
     	}
-    	
-		@Override
-	    public boolean onScale(ScaleGestureDetector detector) {
-			float mScaleFactor = detector.getScaleFactor();
-		 	float origScale = saveScale;
-	        saveScale *= mScaleFactor;
-	        if (saveScale > maxScale) {
-	        	saveScale = maxScale;
-	        	mScaleFactor = maxScale / origScale;
-	        } else if (saveScale < minScale) {
-	        	saveScale = minScale;
-	        	mScaleFactor = minScale / origScale;
-	        }
-        	right = width * saveScale - width - (2 * redundantXSpace * saveScale);
-            bottom = height * saveScale - height - (2 * redundantYSpace * saveScale);
-        	if (origWidth * saveScale <= width || origHeight * saveScale <= height) {
-        		matrix.postScale(mScaleFactor, mScaleFactor, width / 2, height / 2);
-            	if (mScaleFactor < 1) {
-            		matrix.getValues(m);
-            		float x = m[Matrix.MTRANS_X];
-                	float y = m[Matrix.MTRANS_Y];
-                	if (mScaleFactor < 1) {
-        	        	if (Math.round(origWidth * saveScale) < width) {
-        	        		if (y < -bottom)
-            	        		matrix.postTranslate(0, -(y + bottom));
-        	        		else if (y > 0)
-            	        		matrix.postTranslate(0, -y);
-        	        	} else {
-	                		if (x < -right) 
-	        	        		matrix.postTranslate(-(x + right), 0);
-	                		else if (x > 0) 
-	        	        		matrix.postTranslate(-x, 0);
-        	        	}
-                	}
-            	}
-        	} else {
-            	matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
-            	matrix.getValues(m);
-            	float x = m[Matrix.MTRANS_X];
-            	float y = m[Matrix.MTRANS_Y];
-            	if (mScaleFactor < 1) {
-    	        	if (x < -right) 
-    	        		matrix.postTranslate(-(x + right), 0);
-    	        	else if (x > 0) 
-    	        		matrix.postTranslate(-x, 0);
-    	        	if (y < -bottom)
-    	        		matrix.postTranslate(0, -(y + bottom));
-    	        	else if (y > 0)
-    	        		matrix.postTranslate(0, -y);
-            	}
-        	}
-	        return true;
-	        
-	    }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            float mScaleFactor = detector.getScaleFactor();
+            float origScale = saveScale;
+            saveScale *= mScaleFactor;
+            if (saveScale > maxScale) {
+                saveScale = maxScale;
+                mScaleFactor = maxScale / origScale;
+            } else if (saveScale < minScale) {
+                saveScale = minScale;
+                mScaleFactor = minScale / origScale;
+            }
+            //right = width * saveScale - width - (2 * redundantXSpace * saveScale);
+            //bottom = height * saveScale - height - (2 * redundantYSpace * saveScale);
+
+            if (origWidth * saveScale <= width || origHeight * saveScale <= height)
+                matrix.postScale(mScaleFactor, mScaleFactor, width / 2, height / 2);
+            else
+                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
+
+            fixTrans();
+            return true;
+        }
 	}
+
+    void fixTrans(){
+        matrix.getValues(m);
+        float transX = m[Matrix.MTRANS_X];
+        float transY = m[Matrix.MTRANS_Y];
+
+        float fixTransX = getFixTrans(transX, width, origWidth * saveScale);
+        float fixTransY = getFixTrans(transY, height, origHeight * saveScale);
+
+        if (fixTransX != 0 || fixTransY != 0)
+            matrix.postTranslate(fixTransX, fixTransY);
+    }
+
+    float getFixTrans(float trans, float viewSize, float contentSize){
+        float minTrans, maxTrans;
+
+        if (contentSize <= viewSize){
+            minTrans = 0;
+            maxTrans = viewSize - contentSize;
+        }else {
+            minTrans = viewSize - contentSize;
+            maxTrans = 0;
+        }
+
+        if (trans < minTrans)
+            return -trans + minTrans;
+        if (trans > maxTrans)
+            return -trans + maxTrans;
+        return 0;
+    }
     
     @Override
     protected void onMeasure (int widthMeasureSpec, int heightMeasureSpec)
