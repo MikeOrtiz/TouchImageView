@@ -12,6 +12,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -145,6 +147,18 @@ public class TouchImageView extends ImageView {
         if(bm != null) {
             bmWidth = bm.getWidth();
             bmHeight = bm.getHeight();
+        }
+    }
+
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+        super.setImageDrawable(drawable);
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                bmWidth = bitmapDrawable.getBitmap().getWidth();
+                bmHeight = bitmapDrawable.getBitmap().getHeight();
+            }
         }
     }
 
