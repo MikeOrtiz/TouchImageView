@@ -2,6 +2,7 @@
  * TouchImageView.java
  * By: Michael Ortiz
  * Updated By: Patrick Lackemacher
+ * Updated By: Babay88
  * -------------------
  * Extends Android ImageView to include pinch zooming and panning.
  */
@@ -9,12 +10,11 @@
 package com.example.touch;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -22,7 +22,7 @@ import android.widget.ImageView;
 
 public class TouchImageView extends ImageView {
 
-    Matrix matrix = new Matrix();
+    Matrix matrix;
 
     // We can be in one of these 3 states
     static final int NONE = 0;
@@ -33,12 +33,12 @@ public class TouchImageView extends ImageView {
     // Remember some things for zooming
     PointF last = new PointF();
     PointF start = new PointF();
-    float minScale = 0.5f;
+    float minScale = 1f;
     float maxScale = 3f;
     float[] m;
 
 
-    int width, height;
+    int viewWidth, viewHeight;
     static final int CLICK = 3;
     float saveScale = 1f;
     protected float origWidth, origHeight;
@@ -58,12 +58,12 @@ public class TouchImageView extends ImageView {
         super(context, attrs);
         sharedConstructing(context);
     }
-
+    
     private void sharedConstructing(Context context) {
         super.setClickable(true);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-        matrix.setTranslate(1f, 1f);
+        matrix = new Matrix();
         m = new float[9];
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
@@ -73,23 +73,22 @@ public class TouchImageView extends ImageView {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mScaleDetector.onTouchEvent(event);
-
-                matrix.getValues(m);
-                float x = m[Matrix.MTRANS_X];
-                float y = m[Matrix.MTRANS_Y];
                 PointF curr = new PointF(event.getX(), event.getY());
 
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        last.set(event.getX(), event.getY());
+                    	last.set(curr);
                         start.set(last);
                         mode = DRAG;
                         break;
+                        
                     case MotionEvent.ACTION_MOVE:
                         if (mode == DRAG) {
                             float deltaX = curr.x - last.x;
                             float deltaY = curr.y - last.y;
-                            matrix.postTranslate(deltaX, deltaY);
+                            float fixTransX = getFixDragTrans(deltaX, viewWidth, origWidth * saveScale);
+                            float fixTransY = getFixDragTrans(deltaY, viewHeight, origHeight * saveScale);
+                            matrix.postTranslate(fixTransX, fixTransY);
                             fixTrans();
                             last.set(curr.x, curr.y);
                         }
@@ -107,6 +106,7 @@ public class TouchImageView extends ImageView {
                         mode = NONE;
                         break;
                 }
+                
                 setImageMatrix(matrix);
                 invalidate();
                 return true; // indicate event was handled
@@ -139,8 +139,8 @@ public class TouchImageView extends ImageView {
                 mScaleFactor = minScale / origScale;
             }
 
-            if (origWidth * saveScale <= width || origHeight * saveScale <= height)
-                matrix.postScale(mScaleFactor, mScaleFactor, width / 2, height / 2);
+            if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
+                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
             else
                 matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
 
@@ -153,9 +153,9 @@ public class TouchImageView extends ImageView {
         matrix.getValues(m);
         float transX = m[Matrix.MTRANS_X];
         float transY = m[Matrix.MTRANS_Y];
-
-        float fixTransX = getFixTrans(transX, width, origWidth * saveScale);
-        float fixTransY = getFixTrans(transY, height, origHeight * saveScale);
+        
+        float fixTransX = getFixTrans(transX, viewWidth, origWidth * saveScale);
+        float fixTransY = getFixTrans(transY, viewHeight, origHeight * saveScale);
 
         if (fixTransX != 0 || fixTransY != 0)
             matrix.postTranslate(fixTransX, fixTransY);
@@ -178,18 +178,28 @@ public class TouchImageView extends ImageView {
             return -trans + maxTrans;
         return 0;
     }
+    
+    float getFixDragTrans(float delta, float viewSize, float contentSize) {
+        if (contentSize <= viewSize) {
+            return 0;
+        }
+        return delta;
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        width = MeasureSpec.getSize(widthMeasureSpec);
-        height = MeasureSpec.getSize(heightMeasureSpec);
-
-        if (oldMeasuredHeight == width && oldMeasuredHeight == height
-                || width == 0 || height == 0)
+        viewWidth = MeasureSpec.getSize(widthMeasureSpec);
+        viewHeight = MeasureSpec.getSize(heightMeasureSpec);
+        
+        //
+        // Rescales image on rotation
+        //
+        if (oldMeasuredHeight == viewWidth && oldMeasuredHeight == viewHeight
+                || viewWidth == 0 || viewHeight == 0)
             return;
-        oldMeasuredHeight = height;
-        oldMeasuredWidth = width;
+        oldMeasuredHeight = viewHeight;
+        oldMeasuredWidth = viewWidth;
 
         if (saveScale == 1) {
             //Fit to screen.
@@ -200,23 +210,24 @@ public class TouchImageView extends ImageView {
                 return;
             int bmWidth = drawable.getIntrinsicWidth();
             int bmHeight = drawable.getIntrinsicHeight();
+            
+            Log.d("bmSize", "bmWidth: " + bmWidth + " bmHeight : " + bmHeight);
 
-            float scaleX = (float) width / (float) bmWidth;
-            float scaleY = (float) height / (float) bmHeight;
+            float scaleX = (float) viewWidth / (float) bmWidth;
+            float scaleY = (float) viewHeight / (float) bmHeight;
             scale = Math.min(scaleX, scaleY);
             matrix.setScale(scale, scale);
-            setImageMatrix(matrix);
 
             // Center the image
-            float redundantYSpace = (float) height - (scale * (float) bmHeight);
-            float redundantXSpace = (float) width - (scale * (float) bmWidth);
+            float redundantYSpace = (float) viewHeight - (scale * (float) bmHeight);
+            float redundantXSpace = (float) viewWidth - (scale * (float) bmWidth);
             redundantYSpace /= (float) 2;
             redundantXSpace /= (float) 2;
 
             matrix.postTranslate(redundantXSpace, redundantYSpace);
 
-            origWidth = width - 2 * redundantXSpace;
-            origHeight = height - 2 * redundantYSpace;
+            origWidth = viewWidth - 2 * redundantXSpace;
+            origHeight = viewHeight - 2 * redundantYSpace;
             setImageMatrix(matrix);
         }
         fixTrans();
