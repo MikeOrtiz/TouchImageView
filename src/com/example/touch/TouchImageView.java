@@ -47,8 +47,6 @@ public class TouchImageView extends ImageView {
 
     ScaleGestureDetector mScaleDetector;
 
-    Context context;
-
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);
@@ -61,7 +59,6 @@ public class TouchImageView extends ImageView {
     
     private void sharedConstructing(Context context) {
         super.setClickable(true);
-        this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         matrix = new Matrix();
         m = new float[9];
@@ -195,7 +192,7 @@ public class TouchImageView extends ImageView {
         //
         // Rescales image on rotation
         //
-        if (oldMeasuredHeight == viewWidth && oldMeasuredHeight == viewHeight
+        if (oldMeasuredWidth == viewWidth && oldMeasuredHeight == viewHeight
                 || viewWidth == 0 || viewHeight == 0)
             return;
         oldMeasuredHeight = viewHeight;
