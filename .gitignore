@@ -2,5 +2,6 @@ gen
 bin
 .DS_Store
 .metadata/
+.svn
 
 local.properties
