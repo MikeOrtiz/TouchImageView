@@ -1,0 +1,10 @@
+
+*.diff
+*.rej
+*.orig
+/bin
+/gen
+/libs/aFileChooser/bin
+/libs/aFileChooser/gen
+/libs/ActionBarSherlock/bin
+/libs/ActionBarSherlock/gen
