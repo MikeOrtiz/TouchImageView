@@ -26,13 +26,14 @@ public class MainActivity extends Activity
     
     // image sources
     private static final int[] pics = { R.drawable.snoopy,
-            R.drawable.belle};
+            R.drawable.belle, R.drawable.happygoat};
 
-    // navigator icons
+    // pagination navigator imageview
     private ImageView[] dots;
-    // current position
+
+    // pagination navigator current position
     private int currentIndex;
-    
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class MainActivity extends Activity
         LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(
         		LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         
-        //初始化引导图片列表
+        // initialize TouchImageView
         for(int i=0; i<pics.length; i++) {
     		TouchImageView iv = new TouchImageView(this);
             iv.setLayoutParams(mParams);
@@ -63,19 +64,30 @@ public class MainActivity extends Activity
 	}
 
     private void initDots() {
-        LinearLayout ll = (LinearLayout) findViewById(R.id.ll);
+        LinearLayout ll = (LinearLayout) findViewById(R.id.pagination_indicator);
 
         dots = new ImageView[pics.length];
-
-        //循环取得小点图片
+        
+        // layout for each pagination indicator
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(
+        		LinearLayout.LayoutParams.WRAP_CONTENT,
+        		LinearLayout.LayoutParams.WRAP_CONTENT);
+        mParams.setMargins(10, 10, 10, 10);
+        
+        // add pagination indicator
         for (int i = 0; i < pics.length; i++) {
-            dots[i] = (ImageView) ll.getChildAt(i);
-            dots[i].setEnabled(true);//都设为灰色
-            dots[i].setOnClickListener(this);
-            dots[i].setTag(i);//设置位置tag，方便取出与当前位置对应
+        	ImageView iv = new ImageView(this);
+            iv.setLayoutParams(mParams);
+        	iv.setImageResource(R.drawable.dot);
+            iv.setEnabled(false);
+            iv.setOnClickListener(this);
+            iv.setTag(i);
+            ll.addView(iv);
+            dots[i] = iv;
         }
+
         currentIndex = 0;
-        dots[currentIndex].setEnabled(false);//设置为白色，即选中状态
+        dots[currentIndex].setEnabled(true);
     }	
 
     /**
@@ -86,7 +98,6 @@ public class MainActivity extends Activity
         if (position < 0 || position >= pics.length) {
             return;
         }
-
         vp.setCurrentItem(position);
     }
     
@@ -98,8 +109,8 @@ public class MainActivity extends Activity
         if (positon < 0 || positon > pics.length - 1 || currentIndex == positon) {
             return;
         }
-        dots[positon].setEnabled(false);
-        dots[currentIndex].setEnabled(true);
+        dots[positon].setEnabled(true);
+        dots[currentIndex].setEnabled(false);
         currentIndex = positon;
     }
     
@@ -126,7 +137,6 @@ public class MainActivity extends Activity
 	public void onPageSelected(int arg0) {
         // set navigator icon status
         setCurDot(arg0);		
-		
 	}
 
 	@Override
@@ -141,5 +151,4 @@ public class MainActivity extends Activity
 		Toast.makeText(this, "onLongClick", Toast.LENGTH_SHORT).show();
 		return true;
 	}
-
 }

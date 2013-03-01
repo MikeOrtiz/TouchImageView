@@ -17,7 +17,6 @@ public class ViewPagerAdapter extends PagerAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
 		if(views != null)
 			return views.size();
 		return 0;

@@ -146,7 +146,7 @@ public class TouchImageView extends ImageView {
                         start.set(last);
                         mode = DRAG;
 
-                        checkForLongClick(0);
+                        checkForLongClick(-500);
                         break;
                         
                     case MotionEvent.ACTION_MOVE:
