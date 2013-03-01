@@ -2,7 +2,7 @@ Android: TouchImageView
 Created by: Mike Ortiz
 Updated by: Patrick Lackemacher
 Updated by: zfdang (add performLongClick)
-Date: 2/23/2013
+Date: 2013-03-01
 ----------------------
 Adds panning and pinch zoom to Android ImageView.
 
@@ -12,3 +12,7 @@ enable TouchImageView to work with ViewPager (2013-03-01)
 enable LongClick in TouchImageView (2013-02-23)
 Can now be added to XML layout.
 Added support for setting bitmap to null without throwing exception.
+
+Demo App:
+----------------------
+https://github.com/zfdang/TouchImageView/raw/master/dist/TouchImageView.apk
