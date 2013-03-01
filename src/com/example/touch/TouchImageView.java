@@ -3,6 +3,7 @@
  * By: Michael Ortiz
  * Updated By: Patrick Lackemacher
  * Updated By: Babay88
+ * Updated By: zfdang (add performLongClick)
  * -------------------
  * Extends Android ImageView to include pinch zooming and panning.
  */
@@ -13,11 +14,13 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.ImageView;
 
 public class TouchImageView extends ImageView {
@@ -49,6 +52,66 @@ public class TouchImageView extends ImageView {
 
     Context context;
 
+    /**
+     * flag to wait long click event
+     */
+    private boolean mWaitingForLongClick;
+
+	private Handler mHandler = null;
+    private PendingCheckForLongClick mPendingCheckForLongClick = null;
+
+    class PendingCheckForLongClick implements Runnable {
+        public void run() {
+            if (mWaitingForLongClick) {
+                mWaitingForLongClick = false;
+                performLongClick();
+            }
+        }
+    }
+
+    private void checkForLongClick(int delayOffset) {
+        mWaitingForLongClick = true;
+
+        if (mHandler == null) {
+            mHandler = new Handler();
+        }
+        if (mPendingCheckForLongClick != null) {
+            mHandler.removeCallbacks(mPendingCheckForLongClick);
+        } else {
+            mPendingCheckForLongClick = new PendingCheckForLongClick();
+        }
+        mHandler.postDelayed(mPendingCheckForLongClick,
+                ViewConfiguration.getLongPressTimeout() - delayOffset);
+    }
+
+    private void clearCheckForLongClick() {
+        mWaitingForLongClick = false;
+        if (mHandler != null && mPendingCheckForLongClick!= null) {
+            mHandler.removeCallbacks(mPendingCheckForLongClick);
+        }
+    }
+
+    @Override
+	public boolean canScrollHorizontally(int direction) {
+        
+        Drawable drawable = getDrawable();
+        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0)
+            return true;
+        int bmWidth = drawable.getIntrinsicWidth();
+        float scaleX = (float) viewWidth / (float) bmWidth;
+
+        matrix.getValues(m);
+        float x = Math.abs(m[Matrix.MSCALE_X]);
+
+        Log.d("canScrollHorizontally", String.format("%f -- %f", scaleX, x));
+        if (x * 0.95 <= scaleX) {
+            // allow scroll when image are almost fit the screen (*0.95 to better UE)
+        	return false;
+        }
+        return true;
+    }
+
+    
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);
@@ -75,11 +138,15 @@ public class TouchImageView extends ImageView {
                 mScaleDetector.onTouchEvent(event);
                 PointF curr = new PointF(event.getX(), event.getY());
 
+                int xDiff = (int) Math.abs(curr.x - start.x);
+                int yDiff = (int) Math.abs(curr.y - start.y);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                    	last.set(curr);
+                        last.set(curr);
                         start.set(last);
                         mode = DRAG;
+
+                        checkForLongClick(-500);
                         break;
                         
                     case MotionEvent.ACTION_MOVE:
@@ -92,14 +159,16 @@ public class TouchImageView extends ImageView {
                             fixTrans();
                             last.set(curr.x, curr.y);
                         }
+                        if (xDiff > CLICK || yDiff > CLICK) {
+                            clearCheckForLongClick();
+                        }
                         break;
 
                     case MotionEvent.ACTION_UP:
                         mode = NONE;
-                        int xDiff = (int) Math.abs(curr.x - start.x);
-                        int yDiff = (int) Math.abs(curr.y - start.y);
                         if (xDiff < CLICK && yDiff < CLICK)
                             performClick();
+                        clearCheckForLongClick();
                         break;
 
                     case MotionEvent.ACTION_POINTER_UP:

@@ -1,0 +1,6 @@
+
+*.diff
+*.rej
+*.orig
+bin/*
+gen/*
