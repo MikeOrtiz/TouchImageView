@@ -8,6 +8,7 @@ Adds panning and pinch zoom to Android ImageView.
 
 Update:
 ----------------------
+enable TouchImageView to work with ViewPager (2013-03-01)
 enable LongClick in TouchImageView (2013-02-23)
 Can now be added to XML layout.
 Added support for setting bitmap to null without throwing exception.
