@@ -56,7 +56,8 @@ public class TouchImageView extends ImageView {
      * flag to wait long click event
      */
     private boolean mWaitingForLongClick;
-    private Handler mHandler = null;
+
+	private Handler mHandler = null;
     private PendingCheckForLongClick mPendingCheckForLongClick = null;
 
     class PendingCheckForLongClick implements Runnable {
@@ -90,6 +91,27 @@ public class TouchImageView extends ImageView {
         }
     }
 
+    @Override
+	public boolean canScrollHorizontally(int direction) {
+        
+        Drawable drawable = getDrawable();
+        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0)
+            return true;
+        int bmWidth = drawable.getIntrinsicWidth();
+        float scaleX = (float) viewWidth / (float) bmWidth;
+
+        matrix.getValues(m);
+        float x = Math.abs(m[Matrix.MSCALE_X]);
+
+        Log.d("canScrollHorizontally", String.format("%f -- %f", scaleX, x));
+        if (x * 0.95 <= scaleX) {
+            // allow scroll when image are almost fit the screen (*0.95 to better UE)
+        	return false;
+        }
+        return true;
+    }
+
+    
     public TouchImageView(Context context) {
         super(context);
         sharedConstructing(context);
