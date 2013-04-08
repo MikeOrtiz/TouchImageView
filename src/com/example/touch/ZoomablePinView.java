@@ -26,22 +26,22 @@ public class ZoomablePinView extends ImageView{
 	public void setPosition (float posX, float posY) {
 		this.posX = posX;
 		this.posY = posY;
-		adjustPinPosition();
+		setMargins();
  	}
 
 	public void moveOnZoom (float focusX, float focusY, float scale) {
 		posX = (scale * (posX - focusX)) + focusX;
 		posY = (scale * (posY - focusY)) + focusY;
-		adjustPinPosition();
+		setMargins();
 	}
 
 	public void moveOnDrag (float dx, float dy) {
 		posX += dx;
 		posY += dy;
-		adjustPinPosition();
+		setMargins();
 	}
 	
-	private void adjustPinPosition() {
+	private void setMargins() {
 		int leftMargin = (int) (posX - width/2);
 		int topMargin = (int) (posY - height);
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getLayoutParams());
