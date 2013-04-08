@@ -1,7 +1,8 @@
 Android: TouchImageView
 Created by: Mike Ortiz
 Updated by: Patrick Lackemacher
-Date: 2/17/2012
+Updated by: Mario Velasco Casquero
+Date: 4/08/2013
 ----------------------
 Adds panning and pinch zoom to Android ImageView.
 
