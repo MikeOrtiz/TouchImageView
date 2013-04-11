@@ -44,6 +44,9 @@ public class TouchImageView extends ImageView {
 
 	private ZoomablePinView pin = null;
 
+	// Center of the focused area in pixels
+	private PointF centerFocus = new PointF();
+	
 	public TouchImageView(Context context) {
 		super(context);
 		sharedConstructing(context);
@@ -86,6 +89,7 @@ public class TouchImageView extends ImageView {
 						matrix.postTranslate(fixTransX, fixTransY);
 						fixTrans();
 						last.set(curr.x, curr.y);
+						moveCenterPointDrag(fixTransX, fixTransY);
 						if (pin != null)
 							pin.moveOnDrag(fixTransX, fixTransY);
 					}
@@ -99,7 +103,8 @@ public class TouchImageView extends ImageView {
 						performClick();
 						if (pin == null)
 							addPin();
-						pin.setPosition(curr.x, curr.y);
+						PointF centerPoint = new PointF((float) viewWidth/2, (float) viewHeight/2);
+						pin.setPosition(curr.x, curr.y, centerPoint, centerFocus, saveScale);
 					}
 					break;
 
@@ -141,12 +146,14 @@ public class TouchImageView extends ImageView {
 			}
 
 			if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight) {
-				matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
+				matrix.postScale(mScaleFactor, mScaleFactor, (float) viewWidth/2, (float) viewHeight/2);
+				moveCenterPointZoom((float) viewWidth/2, (float) viewHeight/2, mScaleFactor);
 				if (pin != null)
-					pin.moveOnZoom(viewWidth/2, viewHeight/2, mScaleFactor);
+					pin.moveOnZoom((float) viewWidth/2, (float) viewHeight/2, mScaleFactor);
 			}
 			else {
 				matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
+				moveCenterPointZoom(detector.getFocusX(), detector.getFocusY(), mScaleFactor);
 				if (pin != null)
 					pin.moveOnZoom(detector.getFocusX(), detector.getFocusY(), mScaleFactor);
 			}
@@ -165,6 +172,7 @@ public class TouchImageView extends ImageView {
 
 		if (fixTransX != 0 || fixTransY != 0) {
 			matrix.postTranslate(fixTransX, fixTransY);
+			moveCenterPointDrag(fixTransX, fixTransY);
 			if (pin != null)
 				pin.moveOnDrag(fixTransX, fixTransY);
 		}
@@ -183,8 +191,10 @@ public class TouchImageView extends ImageView {
 
 		if (trans < minTrans)
 			return -trans + minTrans;
-		if (trans > maxTrans)
+		else if (trans > maxTrans)
 			return -trans + maxTrans;
+		else if (contentSize <= viewSize && mode == ZOOM)
+			return ((minTrans + maxTrans) / 2) - trans;
 		return 0;
 	}
 
@@ -201,6 +211,9 @@ public class TouchImageView extends ImageView {
 		viewWidth = MeasureSpec.getSize(widthMeasureSpec);
 		viewHeight = MeasureSpec.getSize(heightMeasureSpec);
 
+		centerFocus.x = (float) viewWidth/2;
+		centerFocus.y = (float) viewHeight/2;
+		
 		//
 		// Rescales image on rotation
 		//
@@ -230,8 +243,8 @@ public class TouchImageView extends ImageView {
 			// Center the image
 			float redundantYSpace = (float) viewHeight - (scale * (float) bmHeight);
 			float redundantXSpace = (float) viewWidth - (scale * (float) bmWidth);
-			redundantYSpace /= (float) 2;
-			redundantXSpace /= (float) 2;
+			redundantYSpace /= 2;
+			redundantXSpace /= 2;
 
 			matrix.postTranslate(redundantXSpace, redundantYSpace);
 
@@ -249,5 +262,25 @@ public class TouchImageView extends ImageView {
 				ViewGroup.LayoutParams.WRAP_CONTENT));
 		ViewGroup parent = (ViewGroup) getParent();
 		parent.addView(pin);
+	}
+	
+	public ZoomablePinView getPin() {
+		return pin;
+	}
+
+	private void moveCenterPointZoom (float focusX, float focusY, float scale) {
+			float centerViewX = (float) viewWidth/2;
+			float centerViewY = (float) viewHeight/2;
+			float focusDistanceX = centerViewX - focusX;
+			float focusDistanceY = centerViewY - focusY;
+			float deltaX = focusDistanceX / scale - focusDistanceX;
+			float deltaY = focusDistanceY / scale - focusDistanceY;
+			centerFocus.x += deltaX / (saveScale / scale);
+			centerFocus.y += deltaY / (saveScale / scale);
+	}
+
+	private void moveCenterPointDrag (float deltaX, float deltaY) {
+		centerFocus.x -= deltaX / saveScale;
+		centerFocus.y -= deltaY / saveScale;
 	}
 }

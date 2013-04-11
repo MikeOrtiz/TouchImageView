@@ -3,12 +3,14 @@ package com.example.touch;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class ZoomablePinView extends ImageView{
 
 	private float posX=0, posY=0;
+	private float posXInPixels=0, posYInPixels=0;
 	private float width=0, height=0;
 
 	public ZoomablePinView(Context context) {
@@ -23,7 +25,11 @@ public class ZoomablePinView extends ImageView{
 		this.height = bm.getHeight();
 	}
 	
-	public void setPosition (float posX, float posY) {
+	public void setPosition (float posX, float posY, PointF centerPoint, PointF centerFocus, float saveScale) {
+		float deltaX = (posX - centerPoint.x) / saveScale;
+		float deltaY = (posY - centerPoint.y) / saveScale;
+		posXInPixels = centerFocus.x + deltaX;
+		posYInPixels = centerFocus.y + deltaY;
 		this.posX = posX;
 		this.posY = posY;
 		setMargins();
@@ -47,5 +53,10 @@ public class ZoomablePinView extends ImageView{
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(getLayoutParams());
 		layoutParams.setMargins( leftMargin, topMargin, 0, 0);
 		setLayoutParams(layoutParams);
+	}
+	
+	public PointF getPositionInPixels() {
+		PointF pinPos = new PointF(posXInPixels, posYInPixels);
+		return pinPos;
 	}
 }
