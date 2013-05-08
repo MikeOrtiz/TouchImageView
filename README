@@ -1,12 +1,15 @@
+# Simple Counter
+
 Android: TouchImageView
 Created by: Mike Ortiz
 Updated by: Patrick Lackemacher
 Updated by: Mario Velasco Casquero
-Date: 4/08/2013
+Date: 8 of May of 2013
 ----------------------
 Adds panning and pinch zoom to Android ImageView.
 
+![](https://dl.dropboxusercontent.com/u/18446407/touch.png)![](https://dl.dropboxusercontent.com/u/18446407/touch_zoom.png)
+
 Update:
 ----------------------
-Can now be added to XML layout.
-Added support for setting bitmap to null without throwing exception.
+Added pins (markers) over the zoomable image, which can be dragged.
