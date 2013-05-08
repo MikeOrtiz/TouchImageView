@@ -8,8 +8,8 @@ Date: 8 of May of 2013
 ----------------------
 Adds panning and pinch zoom to Android ImageView.
 
-![ScreenShot](https://dl.dropboxusercontent.com/u/18446407/touch.png)
-![ScreenShot](https://dl.dropboxusercontent.com/u/18446407/touch_zoom.png)
+![ScreenShot](https://github.com/Mariovc/TouchImageView/diff_blob/9fb933271caf751435746873444504a84879e70d/touch.png)
+![ScreenShot](https://github.com/Mariovc/TouchImageView/diff_blob/9fb933271caf751435746873444504a84879e70d/touch_zoom.png)
 
 Update:
 ----------------------
