@@ -115,6 +115,45 @@ public class TouchImageView extends ImageView {
         });
     }
 
+//this function will transform the coordinated in the touch event to the bitmap that the imageview contain
+// done by @ipsilondev
+public PointF transformCoordScale(float x, float y){
+        matrix.getValues(m);        
+        float origW = this.getDrawable().getIntrinsicWidth();
+        float origH = this.getDrawable().getIntrinsicHeight();
+        float iW = (origW*m[Matrix.MSCALE_X]);
+    	float iH = (origH*m[Matrix.MSCALE_Y]);
+        float scaleW = origW/iW;
+    	float scaleH = origH/iH;
+    	float finalX = x * scaleW;
+    	float finalY = y*scaleH;
+    
+        if(m[Matrix.MTRANS_X]<0){
+    		finalX += Math.abs(m[Matrix.MTRANS_X])*scaleW;
+    	}else{
+    		finalX -= m[Matrix.MTRANS_X]*scaleW;    	    
+    	}
+    	if(m[Matrix.MTRANS_Y]<0){
+    		finalY += Math.abs(m[Matrix.MTRANS_Y])*scaleH;
+    	}else{
+    		finalY -= m[Matrix.MTRANS_Y]*scaleH;    	    
+    	}    	
+    	
+    	if(finalX<0){
+    		finalX = 0;
+    	}
+    	if(finalX>pCont.resizeW){
+    		finalX = pCont.resizeW;
+    	}
+    	if(finalY<0){
+    		finalY = 0;
+    	}
+    	if(finalY>pCont.resizeH){
+    		finalY = pCont.resizeH;
+    	}
+    	return new PointF((int)finalX , (int)finalY);
+    }
+
     public void setMaxZoom(float x) {
         maxScale = x;
     }
