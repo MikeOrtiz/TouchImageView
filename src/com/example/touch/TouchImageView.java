@@ -15,6 +15,7 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -39,13 +40,13 @@ public class TouchImageView extends ImageView {
 
 
     int viewWidth, viewHeight;
-    static final int CLICK = 3;
     float saveScale = 1f;
     protected float origWidth, origHeight;
     int oldMeasuredWidth, oldMeasuredHeight;
 
 
     ScaleGestureDetector mScaleDetector;
+    GestureDetector mGestureDetector;
 
     Context context;
 
@@ -63,6 +64,7 @@ public class TouchImageView extends ImageView {
         super.setClickable(true);
         this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        mGestureDetector = new GestureDetector(context, new GestureListener());
         matrix = new Matrix();
         m = new float[9];
         setImageMatrix(matrix);
@@ -73,6 +75,7 @@ public class TouchImageView extends ImageView {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mScaleDetector.onTouchEvent(event);
+                mGestureDetector.onTouchEvent(event);
                 PointF curr = new PointF(event.getX(), event.getY());
 
                 switch (event.getAction()) {
@@ -96,10 +99,6 @@ public class TouchImageView extends ImageView {
 
                     case MotionEvent.ACTION_UP:
                         mode = NONE;
-                        int xDiff = (int) Math.abs(curr.x - start.x);
-                        int yDiff = (int) Math.abs(curr.y - start.y);
-                        if (xDiff < CLICK && yDiff < CLICK)
-                            performClick();
                         break;
 
                     case MotionEvent.ACTION_POINTER_UP:
@@ -118,36 +117,8 @@ public class TouchImageView extends ImageView {
     public void setMaxZoom(float x) {
         maxScale = x;
     }
-
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            mode = ZOOM;
-            return true;
-        }
-
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            float mScaleFactor = detector.getScaleFactor();
-            float origScale = saveScale;
-            saveScale *= mScaleFactor;
-            if (saveScale > maxScale) {
-                saveScale = maxScale;
-                mScaleFactor = maxScale / origScale;
-            } else if (saveScale < minScale) {
-                saveScale = minScale;
-                mScaleFactor = minScale / origScale;
-            }
-
-            if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
-                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
-            else
-                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
-
-            fixTrans();
-            return true;
-        }
-    }
+    
+    
 
     void fixTrans() {
         matrix.getValues(m);
@@ -231,5 +202,60 @@ public class TouchImageView extends ImageView {
             setImageMatrix(matrix);
         }
         fixTrans();
+    }
+    
+    /**
+     * Gesture Listener
+     * @author Ortiz
+     *
+     */
+    private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+    	
+        @Override
+        public boolean onSingleTapUp(MotionEvent e)
+        {
+        	return performClick();
+        }
+        
+        @Override
+        public void onLongPress(MotionEvent e)
+        {
+        	performLongClick();
+        }
+    }
+
+    /**
+     * ScaleListener
+     * @author Ortiz
+     *
+     */
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            mode = ZOOM;
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            float mScaleFactor = detector.getScaleFactor();
+            float origScale = saveScale;
+            saveScale *= mScaleFactor;
+            if (saveScale > maxScale) {
+                saveScale = maxScale;
+                mScaleFactor = maxScale / origScale;
+            } else if (saveScale < minScale) {
+                saveScale = minScale;
+                mScaleFactor = minScale / origScale;
+            }
+
+            if (origWidth * saveScale <= viewWidth || origHeight * saveScale <= viewHeight)
+                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
+            else
+                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
+
+            fixTrans();
+            return true;
+        }
     }
 }
