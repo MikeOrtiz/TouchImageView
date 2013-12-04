@@ -9,3 +9,8 @@ Update:
 ----------------------
 Can now be added to XML layout.
 Added support for setting bitmap to null without throwing exception.
+
+Update 12/4:
+----------------------
+Fling implemented.
+onMeasure updated to support wrap_content.
