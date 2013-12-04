@@ -9,12 +9,20 @@
 
 package com.example.touch;
 
+import static com.example.touch.TouchImageView.State.DRAG;
+import static com.example.touch.TouchImageView.State.FLING;
+import static com.example.touch.TouchImageView.State.NONE;
+import static com.example.touch.TouchImageView.State.ZOOM;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -22,7 +30,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
-import static com.example.touch.TouchImageView.State.*;
+import android.widget.Scroller;
 
 public class TouchImageView extends ImageView {
 	
@@ -41,12 +49,15 @@ public class TouchImageView extends ImageView {
     //
 	private Matrix matrix, prevMatrix;
 
-    public static enum State { NONE, DRAG, ZOOM };
+    public static enum State { NONE, DRAG, ZOOM, FLING };
     private State state;
 
     private float minScale;
     private float maxScale;
-    float[] m;
+    private float[] m;
+    
+    private Context context;
+    private Fling fling;
 
     //
     // Size of view and previous view size (ie before rotation)
@@ -57,7 +68,7 @@ public class TouchImageView extends ImageView {
     // Size of image when it is stretched to fit view. Before and After rotation.
     //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
-
+    
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
 
@@ -73,6 +84,7 @@ public class TouchImageView extends ImageView {
     
     private void sharedConstructing(Context context) {
         super.setClickable(true);
+        this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
         matrix = new Matrix();
@@ -127,8 +139,8 @@ public class TouchImageView extends ImageView {
         float transX = m[Matrix.MTRANS_X];
         float transY = m[Matrix.MTRANS_Y];
         
-        float fixTransX = getFixTrans(transX, viewWidth, matchViewWidth * normalizedScale);
-        float fixTransY = getFixTrans(transY, viewHeight, matchViewHeight * normalizedScale);
+        float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
+        float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
 
         if (fixTransX != 0 || fixTransY != 0) {
             matrix.postTranslate(fixTransX, fixTransY);
@@ -158,6 +170,14 @@ public class TouchImageView extends ImageView {
             return 0;
         }
         return delta;
+    }
+    
+    private float getImageWidth() {
+    	return matchViewWidth * normalizedScale;
+    }
+    
+    private float getImageHeight() {
+    	return matchViewHeight * normalizedScale;
     }
 
     @Override
@@ -222,14 +242,14 @@ public class TouchImageView extends ImageView {
             // Width
             //
             float prevActualWidth = prevMatchViewWidth * normalizedScale;
-            float actualWidth = matchViewWidth * normalizedScale;
+            float actualWidth = getImageWidth();
             translateMatrixAfterRotate(Matrix.MTRANS_X, transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth);
             
             //
             // Height
             //
             float prevActualHeight = prevMatchViewHeight * normalizedScale;
-            float actualHeight = matchViewHeight * normalizedScale;
+            float actualHeight = getImageHeight();
             translateMatrixAfterRotate(Matrix.MTRANS_Y, transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight);
             
             //
@@ -330,6 +350,20 @@ public class TouchImageView extends ImageView {
         {
         	performLongClick();
         }
+        
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+        {
+        	if (fling != null) {
+        		//
+        		// If a previous fling is still active, it should be cancelled so that two flings
+        		// are not run simultaenously.
+        		//
+        		fling.cancelFling();
+        	}
+        	fling = new Fling((int) velocityX, (int) velocityY);
+        	compatPostOnAnimation(fling);
+        	return true;
+        }
     }
     
     /**
@@ -370,9 +404,6 @@ public class TouchImageView extends ImageView {
                     break;
 
                 case MotionEvent.ACTION_UP:
-                    setMode(NONE);
-                    break;
-
                 case MotionEvent.ACTION_POINTER_UP:
                     setMode(NONE);
                     break;
@@ -425,6 +456,88 @@ public class TouchImageView extends ImageView {
         public void onScaleEnd(ScaleGestureDetector detector) {
         	super.onScaleEnd(detector);
         	setMode(NONE);
+        }
+    }
+    
+    /**
+     * Fling launches sequential runnables which apply
+     * the fling graphic to the image. The values for the translation
+     * are interpolated by the Scroller.
+     * @author Ortiz
+     *
+     */
+    private class Fling implements Runnable {
+    	
+        Scroller scroller;
+    	int currX, currY;
+    	
+    	Fling(int velocityX, int velocityY) {
+    		setMode(FLING);
+    		scroller = new Scroller(context);
+    		matrix.getValues(m);
+    		
+    		int startX = (int) m[Matrix.MTRANS_X];
+    		int startY = (int) m[Matrix.MTRANS_Y];
+    		int minX, maxX, minY, maxY;
+    		
+    		if (getImageWidth() > viewWidth) {
+    			minX = viewWidth - (int) getImageWidth();
+    			maxX = 0;
+    			
+    		} else {
+    			minX = maxX = startX;
+    		}
+    		
+    		if (getImageHeight() > viewHeight) {
+    			minY = viewHeight - (int) getImageHeight();
+    			maxY = 0;
+    			
+    		} else {
+    			minY = maxY = startY;
+    		}
+    		
+    		scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX,
+                    maxX, minY, maxY);
+    		currX = startX;
+    		currY = startY;
+    	}
+    	
+    	public void cancelFling() {
+    		if (scroller != null) {
+    			scroller.forceFinished(true);
+    		}
+    	}
+    	
+		@Override
+		public void run() {
+			if (scroller.isFinished()) {
+        		setMode(NONE);
+        		scroller = null;
+        		return;
+        	}
+			
+			if (scroller.computeScrollOffset()) {
+	        	int newX = scroller.getCurrX();
+	            int newY = scroller.getCurrY();
+	            int transX = newX - currX;
+	            int transY = newY - currY;
+	            currX = newX;
+	            currY = newY;
+	            matrix.postTranslate(transX, transY);
+	            fixTrans();
+	            setImageMatrix(matrix);
+	            compatPostOnAnimation(this);
+        	}
+		}
+    }
+    
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	private void compatPostOnAnimation(Runnable runnable) {
+    	if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+            postOnAnimation(runnable);
+            
+        } else {
+            postDelayed(runnable, 1000/60);
         }
     }
     
