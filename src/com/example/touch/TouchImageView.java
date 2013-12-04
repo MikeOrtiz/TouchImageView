@@ -22,51 +22,44 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
+import static com.example.touch.TouchImageView.State.*;
 
 public class TouchImageView extends ImageView {
 	
 	private static final String DEBUG = "DEBUG";
 
-    Matrix matrix, prevMatrix;
-
     //
-    // We can be in one of these 3 states
+    // Scale of image ranges from minScale to maxScale, where minScale == 1
+    // when the image is stretched to fit view.
     //
-    static final int NONE = 0;
-    static final int DRAG = 1;
-    static final int ZOOM = 2;
-    int mode = NONE;
-
-    //
-    // Remember some things for zooming
-    //
-    PointF last = new PointF();
-    PointF start = new PointF();
+    private float normalizedScale;
     
-    float minScale = 1f;
-    float maxScale = 3f;
+    //
+    // Matrix applied to image. MSCALE_X and MSCALE_Y should always be equal.
+    // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
+    // saved prior to the screen rotating.
+    //
+	private Matrix matrix, prevMatrix;
+
+    public static enum State { NONE, DRAG, ZOOM };
+    private State state;
+
+    private float minScale;
+    private float maxScale;
     float[] m;
 
     //
     // Size of view and previous view size (ie before rotation)
     //
-    int viewWidth, viewHeight, prevViewWidth, prevViewHeight;
-    
-    //
-    // Scale of image ranges from minScale to maxScale, where minScale == 1
-    // when the image is stretched to fit view.
-    //
-    float normalizedScale = 1f;
+    private int viewWidth, viewHeight, prevViewWidth, prevViewHeight;
     
     //
     // Size of image when it is stretched to fit view. Before and After rotation.
     //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
 
-    ScaleGestureDetector mScaleDetector;
-    GestureDetector mGestureDetector;
-
-    Context context;
+    private ScaleGestureDetector mScaleDetector;
+    private GestureDetector mGestureDetector;
 
     public TouchImageView(Context context) {
         super(context);
@@ -80,60 +73,17 @@ public class TouchImageView extends ImageView {
     
     private void sharedConstructing(Context context) {
         super.setClickable(true);
-        this.context = context;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
         matrix = new Matrix();
         prevMatrix = new Matrix();
         m = new float[9];
+        normalizedScale = 1;
+        minScale = 1;
+        maxScale = 3;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
-
-        setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                mScaleDetector.onTouchEvent(event);
-                mGestureDetector.onTouchEvent(event);
-                PointF curr = new PointF(event.getX(), event.getY());
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                    	last.set(curr);
-                        start.set(curr);
-                        mode = DRAG;
-                        break;
-                        
-                    case MotionEvent.ACTION_MOVE:
-                        if (mode == DRAG) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
-                            float fixTransX = getFixDragTrans(deltaX, viewWidth, matchViewWidth * normalizedScale);
-                            float fixTransY = getFixDragTrans(deltaY, viewHeight, matchViewHeight * normalizedScale);
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
-                        }
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        mode = NONE;
-                        break;
-
-                    case MotionEvent.ACTION_POINTER_UP:
-                        mode = NONE;
-                        break;
-                }
-                
-                setImageMatrix(matrix);
-                invalidate();
-                //
-                // indicate event was handled
-                //
-                return true;
-            }
-
-        });
+        setOnTouchListener(new TouchImageViewListener());
     }
     
     @Override
@@ -172,7 +122,7 @@ public class TouchImageView extends ImageView {
         maxScale = x;
     }
     
-    void fixTrans() {
+    private void fixTrans() {
         matrix.getValues(m);
         float transX = m[Matrix.MTRANS_X];
         float transY = m[Matrix.MTRANS_Y];
@@ -185,7 +135,7 @@ public class TouchImageView extends ImageView {
         }
     }
 
-    float getFixTrans(float trans, float viewSize, float contentSize) {
+    private float getFixTrans(float trans, float viewSize, float contentSize) {
         float minTrans, maxTrans;
 
         if (contentSize <= viewSize) {
@@ -203,7 +153,7 @@ public class TouchImageView extends ImageView {
         return 0;
     }
     
-    float getFixDragTrans(float delta, float viewSize, float contentSize) {
+    private float getFixDragTrans(float delta, float viewSize, float contentSize) {
         if (contentSize <= viewSize) {
             return 0;
         }
@@ -357,6 +307,10 @@ public class TouchImageView extends ImageView {
         }
     }
     
+    private void setMode(State mode) {
+    	this.state = mode;
+    }
+    
     /**
      * Gesture Listener detects a single click or long click and passes that on
      * to the view's listener.
@@ -377,6 +331,61 @@ public class TouchImageView extends ImageView {
         	performLongClick();
         }
     }
+    
+    /**
+     * Responsible for all touch events. Handles the heavy lifting of drag and also sends
+     * touch events to Scale Detector and Gesture Detector.
+     * @author Ortiz
+     *
+     */
+    private class TouchImageViewListener implements OnTouchListener {
+    	
+    	//
+        // Remember last point position for dragging
+        //
+        private PointF last = new PointF();
+    	
+    	@Override
+        public boolean onTouch(View v, MotionEvent event) {
+            mScaleDetector.onTouchEvent(event);
+            mGestureDetector.onTouchEvent(event);
+            PointF curr = new PointF(event.getX(), event.getY());
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                	last.set(curr);
+                    setMode(DRAG);
+                    break;
+                    
+                case MotionEvent.ACTION_MOVE:
+                    if (state == DRAG) {
+                        float deltaX = curr.x - last.x;
+                        float deltaY = curr.y - last.y;
+                        float fixTransX = getFixDragTrans(deltaX, viewWidth, matchViewWidth * normalizedScale);
+                        float fixTransY = getFixDragTrans(deltaY, viewHeight, matchViewHeight * normalizedScale);
+                        matrix.postTranslate(fixTransX, fixTransY);
+                        fixTrans();
+                        last.set(curr.x, curr.y);
+                    }
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    setMode(NONE);
+                    break;
+
+                case MotionEvent.ACTION_POINTER_UP:
+                    setMode(NONE);
+                    break;
+            }
+            
+            setImageMatrix(matrix);
+            invalidate();
+            //
+            // indicate event was handled
+            //
+            return true;
+        }
+    }
 
     /**
      * ScaleListener detects user two finger scaling and scales image.
@@ -386,7 +395,7 @@ public class TouchImageView extends ImageView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            mode = ZOOM;
+            setMode(ZOOM);
             return true;
         }
 
@@ -415,7 +424,7 @@ public class TouchImageView extends ImageView {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
         	super.onScaleEnd(detector);
-        	mode = NONE;
+        	setMode(NONE);
         }
     }
     
