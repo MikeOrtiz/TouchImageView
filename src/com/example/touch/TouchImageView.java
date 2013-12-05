@@ -56,6 +56,8 @@ public class TouchImageView extends ImageView {
 
     private float minScale;
     private float maxScale;
+    private float superMinScale;
+    private float superMaxScale;
     private float[] m;
     
     private Context context;
@@ -95,6 +97,8 @@ public class TouchImageView extends ImageView {
         normalizedScale = 1;
         minScale = 1;
         maxScale = 3;
+        superMinScale = .75f * minScale;
+        superMaxScale = 1.2f * maxScale;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
@@ -135,6 +139,7 @@ public class TouchImageView extends ImageView {
 
     public void setMaxZoom(float x) {
         maxScale = x;
+        superMaxScale = 1.25f * maxScale;
     }
     
     /**
@@ -399,7 +404,7 @@ public class TouchImageView extends ImageView {
         	boolean consumed = false;
         	if (state == NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
-	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, e.getX(), e.getY());
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, e.getX(), e.getY(), false);
 	        	compatPostOnAnimation(doubleTap);
 	        	consumed = true;
         	}
@@ -477,7 +482,7 @@ public class TouchImageView extends ImageView {
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-        	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
+        	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY(), true, false);
             return true;
         }
         
@@ -485,27 +490,47 @@ public class TouchImageView extends ImageView {
         public void onScaleEnd(ScaleGestureDetector detector) {
         	super.onScaleEnd(detector);
         	setState(NONE);
+        	boolean animateToZoomBoundary = false;
+        	float targetZoom = normalizedScale;
+        	if (normalizedScale > maxScale) {
+        		targetZoom = maxScale;
+        		animateToZoomBoundary = true;
+        		
+        	} else if (normalizedScale < minScale) {
+        		targetZoom = minScale;
+        		animateToZoomBoundary = true;
+        	}
+        	
+        	if (animateToZoomBoundary) {
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, detector.getFocusX(), detector.getFocusY(), true);
+	        	compatPostOnAnimation(doubleTap);
+        	}
         }
     }
     
-    private void scaleImage(float deltaScale, float focusX, float focusY) {
+    private void scaleImage(float deltaScale, float focusX, float focusY, boolean stretchImageToSuper, boolean isRunnable) {
+    	
+    	float lowerScale, upperScale;
+    	if (stretchImageToSuper) {
+    		lowerScale = superMinScale;
+    		upperScale = superMaxScale;
+    		
+    	} else {
+    		lowerScale = minScale;
+    		upperScale = maxScale;
+    	}
+    	
     	float origScale = normalizedScale;
         normalizedScale *= deltaScale;
-        if (normalizedScale > maxScale) {
-            normalizedScale = maxScale;
-            deltaScale = maxScale / origScale;
-        } else if (normalizedScale < minScale) {
-            normalizedScale = minScale;
-            deltaScale = minScale / origScale;
+        if (normalizedScale > upperScale) {
+            normalizedScale = upperScale;
+            deltaScale = upperScale / origScale;
+        } else if (normalizedScale < lowerScale) {
+            normalizedScale = lowerScale;
+            deltaScale = lowerScale / origScale;
         }
-
-        if (getImageWidth() <= viewWidth || getImageHeight() <= viewHeight) {
-            matrix.postScale(deltaScale, deltaScale, viewWidth / 2, viewHeight / 2);
         
-        } else {
-            matrix.postScale(deltaScale, deltaScale, focusX, focusY);
-        }
-
+        matrix.postScale(deltaScale, deltaScale, focusX, focusY);
         fixScaleTrans();
     }
     
@@ -521,15 +546,17 @@ public class TouchImageView extends ImageView {
     	private static final float ZOOM_TIME = 500;
     	private float startZoom, targetZoom;
     	private float focusX, focusY;
+    	private boolean stretchImageToSuper;
     	private AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
     	
-    	DoubleTapZoom(float startZoom, float targetZoom, float focusX, float focusY) {
+    	DoubleTapZoom(float startZoom, float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
     		setState(ANIMATE_ZOOM);
     		startTime = System.currentTimeMillis();
     		this.startZoom = startZoom;
     		this.targetZoom = targetZoom;
     		this.focusX = focusX;
     		this.focusY = focusY;
+    		this.stretchImageToSuper = stretchImageToSuper;
     	}
 
 		@Override
@@ -549,8 +576,7 @@ public class TouchImageView extends ImageView {
 			float zoom = startZoom + t * (targetZoom - startZoom);
 			float deltaScale = zoom / normalizedScale;
 			
-			scaleImage(deltaScale, focusX, focusY);
-			
+			scaleImage(deltaScale, focusX, focusY, stretchImageToSuper, true);
 			fixScaleTrans();
 			setImageMatrix(matrix);
 			
