@@ -9,6 +9,7 @@
 
 package com.example.touch;
 
+import static com.example.touch.TouchImageView.State.ANIMATE_ZOOM;
 import static com.example.touch.TouchImageView.State.DRAG;
 import static com.example.touch.TouchImageView.State.FLING;
 import static com.example.touch.TouchImageView.State.NONE;
@@ -19,16 +20,17 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Scroller;
 
@@ -49,7 +51,7 @@ public class TouchImageView extends ImageView {
     //
 	private Matrix matrix, prevMatrix;
 
-    public static enum State { NONE, DRAG, ZOOM, FLING };
+    public static enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM };
     private State state;
 
     private float minScale;
@@ -95,6 +97,7 @@ public class TouchImageView extends ImageView {
         maxScale = 3;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
+        setState(NONE);
         setOnTouchListener(new TouchImageViewListener());
     }
     
@@ -134,6 +137,10 @@ public class TouchImageView extends ImageView {
         maxScale = x;
     }
     
+    /**
+     * Performs boundary checking and fixes the image matrix if it 
+     * is out of bounds.
+     */
     private void fixTrans() {
         matrix.getValues(m);
         float transX = m[Matrix.MTRANS_X];
@@ -141,10 +148,30 @@ public class TouchImageView extends ImageView {
         
         float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
         float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
-
+        
         if (fixTransX != 0 || fixTransY != 0) {
             matrix.postTranslate(fixTransX, fixTransY);
         }
+    }
+    
+    /**
+     * When transitioning from zooming from focus to zoom from center (or vice versa)
+     * the image can become unaligned within the view. This is apparent when zooming
+     * quickly. When the content size is less than the view size, the content will often
+     * be centered incorrectly within the view. fixScaleTrans first calls fixTrans() and 
+     * then makes sure the image is centered correctly within the view.
+     */
+    private void fixScaleTrans() {
+    	fixTrans();
+    	matrix.getValues(m);
+    	if (getImageWidth() < viewWidth) {
+    		m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
+    	}
+    	
+    	if (getImageHeight() < viewHeight) {
+    		m[Matrix.MTRANS_Y] = (viewHeight - getImageHeight()) / 2;
+    	}
+    	matrix.setValues(m);
     }
 
     private float getFixTrans(float trans, float viewSize, float contentSize) {
@@ -153,6 +180,7 @@ public class TouchImageView extends ImageView {
         if (contentSize <= viewSize) {
             minTrans = 0;
             maxTrans = viewSize - contentSize;
+            
         } else {
             minTrans = viewSize - contentSize;
             maxTrans = 0;
@@ -327,8 +355,8 @@ public class TouchImageView extends ImageView {
         }
     }
     
-    private void setMode(State mode) {
-    	this.state = mode;
+    private void setState(State state) {
+    	this.state = state;
     }
     
     /**
@@ -340,7 +368,7 @@ public class TouchImageView extends ImageView {
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
     	
         @Override
-        public boolean onSingleTapUp(MotionEvent e)
+        public boolean onSingleTapConfirmed(MotionEvent e)
         {
         	return performClick();
         }
@@ -351,6 +379,7 @@ public class TouchImageView extends ImageView {
         	performLongClick();
         }
         
+        @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
         {
         	if (fling != null) {
@@ -362,7 +391,19 @@ public class TouchImageView extends ImageView {
         	}
         	fling = new Fling((int) velocityX, (int) velocityY);
         	compatPostOnAnimation(fling);
-        	return true;
+        	return super.onFling(e1, e2, velocityX, velocityY);
+        }
+        
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+        	boolean consumed = false;
+        	if (state == NONE) {
+	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, e.getX(), e.getY());
+	        	compatPostOnAnimation(doubleTap);
+	        	consumed = true;
+        	}
+        	return consumed;
         }
     }
     
@@ -384,29 +425,33 @@ public class TouchImageView extends ImageView {
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                	last.set(curr);
-                    setMode(DRAG);
-                    break;
-                    
-                case MotionEvent.ACTION_MOVE:
-                    if (state == DRAG) {
-                        float deltaX = curr.x - last.x;
-                        float deltaY = curr.y - last.y;
-                        float fixTransX = getFixDragTrans(deltaX, viewWidth, matchViewWidth * normalizedScale);
-                        float fixTransY = getFixDragTrans(deltaY, viewHeight, matchViewHeight * normalizedScale);
-                        matrix.postTranslate(fixTransX, fixTransY);
-                        fixTrans();
-                        last.set(curr.x, curr.y);
-                    }
-                    break;
-
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_POINTER_UP:
-                    setMode(NONE);
-                    break;
+            
+            if (state == NONE || state == DRAG || state == FLING) {
+	            switch (event.getAction()) {
+	                case MotionEvent.ACTION_DOWN:
+	                	last.set(curr);
+	                    if (fling != null)
+	                    	fling.cancelFling();
+	                    setState(DRAG);
+	                    break;
+	                    
+	                case MotionEvent.ACTION_MOVE:
+	                    if (state == DRAG) {
+	                        float deltaX = curr.x - last.x;
+	                        float deltaY = curr.y - last.y;
+	                        float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
+	                        float fixTransY = getFixDragTrans(deltaY, viewHeight, getImageHeight());
+	                        matrix.postTranslate(fixTransX, fixTransY);
+	                        fixTrans();
+	                        last.set(curr.x, curr.y);
+	                    }
+	                    break;
+	
+	                case MotionEvent.ACTION_UP:
+	                case MotionEvent.ACTION_POINTER_UP:
+	                    setState(NONE);
+	                    break;
+	            }
             }
             
             setImageMatrix(matrix);
@@ -426,37 +471,101 @@ public class TouchImageView extends ImageView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            setMode(ZOOM);
+            setState(ZOOM);
             return true;
         }
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            float mScaleFactor = detector.getScaleFactor();
-            float origScale = normalizedScale;
-            normalizedScale *= mScaleFactor;
-            if (normalizedScale > maxScale) {
-                normalizedScale = maxScale;
-                mScaleFactor = maxScale / origScale;
-            } else if (normalizedScale < minScale) {
-                normalizedScale = minScale;
-                mScaleFactor = minScale / origScale;
-            }
-
-            if (matchViewWidth * normalizedScale <= viewWidth || matchViewHeight * normalizedScale <= viewHeight)
-                matrix.postScale(mScaleFactor, mScaleFactor, viewWidth / 2, viewHeight / 2);
-            else
-                matrix.postScale(mScaleFactor, mScaleFactor, detector.getFocusX(), detector.getFocusY());
-
-            fixTrans();
+        	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY());
             return true;
         }
         
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
         	super.onScaleEnd(detector);
-        	setMode(NONE);
+        	setState(NONE);
         }
+    }
+    
+    private void scaleImage(float deltaScale, float focusX, float focusY) {
+    	float origScale = normalizedScale;
+        normalizedScale *= deltaScale;
+        if (normalizedScale > maxScale) {
+            normalizedScale = maxScale;
+            deltaScale = maxScale / origScale;
+        } else if (normalizedScale < minScale) {
+            normalizedScale = minScale;
+            deltaScale = minScale / origScale;
+        }
+
+        if (getImageWidth() <= viewWidth || getImageHeight() <= viewHeight) {
+            matrix.postScale(deltaScale, deltaScale, viewWidth / 2, viewHeight / 2);
+        
+        } else {
+            matrix.postScale(deltaScale, deltaScale, focusX, focusY);
+        }
+
+        fixScaleTrans();
+    }
+    
+    /**
+     * DoubleTapZoom calls a series of runnables which apply
+     * an animated zoom in/out graphic to the image.
+     * @author Ortiz
+     *
+     */
+    private class DoubleTapZoom implements Runnable {
+    	
+    	private long startTime;
+    	private static final float ZOOM_TIME = 500;
+    	private float startZoom, targetZoom;
+    	private float focusX, focusY;
+    	private AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
+    	
+    	DoubleTapZoom(float startZoom, float targetZoom, float focusX, float focusY) {
+    		setState(ANIMATE_ZOOM);
+    		startTime = System.currentTimeMillis();
+    		this.startZoom = startZoom;
+    		this.targetZoom = targetZoom;
+    		this.focusX = focusX;
+    		this.focusY = focusY;
+    	}
+
+		@Override
+		public void run() {
+			//
+			// Use interpolator to get the t value
+			//
+			long currTime = System.currentTimeMillis();
+			float elapsed = (currTime - startTime) / ZOOM_TIME;
+			elapsed = Math.min(1f, elapsed);
+			float t = interpolator.getInterpolation(elapsed);
+			
+			//
+			// Interpolate the current targeted zoom and get the delta
+			// from the current zoom.
+			//
+			float zoom = startZoom + t * (targetZoom - startZoom);
+			float deltaScale = zoom / normalizedScale;
+			
+			scaleImage(deltaScale, focusX, focusY);
+			
+			fixScaleTrans();
+			setImageMatrix(matrix);
+			
+			if (t < 1f) {
+				//
+				// We haven't finished zooming
+				//
+				compatPostOnAnimation(this);
+			} else {
+				//
+				// Finished zooming
+				//
+				setState(NONE);
+			}
+		}
     }
     
     /**
@@ -472,7 +581,7 @@ public class TouchImageView extends ImageView {
     	int currX, currY;
     	
     	Fling(int velocityX, int velocityY) {
-    		setMode(FLING);
+    		setState(FLING);
     		scroller = new Scroller(context);
     		matrix.getValues(m);
     		
@@ -504,6 +613,7 @@ public class TouchImageView extends ImageView {
     	
     	public void cancelFling() {
     		if (scroller != null) {
+    			setState(NONE);
     			scroller.forceFinished(true);
     		}
     	}
@@ -511,7 +621,6 @@ public class TouchImageView extends ImageView {
 		@Override
 		public void run() {
 			if (scroller.isFinished()) {
-        		setMode(NONE);
         		scroller = null;
         		return;
         	}
