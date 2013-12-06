@@ -28,8 +28,16 @@ name, because it is a custom view. Example:
 API:
 ----------------------
 
+// For a given point on the view (ie, a touch event), returns the
+// point relative to the original drawable's coordinate system.
+PointF getDrawablePointFromTouchPoint(float x, float y);
+
+// For a given point on the view (ie, a touch event), returns the
+// point relative to the original drawable's coordinate system.
+PointF getDrawablePointFromTouchPoint(PointF p);
+
 // Set the max zoom multiplier. Default value: 3.
-setMaxZoom(float max);
+void setMaxZoom(float max);
 
 // Set the min zoom multiplier. Default value: 1.
-setMinZoom(float min);
+void setMinZoom(float min);

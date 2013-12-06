@@ -165,6 +165,27 @@ public class TouchImageView extends ImageView {
     }
     
     /**
+     * For a given point on the view (ie, a touch event), returns the
+     * point relative to the original drawable's coordinate system.
+     * @param x
+     * @param y
+     * @return PointF relative to original drawable's coordinate system.
+     */
+    public PointF getDrawablePointFromTouchPoint(float x, float y) {
+    	return transformCoordTouchToBitmap(x, y, true);
+    }
+    
+    /**
+     * For a given point on the view (ie, a touch event), returns the
+     * point relative to the original drawable's coordinate system.
+     * @param p
+     * @return PointF relative to original drawable's coordinate system.
+     */
+    public PointF getDrawablePointFromTouchPoint(PointF p) {
+    	return transformCoordTouchToBitmap(p.x, p.y, true);
+    }
+    
+    /**
      * Performs boundary checking and fixes the image matrix if it 
      * is out of bounds.
      */
