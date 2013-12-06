@@ -10,8 +10,7 @@ public class TouchImageViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        TouchImageView img = (TouchImageView) findViewById(R.id.snoop);
-        img.setImageResource(R.drawable.snoopy);
-        img.setMaxZoom(4f);
+        TouchImageView img = (TouchImageView) findViewById(R.id.img);
+        img.setMaxZoom(4);
     }
 }

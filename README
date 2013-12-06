@@ -1,11 +1,42 @@
 Android: TouchImageView
 Created by: Mike Ortiz
-Updated by: Patrick Lackemacher
+Contributions by: 
+ * Patrick Lackemacher
+ * Babay88
+ * @ipsilondev
+
 Date: 2/17/2012
 ----------------------
-Adds panning and pinch zoom to Android ImageView.
+Adds panning, pinch zoom, double tap zoom, and fling to Android ImageView.
 
-Update:
+Usage:
 ----------------------
-Can now be added to XML layout.
-Added support for setting bitmap to null without throwing exception.
+Place TouchImageView.java in your project. It can then be used the same as
+ImageView. Example:
+
+TouchImageView img = (TouchImageView) findViewById(R.id.img);
+
+If you are using TouchImageView in xml, then you must provide the full package
+name, because it is a custom view. Example:
+
+<com.example.touch.TouchImageView
+	    android:id="@+id/img”
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" />
+
+API:
+----------------------
+
+// For a given point on the view (ie, a touch event), returns the
+// point relative to the original drawable's coordinate system.
+PointF getDrawablePointFromTouchPoint(float x, float y);
+
+// For a given point on the view (ie, a touch event), returns the
+// point relative to the original drawable's coordinate system.
+PointF getDrawablePointFromTouchPoint(PointF p);
+
+// Set the max zoom multiplier. Default value: 3.
+void setMaxZoom(float max);
+
+// Set the min zoom multiplier. Default value: 1.
+void setMinZoom(float min);
