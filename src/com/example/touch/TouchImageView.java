@@ -95,6 +95,11 @@ public class TouchImageView extends ImageView {
         sharedConstructing(context);
     }
     
+    public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
+    	super(context, attrs, defStyle);
+    	sharedConstructing(context);
+    }
+    
     private void sharedConstructing(Context context) {
         super.setClickable(true);
         this.context = context;
