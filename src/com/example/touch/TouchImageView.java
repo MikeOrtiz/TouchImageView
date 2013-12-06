@@ -150,6 +150,14 @@ public class TouchImageView extends ImageView {
 
       	super.onRestoreInstanceState(state);
     }
+    
+    /**
+     * Get the max zoom multiplier.
+     * @return max zoom multiplier.
+     */
+    public float getMaxZoom() {
+    	return maxScale;
+    }
 
     /**
      * Set the max zoom multiplier. Default value: 3.
@@ -158,6 +166,23 @@ public class TouchImageView extends ImageView {
     public void setMaxZoom(float max) {
         maxScale = max;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+    }
+    
+    /**
+     * Get the min zoom multiplier.
+     * @return min zoom multiplier.
+     */
+    public float getMinZoom() {
+    	return minScale;
+    }
+    
+    /**
+     * Get the current zoom. This is the zoom relative to the initial
+     * scale, not the original resource.
+     * @return current zoom multiplier.
+     */
+    public float getCurrentZoom() {
+    	return normalizedScale;
     }
     
     /**
