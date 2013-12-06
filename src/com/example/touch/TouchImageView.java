@@ -138,6 +138,10 @@ public class TouchImageView extends ImageView {
       	super.onRestoreInstanceState(state);
     }
 
+    /**
+     * Set the max zoom multiplier.
+     * @param x max zoom multiplier.
+     */
     public void setMaxZoom(float x) {
         maxScale = x;
         superMaxScale = 1.25f * maxScale;
