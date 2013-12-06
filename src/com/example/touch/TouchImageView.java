@@ -38,6 +38,14 @@ import android.widget.Scroller;
 public class TouchImageView extends ImageView {
 	
 	private static final String DEBUG = "DEBUG";
+	
+	//
+	// SuperMin and SuperMax multipliers. Determine how much the image can be
+	// zoomed below or above the zoom boundaries, before animating back to the
+	// min/max zoom boundary.
+	//
+	private static final float SUPER_MIN_MULTIPLIER = .75f;
+	private static final float SUPER_MAX_MULTIPLIER = 1.25f;
 
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
@@ -98,8 +106,8 @@ public class TouchImageView extends ImageView {
         normalizedScale = 1;
         minScale = 1;
         maxScale = 3;
-        superMinScale = .75f * minScale;
-        superMaxScale = 1.2f * maxScale;
+        superMinScale = SUPER_MIN_MULTIPLIER * minScale;
+        superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
@@ -139,12 +147,21 @@ public class TouchImageView extends ImageView {
     }
 
     /**
-     * Set the max zoom multiplier.
-     * @param x max zoom multiplier.
+     * Set the max zoom multiplier. Default value: 3.
+     * @param max max zoom multiplier.
      */
-    public void setMaxZoom(float x) {
-        maxScale = x;
-        superMaxScale = 1.25f * maxScale;
+    public void setMaxZoom(float max) {
+        maxScale = max;
+        superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+    }
+    
+    /**
+     * Set the min zoom multiplier. Default value: 1.
+     * @param min min zoom multiplier.
+     */
+    public void setMinZoom(float min) {
+    	minScale = min;
+    	superMinScale = SUPER_MIN_MULTIPLIER * minScale;
     }
     
     /**

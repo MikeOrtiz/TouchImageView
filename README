@@ -28,5 +28,8 @@ name, because it is a custom view. Example:
 API:
 ----------------------
 
-// Set the max zoom multiplier.
+// Set the max zoom multiplier. Default value: 3.
 setMaxZoom(float max);
+
+// Set the min zoom multiplier. Default value: 1.
+setMinZoom(float min);
