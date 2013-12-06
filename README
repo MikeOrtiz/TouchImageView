@@ -15,7 +15,6 @@ Place TouchImageView.java in your project. It can then be used the same as
 ImageView. Example:
 
 TouchImageView img = (TouchImageView) findViewById(R.id.img);
-img.setImageResource(R.drawable.img);
 
 If you are using TouchImageView in xml, then you must provide the full package
 name, because it is a custom view. Example:
