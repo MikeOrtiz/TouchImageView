@@ -452,7 +452,7 @@ public class TouchImageView extends ImageView {
         	boolean consumed = false;
         	if (state == NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
-	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, e.getX(), e.getY(), false);
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
 	        	compatPostOnAnimation(doubleTap);
 	        	consumed = true;
         	}
@@ -550,7 +550,7 @@ public class TouchImageView extends ImageView {
         	}
         	
         	if (animateToZoomBoundary) {
-	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, viewWidth / 2, viewHeight / 2, true);
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
 	        	compatPostOnAnimation(doubleTap);
         	}
         }
@@ -599,10 +599,10 @@ public class TouchImageView extends ImageView {
     	private PointF startTouch;
     	private PointF endTouch;
 
-    	DoubleTapZoom(float startZoom, float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
+    	DoubleTapZoom(float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
     		setState(ANIMATE_ZOOM);
     		startTime = System.currentTimeMillis();
-    		this.startZoom = startZoom;
+    		this.startZoom = normalizedScale;
     		this.targetZoom = targetZoom;
     		this.stretchImageToSuper = stretchImageToSuper;
     		PointF bitmapPoint = transformCoordTouchToBitmap(focusX, focusY, false);
