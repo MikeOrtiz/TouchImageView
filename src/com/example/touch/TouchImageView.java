@@ -17,9 +17,11 @@ import static com.example.touch.TouchImageView.State.NONE;
 import static com.example.touch.TouchImageView.State.ZOOM;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -117,6 +119,45 @@ public class TouchImageView extends ImageView {
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
         setOnTouchListener(new TouchImageViewListener());
+    }
+    
+    @Override
+    public void setImageResource(int resId) {
+    	super.setImageResource(resId);
+    	savePreviousImageValues();
+    }
+    
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+    	super.setImageBitmap(bm);
+    	savePreviousImageValues();
+    }
+    
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+    	super.setImageDrawable(drawable);
+    	savePreviousImageValues();
+    }
+    
+    @Override
+    public void setImageURI(Uri uri) {
+    	super.setImageURI(uri);
+    	savePreviousImageValues();
+    }
+    
+    /**
+     * Save the current matrix and view dimensions
+     * in the prevMatrix and prevView variables.
+     */
+    private void savePreviousImageValues() {
+    	if (matrix != null) {
+	    	matrix.getValues(m);
+	    	prevMatrix.setValues(m);
+	    	prevMatchViewHeight = matchViewHeight;
+	        prevMatchViewWidth = matchViewWidth;
+	        prevViewHeight = viewHeight;
+	        prevViewWidth = viewHeight;
+    	}
     }
     
     @Override
@@ -308,6 +349,26 @@ public class TouchImageView extends ImageView {
         setMeasuredDimension(viewWidth, viewHeight);
         
         //
+        // Fit content within view
+        //
+        fitImageToView();
+    }
+    
+    /**
+     * If the normalizedScale is equal to 1, then the image is made to fit the screen. Otherwise,
+     * it is made to fit the screen according to the dimensions of the previous image matrix. This
+     * allows the image to maintain its zoom after rotation.
+     */
+    private void fitImageToView() {
+    	Drawable drawable = getDrawable();
+        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+        	return;
+        }
+        
+        int drawableWidth = drawable.getIntrinsicWidth();
+        int drawableHeight = drawable.getIntrinsicHeight();
+    	
+    	//
     	// Scale image for view
     	//
         float scaleX = (float) viewWidth / drawableWidth;
