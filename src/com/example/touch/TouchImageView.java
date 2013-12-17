@@ -246,7 +246,7 @@ public class TouchImageView extends ImageView {
     /**
      * After setting image, a value of true means the new image should maintain
      * the zoom of the previous image. False means the image should be resized within
-     * the view.
+     * the view. Defaults value is true.
      * @param maintainZoom
      */
     public void maintainZoomAfterSetImage(boolean maintainZoom) {

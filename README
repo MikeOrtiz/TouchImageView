@@ -46,8 +46,8 @@ float getMaxZoom();
 float getMinZoom();
 
 // After setting image, a value of true means the new image should maintain
-// the zoom of the previous image. False means the image should be resized within
-// the view.
+// the zoom of the previous image. False means the image should be resized 
+// within the view. Default value is true.
 void maintainZoomAfterSetImage(boolean maintainZoom); 
 
 // Set the max zoom multiplier. Default value: 3.
