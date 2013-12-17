@@ -84,6 +84,17 @@ public class TouchImageView extends ImageView {
     //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
     
+    //
+    // After setting image, a value of true means the new image should maintain
+    // the zoom of the previous image. False means it should be resized within the view.
+    //
+    private boolean maintainZoomAfterSetImage;
+    
+    //
+    // True when maintainZoomAfterSetImage has been set to true and setImage has been called.
+    //
+    private boolean setImageCalledRecenterImage;
+    
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
 
@@ -115,6 +126,7 @@ public class TouchImageView extends ImageView {
         maxScale = 3;
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+        maintainZoomAfterSetImage = true;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
@@ -124,25 +136,39 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageResource(int resId) {
     	super.setImageResource(resId);
+    	setImageCalled();
     	savePreviousImageValues();
+    	fitImageToView();
     }
     
     @Override
     public void setImageBitmap(Bitmap bm) {
     	super.setImageBitmap(bm);
+    	setImageCalled();
     	savePreviousImageValues();
+    	fitImageToView();
     }
     
     @Override
     public void setImageDrawable(Drawable drawable) {
     	super.setImageDrawable(drawable);
+    	setImageCalled();
     	savePreviousImageValues();
+    	fitImageToView();
     }
     
     @Override
     public void setImageURI(Uri uri) {
     	super.setImageURI(uri);
+    	setImageCalled();
     	savePreviousImageValues();
+    	fitImageToView();
+    }
+    
+    private void setImageCalled() {
+    	if (!maintainZoomAfterSetImage) {
+    		setImageCalledRecenterImage = true;
+    	}
     }
     
     /**
@@ -156,7 +182,7 @@ public class TouchImageView extends ImageView {
 	    	prevMatchViewHeight = matchViewHeight;
 	        prevMatchViewWidth = matchViewWidth;
 	        prevViewHeight = viewHeight;
-	        prevViewWidth = viewHeight;
+	        prevViewWidth = viewWidth;
     	}
     }
     
@@ -215,6 +241,16 @@ public class TouchImageView extends ImageView {
      */
     public float getMinZoom() {
     	return minScale;
+    }
+    
+    /**
+     * After setting image, a value of true means the new image should maintain
+     * the zoom of the previous image. False means the image should be resized within
+     * the view.
+     * @param maintainZoom
+     */
+    public void maintainZoomAfterSetImage(boolean maintainZoom) {
+    	maintainZoomAfterSetImage = maintainZoom;
     }
     
     /**
@@ -364,6 +400,9 @@ public class TouchImageView extends ImageView {
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
         	return;
         }
+        if (matrix == null || prevMatrix == null) {
+        	return;
+        }
         
         int drawableWidth = drawable.getIntrinsicWidth();
         int drawableHeight = drawable.getIntrinsicHeight();
@@ -382,13 +421,14 @@ public class TouchImageView extends ImageView {
         float redundantXSpace = viewWidth - (scale * drawableWidth);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        
-        if (normalizedScale == 1) {
+        if (normalizedScale == 1 || setImageCalledRecenterImage) {
         	//
         	// Stretch and center image to fit view
         	//
         	matrix.setScale(scale, scale);
         	matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
+        	normalizedScale = 1;
+        	setImageCalledRecenterImage = false;
         	
         } else {
         	prevMatrix.getValues(m);
@@ -424,7 +464,6 @@ public class TouchImageView extends ImageView {
             //
             matrix.setValues(m);
         }
-        fixTrans();
         setImageMatrix(matrix);
     }
     
@@ -594,7 +633,6 @@ public class TouchImageView extends ImageView {
             }
             
             setImageMatrix(matrix);
-            invalidate();
             //
             // indicate event was handled
             //
