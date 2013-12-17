@@ -367,6 +367,7 @@ public class TouchImageView extends ImageView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+        	setMeasuredDimension(0, 0);
         	return;
         }
         
