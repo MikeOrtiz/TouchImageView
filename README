@@ -27,6 +27,10 @@ name, because it is a custom view. Example:
 API:
 ----------------------
 
+// Get the current zoom. This is the zoom relative to the initial
+// scale, not the original resource.
+float getCurrentZoom();
+
 // For a given point on the view (ie, a touch event), returns the
 // point relative to the original drawable's coordinate system.
 PointF getDrawablePointFromTouchPoint(float x, float y);
@@ -34,6 +38,17 @@ PointF getDrawablePointFromTouchPoint(float x, float y);
 // For a given point on the view (ie, a touch event), returns the
 // point relative to the original drawable's coordinate system.
 PointF getDrawablePointFromTouchPoint(PointF p);
+
+// Get the max zoom multiplier.
+float getMaxZoom();
+
+// Get the min zoom multiplier.
+float getMinZoom();
+
+// After setting image, a value of true means the new image should maintain
+// the zoom of the previous image. False means the image should be resized 
+// within the view. Default value is true.
+void maintainZoomAfterSetImage(boolean maintainZoom); 
 
 // Set the max zoom multiplier. Default value: 3.
 void setMaxZoom(float max);

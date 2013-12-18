@@ -17,9 +17,11 @@ import static com.example.touch.TouchImageView.State.NONE;
 import static com.example.touch.TouchImageView.State.ZOOM;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -82,6 +84,17 @@ public class TouchImageView extends ImageView {
     //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
     
+    //
+    // After setting image, a value of true means the new image should maintain
+    // the zoom of the previous image. False means it should be resized within the view.
+    //
+    private boolean maintainZoomAfterSetImage;
+    
+    //
+    // True when maintainZoomAfterSetImage has been set to true and setImage has been called.
+    //
+    private boolean setImageCalledRecenterImage;
+    
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
 
@@ -113,10 +126,64 @@ public class TouchImageView extends ImageView {
         maxScale = 3;
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+        maintainZoomAfterSetImage = true;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
         setOnTouchListener(new TouchImageViewListener());
+    }
+    
+    @Override
+    public void setImageResource(int resId) {
+    	super.setImageResource(resId);
+    	setImageCalled();
+    	savePreviousImageValues();
+    	fitImageToView();
+    }
+    
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+    	super.setImageBitmap(bm);
+    	setImageCalled();
+    	savePreviousImageValues();
+    	fitImageToView();
+    }
+    
+    @Override
+    public void setImageDrawable(Drawable drawable) {
+    	super.setImageDrawable(drawable);
+    	setImageCalled();
+    	savePreviousImageValues();
+    	fitImageToView();
+    }
+    
+    @Override
+    public void setImageURI(Uri uri) {
+    	super.setImageURI(uri);
+    	setImageCalled();
+    	savePreviousImageValues();
+    	fitImageToView();
+    }
+    
+    private void setImageCalled() {
+    	if (!maintainZoomAfterSetImage) {
+    		setImageCalledRecenterImage = true;
+    	}
+    }
+    
+    /**
+     * Save the current matrix and view dimensions
+     * in the prevMatrix and prevView variables.
+     */
+    private void savePreviousImageValues() {
+    	if (matrix != null) {
+	    	matrix.getValues(m);
+	    	prevMatrix.setValues(m);
+	    	prevMatchViewHeight = matchViewHeight;
+	        prevMatchViewWidth = matchViewWidth;
+	        prevViewHeight = viewHeight;
+	        prevViewWidth = viewWidth;
+    	}
     }
     
     @Override
@@ -150,6 +217,14 @@ public class TouchImageView extends ImageView {
 
       	super.onRestoreInstanceState(state);
     }
+    
+    /**
+     * Get the max zoom multiplier.
+     * @return max zoom multiplier.
+     */
+    public float getMaxZoom() {
+    	return maxScale;
+    }
 
     /**
      * Set the max zoom multiplier. Default value: 3.
@@ -158,6 +233,33 @@ public class TouchImageView extends ImageView {
     public void setMaxZoom(float max) {
         maxScale = max;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+    }
+    
+    /**
+     * Get the min zoom multiplier.
+     * @return min zoom multiplier.
+     */
+    public float getMinZoom() {
+    	return minScale;
+    }
+    
+    /**
+     * After setting image, a value of true means the new image should maintain
+     * the zoom of the previous image. False means the image should be resized within
+     * the view. Defaults value is true.
+     * @param maintainZoom
+     */
+    public void maintainZoomAfterSetImage(boolean maintainZoom) {
+    	maintainZoomAfterSetImage = maintainZoom;
+    }
+    
+    /**
+     * Get the current zoom. This is the zoom relative to the initial
+     * scale, not the original resource.
+     * @return current zoom multiplier.
+     */
+    public float getCurrentZoom() {
+    	return normalizedScale;
     }
     
     /**
@@ -265,6 +367,7 @@ public class TouchImageView extends ImageView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+        	setMeasuredDimension(0, 0);
         	return;
         }
         
@@ -283,6 +386,29 @@ public class TouchImageView extends ImageView {
         setMeasuredDimension(viewWidth, viewHeight);
         
         //
+        // Fit content within view
+        //
+        fitImageToView();
+    }
+    
+    /**
+     * If the normalizedScale is equal to 1, then the image is made to fit the screen. Otherwise,
+     * it is made to fit the screen according to the dimensions of the previous image matrix. This
+     * allows the image to maintain its zoom after rotation.
+     */
+    private void fitImageToView() {
+    	Drawable drawable = getDrawable();
+        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+        	return;
+        }
+        if (matrix == null || prevMatrix == null) {
+        	return;
+        }
+        
+        int drawableWidth = drawable.getIntrinsicWidth();
+        int drawableHeight = drawable.getIntrinsicHeight();
+    	
+    	//
     	// Scale image for view
     	//
         float scaleX = (float) viewWidth / drawableWidth;
@@ -296,13 +422,14 @@ public class TouchImageView extends ImageView {
         float redundantXSpace = viewWidth - (scale * drawableWidth);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        
-        if (normalizedScale == 1) {
+        if (normalizedScale == 1 || setImageCalledRecenterImage) {
         	//
         	// Stretch and center image to fit view
         	//
         	matrix.setScale(scale, scale);
         	matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
+        	normalizedScale = 1;
+        	setImageCalledRecenterImage = false;
         	
         } else {
         	prevMatrix.getValues(m);
@@ -338,7 +465,6 @@ public class TouchImageView extends ImageView {
             //
             matrix.setValues(m);
         }
-        fixTrans();
         setImageMatrix(matrix);
     }
     
@@ -452,7 +578,7 @@ public class TouchImageView extends ImageView {
         	boolean consumed = false;
         	if (state == NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
-	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, e.getX(), e.getY(), false);
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
 	        	compatPostOnAnimation(doubleTap);
 	        	consumed = true;
         	}
@@ -508,7 +634,6 @@ public class TouchImageView extends ImageView {
             }
             
             setImageMatrix(matrix);
-            invalidate();
             //
             // indicate event was handled
             //
@@ -550,7 +675,7 @@ public class TouchImageView extends ImageView {
         	}
         	
         	if (animateToZoomBoundary) {
-	        	DoubleTapZoom doubleTap = new DoubleTapZoom(normalizedScale, targetZoom, viewWidth / 2, viewHeight / 2, true);
+	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
 	        	compatPostOnAnimation(doubleTap);
         	}
         }
@@ -599,10 +724,10 @@ public class TouchImageView extends ImageView {
     	private PointF startTouch;
     	private PointF endTouch;
 
-    	DoubleTapZoom(float startZoom, float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
+    	DoubleTapZoom(float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
     		setState(ANIMATE_ZOOM);
     		startTime = System.currentTimeMillis();
-    		this.startZoom = startZoom;
+    		this.startZoom = normalizedScale;
     		this.targetZoom = targetZoom;
     		this.stretchImageToSuper = stretchImageToSuper;
     		PointF bitmapPoint = transformCoordTouchToBitmap(focusX, focusY, false);
