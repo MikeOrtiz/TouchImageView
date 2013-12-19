@@ -506,6 +506,24 @@ public class TouchImageView extends ImageView {
     	this.state = state;
     }
     
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+    	matrix.getValues(m);
+    	float x = m[Matrix.MTRANS_X];
+    	
+    	if (getImageWidth() < viewWidth) {
+    		return false;
+    		
+    	} else if (x >= -1 && direction < 0) {
+    		return false;
+    		
+    	} else if (Math.abs(x) + viewWidth + 1 >= getImageWidth() && direction > 0) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
     /**
      * Gesture Listener detects a single click or long click and passes that on
      * to the view's listener.
