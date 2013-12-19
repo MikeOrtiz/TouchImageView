@@ -787,8 +787,8 @@ public class TouchImageView extends ImageView {
          float finalY = ((y - transY) * origH) / getImageHeight();
          
          if (clipToBitmap) {
-        	 finalX = Math.min(Math.max(x, 0), origW);
-        	 finalY = Math.min(Math.max(y, 0), origH);
+        	 finalX = Math.min(Math.max(finalX, 0), origW);
+        	 finalY = Math.min(Math.max(finalY, 0), origH);
          }
          
          return new PointF(finalX , finalY);
