@@ -17,6 +17,7 @@ import static com.example.touch.TouchImageView.State.NONE;
 import static com.example.touch.TouchImageView.State.ZOOM;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -166,18 +167,18 @@ public class TouchImageView extends ImageView {
     
     @Override
     public Parcelable onSaveInstanceState() {
-      Bundle bundle = new Bundle();
-      bundle.putParcelable("instanceState", super.onSaveInstanceState());
-      bundle.putFloat("saveScale", normalizedScale);
-      bundle.putFloat("matchViewHeight", matchViewHeight);
-      bundle.putFloat("matchViewWidth", matchViewWidth);
-      bundle.putInt("viewWidth", viewWidth);
-      bundle.putInt("viewHeight", viewHeight);
-      matrix.getValues(m);
-      bundle.putFloatArray("matrix", m);
-      return bundle;
+    	Bundle bundle = new Bundle();
+    	bundle.putParcelable("instanceState", super.onSaveInstanceState());
+    	bundle.putFloat("saveScale", normalizedScale);
+    	bundle.putFloat("matchViewHeight", matchViewHeight);
+    	bundle.putFloat("matchViewWidth", matchViewWidth);
+    	bundle.putInt("viewWidth", viewWidth);
+    	bundle.putInt("viewHeight", viewHeight);
+    	matrix.getValues(m);
+    	bundle.putFloatArray("matrix", m);
+    	return bundle;
     }
-
+    
     @Override
     public void onRestoreInstanceState(Parcelable state) {
       	if (state instanceof Bundle) {
@@ -194,6 +195,12 @@ public class TouchImageView extends ImageView {
       	}
 
       	super.onRestoreInstanceState(state);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+    	super.onConfigurationChanged(newConfig);
+    	savePreviousImageValues();
     }
     
     /**
