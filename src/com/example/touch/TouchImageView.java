@@ -84,17 +84,6 @@ public class TouchImageView extends ImageView {
     //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
     
-    //
-    // After setting image, a value of true means the new image should maintain
-    // the zoom of the previous image. False means it should be resized within the view.
-    //
-    private boolean maintainZoomAfterSetImage;
-    
-    //
-    // True when maintainZoomAfterSetImage has been set to true and setImage has been called.
-    //
-    private boolean setImageCalledRecenterImage;
-    
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
 
@@ -126,7 +115,6 @@ public class TouchImageView extends ImageView {
         maxScale = 3;
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
-        maintainZoomAfterSetImage = true;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
@@ -136,7 +124,6 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageResource(int resId) {
     	super.setImageResource(resId);
-    	setImageCalled();
     	savePreviousImageValues();
     	fitImageToView();
     }
@@ -144,7 +131,6 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageBitmap(Bitmap bm) {
     	super.setImageBitmap(bm);
-    	setImageCalled();
     	savePreviousImageValues();
     	fitImageToView();
     }
@@ -152,7 +138,6 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageDrawable(Drawable drawable) {
     	super.setImageDrawable(drawable);
-    	setImageCalled();
     	savePreviousImageValues();
     	fitImageToView();
     }
@@ -160,15 +145,8 @@ public class TouchImageView extends ImageView {
     @Override
     public void setImageURI(Uri uri) {
     	super.setImageURI(uri);
-    	setImageCalled();
     	savePreviousImageValues();
     	fitImageToView();
-    }
-    
-    private void setImageCalled() {
-    	if (!maintainZoomAfterSetImage) {
-    		setImageCalledRecenterImage = true;
-    	}
     }
     
     /**
@@ -241,16 +219,6 @@ public class TouchImageView extends ImageView {
      */
     public float getMinZoom() {
     	return minScale;
-    }
-    
-    /**
-     * After setting image, a value of true means the new image should maintain
-     * the zoom of the previous image. False means the image should be resized within
-     * the view. Defaults value is true.
-     * @param maintainZoom
-     */
-    public void maintainZoomAfterSetImage(boolean maintainZoom) {
-    	maintainZoomAfterSetImage = maintainZoom;
     }
     
     /**
@@ -422,14 +390,13 @@ public class TouchImageView extends ImageView {
         float redundantXSpace = viewWidth - (scale * drawableWidth);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        if (normalizedScale == 1 || setImageCalledRecenterImage) {
+        if (normalizedScale == 1) {
         	//
         	// Stretch and center image to fit view
         	//
         	matrix.setScale(scale, scale);
         	matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
         	normalizedScale = 1;
-        	setImageCalledRecenterImage = false;
         	
         } else {
         	prevMatrix.getValues(m);
@@ -465,6 +432,7 @@ public class TouchImageView extends ImageView {
             //
             matrix.setValues(m);
         }
+        fixTrans();
         setImageMatrix(matrix);
     }
     
