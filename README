@@ -60,6 +60,9 @@ Bitmap getZoomedImageFromSource()
 // of the drawable source.
 Rect getZoomedRect();
 
+// Returns false if image is in initial, unzoomed state. False, otherwise.
+boolean isZoomed();
+
 // Set the max zoom multiplier. Default value: 3.
 void setMaxZoom(float max);
 

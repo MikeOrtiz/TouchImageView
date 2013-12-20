@@ -155,6 +155,14 @@ public class TouchImageView extends ImageView {
     }
     
     /**
+     * Returns false if image is in initial, unzoomed state. False, otherwise.
+     * @return true if image is zoomed
+     */
+    public boolean isZoomed() {
+    	return normalizedScale != 1;
+    }
+    
+    /**
      * Return a bitmap of the zoomed image as it appears within the view. This essentially
      * acts as a "screenshot" of the view and the size of the final bitmap is limited to the
      * resolution of the view itself.
@@ -440,7 +448,7 @@ public class TouchImageView extends ImageView {
         float redundantXSpace = viewWidth - (scale * drawableWidth);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        if (normalizedScale == 1) {
+        if (!isZoomed()) {
         	//
         	// Stretch and center image to fit view
         	//
