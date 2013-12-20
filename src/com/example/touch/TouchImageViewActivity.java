@@ -2,6 +2,7 @@ package com.example.touch;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.ImageView.ScaleType;
 
 
 public class TouchImageViewActivity extends Activity {
@@ -11,6 +12,7 @@ public class TouchImageViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         TouchImageView img = (TouchImageView) findViewById(R.id.img);
+        img.setScaleType(ScaleType.CENTER_CROP);
         img.setMaxZoom(4);
     }
 }

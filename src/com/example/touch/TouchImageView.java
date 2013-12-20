@@ -78,6 +78,8 @@ public class TouchImageView extends ImageView {
     
     private Context context;
     private Fling fling;
+    
+    private ScaleType mScaleType;
 
     //
     // Size of view and previous view size (ie before rotation)
@@ -116,6 +118,7 @@ public class TouchImageView extends ImageView {
         prevMatrix = new Matrix();
         m = new float[9];
         normalizedScale = 1;
+        mScaleType = ScaleType.FIT_CENTER;
         minScale = 1;
         maxScale = 3;
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
@@ -154,6 +157,19 @@ public class TouchImageView extends ImageView {
     	fitImageToView();
     }
     
+    @Override
+    public void setScaleType(ScaleType type) {
+    	if (type == ScaleType.FIT_START || type == ScaleType.FIT_END) {
+    		throw new UnsupportedOperationException("TouchImageView does not support FIT_START or FIT_END");
+    	}
+    	if (type == ScaleType.MATRIX) {
+    		super.setScaleType(ScaleType.MATRIX);
+    		
+    	} else {
+    		mScaleType = type;
+    	}
+    }
+    
     /**
      * Returns false if image is in initial, unzoomed state. False, otherwise.
      * @return true if image is zoomed
@@ -183,6 +199,9 @@ public class TouchImageView extends ImageView {
      * @return bitmap of zoomed image
      */
     public Bitmap getZoomedImageFromSource() {
+    	if (mScaleType == ScaleType.FIT_XY) {
+    		throw new UnsupportedOperationException("getZoomedImageFromSource() not supported with FIT_XY");
+    	}
     	Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
     	Rect r = getZoomedRect();
     	if (r.width() <= 0 || r.height() <= 0) {
@@ -196,6 +215,9 @@ public class TouchImageView extends ImageView {
      * @return rect representing zoomed image
      */
     public Rect getZoomedRect() {
+    	if (mScaleType == ScaleType.FIT_XY) {
+    		throw new UnsupportedOperationException("getZoomedRect() not supported with FIT_XY");
+    	}
     	PointF topLeft = getDrawablePointFromTouchPoint(0,0);
     	PointF bottomRight = getDrawablePointFromTouchPoint(viewWidth, viewHeight);
     	return new Rect((int) topLeft.x, (int) topLeft.y,(int) bottomRight.x, (int) bottomRight.y);
@@ -439,20 +461,46 @@ public class TouchImageView extends ImageView {
     	//
         float scaleX = (float) viewWidth / drawableWidth;
         float scaleY = (float) viewHeight / drawableHeight;
-        float scale = Math.min(scaleX, scaleY);
+        
+        switch (mScaleType) {
+        case CENTER:
+        	scaleX = scaleY = 1;
+        	break;
+        	
+        case CENTER_CROP:
+        	scaleX = scaleY = Math.max(scaleX, scaleY);
+        	break;
+        	
+        case CENTER_INSIDE:
+        	scaleX = scaleY = Math.min(1, Math.min(scaleX, scaleY));
+        	
+        case FIT_CENTER:
+        	scaleX = scaleY = Math.min(scaleX, scaleY);
+        	break;
+        	
+        case FIT_XY:
+        	break;
+        	
+    	default:
+    		//
+    		// FIT_START and FIT_END not supported
+    		//
+    		throw new UnsupportedOperationException("TouchImageView does not support FIT_START or FIT_END");
+        	
+        }
 
         //
         // Center the image
         //
-        float redundantYSpace = viewHeight - (scale * drawableHeight);
-        float redundantXSpace = viewWidth - (scale * drawableWidth);
+        float redundantXSpace = viewWidth - (scaleX * drawableWidth);
+        float redundantYSpace = viewHeight - (scaleY * drawableHeight);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
         if (!isZoomed()) {
         	//
         	// Stretch and center image to fit view
         	//
-        	matrix.setScale(scale, scale);
+        	matrix.setScale(scaleX, scaleY);
         	matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
         	normalizedScale = 1;
         	
