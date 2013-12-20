@@ -4,6 +4,7 @@
  * Updated By: Patrick Lackemacher
  * Updated By: Babay88
  * Updated By: @ipsilondev
+ * Updated By: hank-cp
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
