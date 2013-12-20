@@ -46,6 +46,20 @@ float getMaxZoom();
 // Get the min zoom multiplier.
 float getMinZoom();
 
+// Return a bitmap of the zoomed image as it appears within the view. This essentially
+// acts as a "screenshot" of the view and the size of the final bitmap is limited to the
+// resolution of the view itself.
+Bitmap getZoomedImage()
+
+// Return a bitmap of the zoomed image. This method is different from getZoomedImage(), 
+// because it cuts the image directly from the drawable source, and thus, is not limited 
+// by the resolution of the view. Not supported with FIT_XY.
+Bitmap getZoomedImageFromSource()
+
+// Return a Rect representing the zoomed image in the coordinate system 
+// of the drawable source.
+Rect getZoomedRect();
+
 // Set the max zoom multiplier. Default value: 3.
 void setMaxZoom(float max);
 
