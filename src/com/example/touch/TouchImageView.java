@@ -20,8 +20,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -149,6 +152,45 @@ public class TouchImageView extends ImageView {
     	super.setImageURI(uri);
     	savePreviousImageValues();
     	fitImageToView();
+    }
+    
+    /**
+     * Return a bitmap of the zoomed image as it appears within the view. This essentially
+     * acts as a "screenshot" of the view and the size of the final bitmap is limited to the
+     * resolution of the view itself.
+     * @return bitmap of zoomed image
+     */
+    public Bitmap getZoomedImage() {
+        Bitmap bitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);                
+        Canvas canvas = new Canvas(bitmap);
+        layout(0, 0, viewWidth, viewHeight);
+        draw(canvas);
+        return bitmap;
+    }
+    
+    /**
+     * Return a bitmap of the zoomed image. This method is different from getZoomedImage() because
+     * it cuts the image directly from the drawable source, and thus, is not limited by the resolution
+     * of the view. Not supported with FIT_XY.
+     * @return bitmap of zoomed image
+     */
+    public Bitmap getZoomedImageFromSource() {
+    	Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
+    	Rect r = getZoomedRect();
+    	if (r.width() <= 0 || r.height() <= 0) {
+    		return null;
+    	}
+    	return Bitmap.createBitmap(bitmap, r.left, r.top, r.width(), r.height());
+    }
+    
+    /**
+     * Return a Rect representing the zoomed image in the coordinate system of the drawable source.
+     * @return rect representing zoomed image
+     */
+    public Rect getZoomedRect() {
+    	PointF topLeft = getDrawablePointFromTouchPoint(0,0);
+    	PointF bottomRight = getDrawablePointFromTouchPoint(viewWidth, viewHeight);
+    	return new Rect((int) topLeft.x, (int) topLeft.y,(int) bottomRight.x, (int) bottomRight.y);
     }
     
     /**
