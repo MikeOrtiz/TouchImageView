@@ -321,6 +321,14 @@ public class TouchImageView extends ImageView {
     }
     
     /**
+     * Reset zoom and translation to initial state.
+     */
+    public void resetZoom() {
+    	normalizedScale = 1;
+    	fitImageToView();
+    }
+    
+    /**
      * For a given point on the view (ie, a touch event), returns the
      * point relative to the original drawable's coordinate system.
      * @param x

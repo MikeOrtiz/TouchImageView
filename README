@@ -63,6 +63,9 @@ Rect getZoomedRect();
 // Returns false if image is in initial, unzoomed state. False, otherwise.
 boolean isZoomed();
 
+// Reset zoom and translation to initial state.
+void resetZoom();
+
 // Set the max zoom multiplier. Default value: 3.
 void setMaxZoom(float max);
 
