@@ -171,6 +171,11 @@ public class TouchImageView extends ImageView {
     	}
     }
     
+    @Override
+    public ScaleType getScaleType() {
+    	return mScaleType;
+    }
+    
     /**
      * Returns false if image is in initial, unzoomed state. False, otherwise.
      * @return true if image is zoomed
@@ -329,6 +334,64 @@ public class TouchImageView extends ImageView {
     }
     
     /**
+     * Set zoom to the specified scale. Image will be centered by default.
+     * @param scale
+     */
+    public void setZoom(float scale) {
+    	setZoom(scale, 0.5f, 0.5f);
+    }
+    
+    /**
+     * Set zoom to the specified scale. Image will be centered around the point
+     * (focusX, focusY). These floats range from 0 to 1 and denote the focus point
+     * as a fraction from the left and top of the view. For example, the top left 
+     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+     * @param scale
+     * @param focusX
+     * @param focusY
+     */
+    public void setZoom(float scale, float focusX, float focusY) {
+    	setZoom(scale, focusX, focusY, mScaleType);
+    }
+    
+    /**
+     * Set zoom to the specified scale. Image will be centered around the point
+     * (focusX, focusY). These floats range from 0 to 1 and denote the focus point
+     * as a fraction from the left and top of the view. For example, the top left 
+     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+     * @param scale
+     * @param focusX
+     * @param focusY
+     * @param scaleType
+     */
+    public void setZoom(float scale, float focusX, float focusY, ScaleType scaleType) {
+    	if (scale < minScale || scale > maxScale) {
+    		throw new UnsupportedOperationException("Scale must be greater than minScale and less than maxScale");
+    	}
+    	if (focusX < 0 || focusX > 1 || focusY < 0 || focusY > 1) {
+    		throw new UnsupportedOperationException("focusX and focusY must range in value between 0 and 1");
+    	}
+    	setScaleType(scaleType);
+    	resetZoom();
+    	scaleImage(scale, viewWidth / 2, viewHeight / 2, false);
+    	matrix.getValues(m);
+    	m[Matrix.MTRANS_X] = -((focusX * getImageWidth()) - (viewWidth * 0.5f));
+    	m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
+    	matrix.setValues(m);
+    	setImageMatrix(matrix);
+    }
+    
+    /**
+     * Set zoom parameters equal to another TouchImageView. Including scale, position,
+     * and ScaleType.
+     * @param TouchImageView
+     */
+    public void setZoom(TouchImageView img) {
+    	PointF center = img.getCenterOfZoomedImage();
+    	setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
+    }
+    
+    /**
      * For a given point on the view (ie, a touch event), returns the
      * point relative to the original drawable's coordinate system.
      * @param x
@@ -347,6 +410,27 @@ public class TouchImageView extends ImageView {
      */
     public PointF getDrawablePointFromTouchPoint(PointF p) {
     	return transformCoordTouchToBitmap(p.x, p.y, true);
+    }
+    
+    /**
+     * Return the point at the center of the zoomed image. The PointF coordinates range
+     * in value between 0 and 1 and the focus point is denoted as a fraction from the left 
+     * and top of the view. For example, the top left corner of the image would be (0, 0). 
+     * And the bottom right corner would be (1, 1).
+     * @return PointF representing center of zoomed image
+     */
+    public PointF getCenterOfZoomedImage() {
+    	Drawable drawable = getDrawable();
+    	if (drawable == null) {
+    		return null;
+    	}
+    	int drawableWidth = drawable.getIntrinsicWidth();
+        int drawableHeight = drawable.getIntrinsicHeight();
+        
+        PointF point = getDrawablePointFromTouchPoint(viewWidth / 2, viewHeight / 2);
+        point.x /= drawableWidth;
+        point.y /= drawableHeight;
+        return point;
     }
     
     /**

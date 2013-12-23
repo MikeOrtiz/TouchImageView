@@ -27,6 +27,11 @@ name, because it is a custom view. Example:
 
 API:
 ----------------------
+// Return the point at the center of the zoomable image. The PointF coordinates range
+// in value between 0 and 1 and the focus point is denoted as a fraction from the left 
+// and top of the view. For example, the top left corner of the image would be (0, 0). 
+// And the bottom right corner would be (1, 1).
+PointF getCenterOfZoomedImage();
 
 // Get the current zoom. This is the zoom relative to the initial
 // scale, not the original resource.
@@ -71,3 +76,22 @@ void setMaxZoom(float max);
 
 // Set the min zoom multiplier. Default value: 1.
 void setMinZoom(float min);
+
+// Set zoom to the specified scale. Image will be centered by default.
+void setZoom(float scale);
+
+// Set zoom to the specified scale. Image will be centered around the point
+// (focusX, focusY). These floats range from 0 to 1 and denote the focus point
+// as a fraction from the left and top of the view. For example, the top left 
+// corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+void setZoom(float scale, float focusX, float focusY);
+
+// Set zoom to the specified scale. Image will be centered around the point
+// (focusX, focusY). These floats range from 0 to 1 and denote the focus point
+// as a fraction from the left and top of the view. For example, the top left 
+// corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+void setZoom(float scale, float focusX, float focusY, ScaleType scaleType);
+
+// Set zoom parameters equal to another TouchImageView. Including scale, position,
+// and ScaleType.
+void setZoom(TouchImageView img);
