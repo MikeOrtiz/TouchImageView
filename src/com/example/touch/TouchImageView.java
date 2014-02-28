@@ -94,6 +94,8 @@ public class TouchImageView extends ImageView {
     
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
+    private GestureDetector.OnDoubleTapListener doubleTapListener = null;
+    private OnTouchListener touchListener = null;
 
     public TouchImageView(Context context) {
         super(context);
@@ -127,8 +129,18 @@ public class TouchImageView extends ImageView {
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(NONE);
-        setOnTouchListener(new TouchImageViewListener());
+        super.setOnTouchListener(new TouchImageViewListener());
     }
+
+    @Override
+    public void setOnTouchListener(View.OnTouchListener l) {
+        touchListener = l;
+    }
+
+    public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
+        doubleTapListener = l;
+    }
+
     
     @Override
     public void setImageResource(int resId) {
@@ -734,6 +746,7 @@ public class TouchImageView extends ImageView {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e)
         {
+            if(doubleTapListener != null) return doubleTapListener.onSingleTapConfirmed(e);
         	return performClick();
         }
         
@@ -761,6 +774,7 @@ public class TouchImageView extends ImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
         	boolean consumed = false;
+            if(doubleTapListener != null) consumed = doubleTapListener.onDoubleTap(e);
         	if (state == NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
 	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
@@ -768,6 +782,12 @@ public class TouchImageView extends ImageView {
 	        	consumed = true;
         	}
         	return consumed;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if(doubleTapListener != null) return doubleTapListener.onDoubleTapEvent(e);
+            return false;
         }
     }
     
@@ -786,6 +806,7 @@ public class TouchImageView extends ImageView {
     	
     	@Override
         public boolean onTouch(View v, MotionEvent event) {
+            if(touchListener != null) touchListener.onTouch(v, event); // User-defined handler, maybe
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
