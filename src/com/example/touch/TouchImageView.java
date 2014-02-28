@@ -94,6 +94,8 @@ public class TouchImageView extends ImageView {
     
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
+    private Runnable onReady = null;
+    private boolean ready = false;
 
     public TouchImageView(Context context) {
         super(context);
@@ -390,7 +392,23 @@ public class TouchImageView extends ImageView {
     	PointF center = img.getCenterOfZoomedImage();
     	setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
     }
-    
+
+    public void setOnReady(Runnable r) {
+      if(ready && r != null) {
+        r.run();
+      } else {
+          onReady = r;
+      }
+    }
+
+    private void ready() {
+      if(!ready && onReady != null) {
+        onReady.run();
+        onReady = null;
+      }
+      ready = true;
+    }
+
     /**
      * For a given point on the view (ie, a touch event), returns the
      * point relative to the original drawable's coordinate system.
@@ -1180,5 +1198,11 @@ public class TouchImageView extends ImageView {
     private void printMatrixInfo() {
     	matrix.getValues(m);
     	Log.d(DEBUG, "Scale: " + m[Matrix.MSCALE_X] + " TransX: " + m[Matrix.MTRANS_X] + " TransY: " + m[Matrix.MTRANS_Y]);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+       ready();
+       super.onDraw(canvas);
     }
 }
