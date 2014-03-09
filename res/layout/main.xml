@@ -6,7 +6,7 @@
     
 	<com.example.touch.TouchImageView
 	    android:id="@+id/img"
-	    android:src="@drawable/grand_canyon"
+	    android:src="@drawable/nature_1"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
     
