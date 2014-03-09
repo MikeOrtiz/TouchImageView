@@ -362,12 +362,6 @@ public class TouchImageView extends ImageView {
      * @param scaleType
      */
     public void setZoom(float scale, float focusX, float focusY, ScaleType scaleType) {
-    	if (scale < minScale || scale > maxScale) {
-    		throw new UnsupportedOperationException("Scale must be greater than minScale and less than maxScale");
-    	}
-    	if (focusX < 0 || focusX > 1 || focusY < 0 || focusY > 1) {
-    		throw new UnsupportedOperationException("focusX and focusY must range in value between 0 and 1");
-    	}
     	setScaleType(scaleType);
     	resetZoom();
     	scaleImage(scale, viewWidth / 2, viewHeight / 2, false);
@@ -375,6 +369,7 @@ public class TouchImageView extends ImageView {
     	m[Matrix.MTRANS_X] = -((focusX * getImageWidth()) - (viewWidth * 0.5f));
     	m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
     	matrix.setValues(m);
+    	fixTrans();
     	setImageMatrix(matrix);
     }
     
