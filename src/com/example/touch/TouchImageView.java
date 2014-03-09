@@ -114,7 +114,9 @@ public class TouchImageView extends ImageView {
         prevMatrix = new Matrix();
         m = new float[9];
         normalizedScale = 1;
-        mScaleType = ScaleType.FIT_CENTER;
+        if (mScaleType == null) {
+        	mScaleType = ScaleType.FIT_CENTER;
+        }
         minScale = 1;
         maxScale = 3;
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
