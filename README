@@ -6,12 +6,12 @@ Contributions by:
  * @ipsilondev
  * hank-cp
 
-Date: 2/17/2012
+Support:
 ----------------------
-Adds panning, pinch zoom, double tap zoom, and fling to Android ImageView.
+Minimum API: 8
 
 Usage:
-----------------------
+———————————
 Place TouchImageView.java in your project. It can then be used the same as
 ImageView. Example:
 
