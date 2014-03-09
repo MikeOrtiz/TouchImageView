@@ -11,11 +11,6 @@
 
 package com.example.touch;
 
-import static com.example.touch.TouchImageView.State.ANIMATE_ZOOM;
-import static com.example.touch.TouchImageView.State.DRAG;
-import static com.example.touch.TouchImageView.State.FLING;
-import static com.example.touch.TouchImageView.State.NONE;
-import static com.example.touch.TouchImageView.State.ZOOM;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -68,7 +63,7 @@ public class TouchImageView extends ImageView {
     //
 	private Matrix matrix, prevMatrix;
 
-    public static enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM };
+    private static enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM };
     private State state;
 
     private float minScale;
@@ -126,7 +121,7 @@ public class TouchImageView extends ImageView {
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
-        setState(NONE);
+        setState(State.NONE);
         setOnTouchListener(new TouchImageViewListener());
     }
     
@@ -761,7 +756,7 @@ public class TouchImageView extends ImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
         	boolean consumed = false;
-        	if (state == NONE) {
+        	if (state == State.NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
 	        	DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
 	        	compatPostOnAnimation(doubleTap);
@@ -790,17 +785,17 @@ public class TouchImageView extends ImageView {
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
             
-            if (state == NONE || state == DRAG || state == FLING) {
+            if (state == State.NONE || state == State.DRAG || state == State.FLING) {
 	            switch (event.getAction()) {
 	                case MotionEvent.ACTION_DOWN:
 	                	last.set(curr);
 	                    if (fling != null)
 	                    	fling.cancelFling();
-	                    setState(DRAG);
+	                    setState(State.DRAG);
 	                    break;
 	                    
 	                case MotionEvent.ACTION_MOVE:
-	                    if (state == DRAG) {
+	                    if (state == State.DRAG) {
 	                        float deltaX = curr.x - last.x;
 	                        float deltaY = curr.y - last.y;
 	                        float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
@@ -813,7 +808,7 @@ public class TouchImageView extends ImageView {
 	
 	                case MotionEvent.ACTION_UP:
 	                case MotionEvent.ACTION_POINTER_UP:
-	                    setState(NONE);
+	                    setState(State.NONE);
 	                    break;
 	            }
             }
@@ -834,7 +829,7 @@ public class TouchImageView extends ImageView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
-            setState(ZOOM);
+            setState(State.ZOOM);
             return true;
         }
 
@@ -847,7 +842,7 @@ public class TouchImageView extends ImageView {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
         	super.onScaleEnd(detector);
-        	setState(NONE);
+        	setState(State.NONE);
         	boolean animateToZoomBoundary = false;
         	float targetZoom = normalizedScale;
         	if (normalizedScale > maxScale) {
@@ -910,7 +905,7 @@ public class TouchImageView extends ImageView {
     	private PointF endTouch;
 
     	DoubleTapZoom(float targetZoom, float focusX, float focusY, boolean stretchImageToSuper) {
-    		setState(ANIMATE_ZOOM);
+    		setState(State.ANIMATE_ZOOM);
     		startTime = System.currentTimeMillis();
     		this.startZoom = normalizedScale;
     		this.targetZoom = targetZoom;
@@ -945,7 +940,7 @@ public class TouchImageView extends ImageView {
 				//
 				// Finished zooming
 				//
-				setState(NONE);
+				setState(State.NONE);
 			}
 		}
 		
@@ -1042,7 +1037,7 @@ public class TouchImageView extends ImageView {
     	int currX, currY;
     	
     	Fling(int velocityX, int velocityY) {
-    		setState(FLING);
+    		setState(State.FLING);
     		scroller = new CompatScroller(context);
     		matrix.getValues(m);
     		
@@ -1074,7 +1069,7 @@ public class TouchImageView extends ImageView {
     	
     	public void cancelFling() {
     		if (scroller != null) {
-    			setState(NONE);
+    			setState(State.NONE);
     			scroller.forceFinished(true);
     		}
     	}
