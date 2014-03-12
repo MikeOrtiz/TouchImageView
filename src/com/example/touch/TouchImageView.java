@@ -5,6 +5,7 @@
  * Updated By: Babay88
  * Updated By: @ipsilondev
  * Updated By: hank-cp
+ * Updated By: singpolyma
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
@@ -76,6 +77,9 @@ public class TouchImageView extends ImageView {
     private Fling fling;
     
     private ScaleType mScaleType;
+    
+    private boolean onDrawReady;
+    private ZoomVariables delayedZoomVariables;
 
     //
     // Size of view and previous view size (ie before rotation)
@@ -125,6 +129,7 @@ public class TouchImageView extends ImageView {
         setScaleType(ScaleType.MATRIX);
         setState(State.NONE);
         setOnTouchListener(new TouchImageViewListener());
+        onDrawReady = false;
     }
     
     @Override
@@ -274,6 +279,16 @@ public class TouchImageView extends ImageView {
     }
     
     @Override
+    protected void onDraw(Canvas canvas) {
+    	onDrawReady = true;
+    	if (delayedZoomVariables != null) {
+    		setZoom(delayedZoomVariables.scale, delayedZoomVariables.focusX, delayedZoomVariables.focusY, delayedZoomVariables.scaleType);
+    		delayedZoomVariables = null;
+    	}
+    	super.onDraw(canvas);
+    }
+    
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
     	super.onConfigurationChanged(newConfig);
     	savePreviousImageValues();
@@ -362,6 +377,16 @@ public class TouchImageView extends ImageView {
      * @param scaleType
      */
     public void setZoom(float scale, float focusX, float focusY, ScaleType scaleType) {
+    	//
+    	// setZoom can be called before the image is on the screen, but at this point, 
+    	// image and view sizes have not yet been calculated in onMeasure. Thus, we should
+    	// delay calling setZoom until the view has been measured.
+    	//
+    	if (!onDrawReady) {
+    		delayedZoomVariables = new ZoomVariables(scale, focusX, focusY, scaleType);
+    		return;
+    	}
+    	
     	setScaleType(scaleType);
     	resetZoom();
     	scaleImage(scale, viewWidth / 2, viewHeight / 2, false);
@@ -590,6 +615,15 @@ public class TouchImageView extends ImageView {
         	normalizedScale = 1;
         	
         } else {
+        	//
+        	// These values should never be 0 or we will set viewWidth and viewHeight
+        	// to NaN in translateMatrixAfterRotate. To avoid this, call savePreviousImageValues
+        	// to set them equal to the current values.
+        	//
+        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
+        		savePreviousImageValues();
+        	}
+        	
         	prevMatrix.getValues(m);
         	
         	//
@@ -1169,8 +1203,23 @@ public class TouchImageView extends ImageView {
         }
     }
     
+    private class ZoomVariables {
+    	public float scale;
+    	public float focusX;
+    	public float focusY;
+    	public ScaleType scaleType;
+    	
+    	public ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
+    		this.scale = scale;
+    		this.focusX = focusX;
+    		this.focusY = focusY;
+    		this.scaleType = scaleType;
+    	}
+    }
+    
     private void printMatrixInfo() {
-    	matrix.getValues(m);
-    	Log.d(DEBUG, "Scale: " + m[Matrix.MSCALE_X] + " TransX: " + m[Matrix.MTRANS_X] + " TransY: " + m[Matrix.MTRANS_Y]);
+    	float[] n = new float[9];
+    	matrix.getValues(n);
+    	Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
     }
 }
