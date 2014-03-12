@@ -36,23 +36,9 @@ name, because it is a custom view. Example:
 
 API:
 ----------------------
-// Return the point at the center of the zoomable image. The PointF coordinates range
-// in value between 0 and 1 and the focus point is denoted as a fraction from the left 
-// and top of the view. For example, the top left corner of the image would be (0, 0). 
-// And the bottom right corner would be (1, 1).
-PointF getCenterOfZoomedImage();
-
 // Get the current zoom. This is the zoom relative to the initial
 // scale, not the original resource.
 float getCurrentZoom();
-
-// For a given point on the view (ie, a touch event), returns the
-// point relative to the original drawable's coordinate system.
-PointF getDrawablePointFromTouchPoint(float x, float y);
-
-// For a given point on the view (ie, a touch event), returns the
-// point relative to the original drawable's coordinate system.
-PointF getDrawablePointFromTouchPoint(PointF p);
 
 // Get the max zoom multiplier.
 float getMaxZoom();
@@ -60,15 +46,21 @@ float getMaxZoom();
 // Get the min zoom multiplier.
 float getMinZoom();
 
+// Return the point at the center of the zoomable image. The PointF coordinates range
+// in value between 0 and 1 and the focus point is denoted as a fraction from the left 
+// and top of the view. For example, the top left corner of the image would be (0, 0). 
+// And the bottom right corner would be (1, 1).
+PointF getScrollPosition();
+
 // Return a bitmap of the zoomed image as it appears within the view. This essentially
 // acts as a "screenshot" of the view and the size of the final bitmap is limited to the
 // resolution of the view itself.
-Bitmap getZoomedImage()
+Bitmap getZoomedImage();
 
 // Return a bitmap of the zoomed image. This method is different from getZoomedImage(), 
 // because it cuts the image directly from the drawable source, and thus, is not limited 
 // by the resolution of the view. Not supported with FIT_XY.
-Bitmap getZoomedImageFromSource()
+Bitmap getZoomedImageFromSource();
 
 // Return a Rect representing the zoomed image in the coordinate system 
 // of the drawable source.
@@ -85,6 +77,10 @@ void setMaxZoom(float max);
 
 // Set the min zoom multiplier. Default value: 1.
 void setMinZoom(float min);
+
+// Set the focus point of the zoomed image. The focus points are denoted as a fraction 
+// from the left and top of the view. The focus points can range in value between 0 and 1. 
+void setScrollPosition(float focusX, float focusY);
 
 // Set zoom to the specified scale. Image will be centered by default.
 void setZoom(float scale);

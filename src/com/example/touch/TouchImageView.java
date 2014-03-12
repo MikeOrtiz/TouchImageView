@@ -237,8 +237,8 @@ public class TouchImageView extends ImageView {
     	if (mScaleType == ScaleType.FIT_XY) {
     		throw new UnsupportedOperationException("getZoomedRect() not supported with FIT_XY");
     	}
-    	PointF topLeft = getDrawablePointFromTouchPoint(0,0);
-    	PointF bottomRight = getDrawablePointFromTouchPoint(viewWidth, viewHeight);
+    	PointF topLeft = transformCoordTouchToBitmap(0, 0, true);
+    	PointF bottomRight = transformCoordTouchToBitmap(viewWidth, viewHeight, true);
     	return new Rect((int) topLeft.x, (int) topLeft.y,(int) bottomRight.x, (int) bottomRight.y);
     }
     
@@ -415,29 +415,8 @@ public class TouchImageView extends ImageView {
      * @param TouchImageView
      */
     public void setZoom(TouchImageView img) {
-    	PointF center = img.getCenterOfZoomedImage();
+    	PointF center = img.getScrollPosition();
     	setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
-    }
-    
-    /**
-     * For a given point on the view (ie, a touch event), returns the
-     * point relative to the original drawable's coordinate system.
-     * @param x
-     * @param y
-     * @return PointF relative to original drawable's coordinate system.
-     */
-    public PointF getDrawablePointFromTouchPoint(float x, float y) {
-    	return transformCoordTouchToBitmap(x, y, true);
-    }
-    
-    /**
-     * For a given point on the view (ie, a touch event), returns the
-     * point relative to the original drawable's coordinate system.
-     * @param p
-     * @return PointF relative to original drawable's coordinate system.
-     */
-    public PointF getDrawablePointFromTouchPoint(PointF p) {
-    	return transformCoordTouchToBitmap(p.x, p.y, true);
     }
     
     /**
@@ -445,9 +424,9 @@ public class TouchImageView extends ImageView {
      * in value between 0 and 1 and the focus point is denoted as a fraction from the left 
      * and top of the view. For example, the top left corner of the image would be (0, 0). 
      * And the bottom right corner would be (1, 1).
-     * @return PointF representing center of zoomed image
+     * @return PointF representing the scroll position of the zoomed image.
      */
-    public PointF getCenterOfZoomedImage() {
+    public PointF getScrollPosition() {
     	Drawable drawable = getDrawable();
     	if (drawable == null) {
     		return null;
@@ -455,10 +434,20 @@ public class TouchImageView extends ImageView {
     	int drawableWidth = drawable.getIntrinsicWidth();
         int drawableHeight = drawable.getIntrinsicHeight();
         
-        PointF point = getDrawablePointFromTouchPoint(viewWidth / 2, viewHeight / 2);
+        PointF point = transformCoordTouchToBitmap(viewWidth / 2, viewHeight / 2, true);
         point.x /= drawableWidth;
         point.y /= drawableHeight;
         return point;
+    }
+    
+    /**
+     * Set the focus point of the zoomed image. The focus points are denoted as a fraction from the
+     * left and top of the view. The focus points can range in value between 0 and 1. 
+     * @param focusX
+     * @param focusY
+     */
+    public void setScrollPosition(float focusX, float focusY) {
+    	setZoom(normalizedScale, focusX, focusY);
     }
     
     /**
