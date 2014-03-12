@@ -52,19 +52,8 @@ float getMinZoom();
 // And the bottom right corner would be (1, 1).
 PointF getScrollPosition();
 
-// Return a bitmap of the zoomed image as it appears within the view. This essentially
-// acts as a "screenshot" of the view and the size of the final bitmap is limited to the
-// resolution of the view itself.
-Bitmap getZoomedImage();
-
-// Return a bitmap of the zoomed image. This method is different from getZoomedImage(), 
-// because it cuts the image directly from the drawable source, and thus, is not limited 
-// by the resolution of the view. Not supported with FIT_XY.
-Bitmap getZoomedImageFromSource();
-
-// Return a Rect representing the zoomed image in the coordinate system 
-// of the drawable source.
-Rect getZoomedRect();
+// Return a Rect representing the zoomed image.
+RectF getZoomedRect();
 
 // Returns false if image is in initial, unzoomed state. False, otherwise.
 boolean isZoomed();

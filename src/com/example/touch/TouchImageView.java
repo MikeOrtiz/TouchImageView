@@ -20,6 +20,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -198,48 +199,19 @@ public class TouchImageView extends ImageView {
     }
     
     /**
-     * Return a bitmap of the zoomed image as it appears within the view. This essentially
-     * acts as a "screenshot" of the view and the size of the final bitmap is limited to the
-     * resolution of the view itself.
-     * @return bitmap of zoomed image
-     */
-    public Bitmap getZoomedImage() {
-        Bitmap bitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);                
-        Canvas canvas = new Canvas(bitmap);
-        layout(0, 0, viewWidth, viewHeight);
-        draw(canvas);
-        return bitmap;
-    }
-    
-    /**
-     * Return a bitmap of the zoomed image. This method is different from getZoomedImage() because
-     * it cuts the image directly from the drawable source, and thus, is not limited by the resolution
-     * of the view. Not supported with FIT_XY.
-     * @return bitmap of zoomed image
-     */
-    public Bitmap getZoomedImageFromSource() {
-    	if (mScaleType == ScaleType.FIT_XY) {
-    		throw new UnsupportedOperationException("getZoomedImageFromSource() not supported with FIT_XY");
-    	}
-    	Bitmap bitmap = ((BitmapDrawable) getDrawable()).getBitmap();
-    	Rect r = getZoomedRect();
-    	if (r.width() <= 0 || r.height() <= 0) {
-    		return null;
-    	}
-    	return Bitmap.createBitmap(bitmap, r.left, r.top, r.width(), r.height());
-    }
-    
-    /**
-     * Return a Rect representing the zoomed image in the coordinate system of the drawable source.
+     * Return a Rect representing the zoomed image.
      * @return rect representing zoomed image
      */
-    public Rect getZoomedRect() {
+    public RectF getZoomedRect() {
     	if (mScaleType == ScaleType.FIT_XY) {
     		throw new UnsupportedOperationException("getZoomedRect() not supported with FIT_XY");
     	}
     	PointF topLeft = transformCoordTouchToBitmap(0, 0, true);
     	PointF bottomRight = transformCoordTouchToBitmap(viewWidth, viewHeight, true);
-    	return new Rect((int) topLeft.x, (int) topLeft.y,(int) bottomRight.x, (int) bottomRight.y);
+    	
+    	float w = getDrawable().getIntrinsicWidth();
+    	float h = getDrawable().getIntrinsicHeight();
+    	return new RectF(topLeft.x / w, topLeft.y / h, bottomRight.x / w, bottomRight.y / h);
     }
     
     /**
