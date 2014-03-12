@@ -11,8 +11,16 @@ Support:
 ----------------------
 Minimum API: 8
 
+Contributing:
+----------------------
+Before creating an issue, please make sure that a ticket is not already open. Also, 
+please check that your issue has not already been fixed in the dev branch. If the
+issue is reproducible on the dev branch, please provide clear repro instructions
+in the issue. Last, if you’d like to contribute code, please open all pull requests
+against the dev branch.
+
 Usage:
-———————————
+----------------------
 Place TouchImageView.java in your project. It can then be used the same as
 ImageView. Example:
 
