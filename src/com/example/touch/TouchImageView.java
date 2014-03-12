@@ -143,7 +143,6 @@ public class TouchImageView extends ImageView {
         doubleTapListener = l;
     }
 
-    
     @Override
     public void setImageResource(int resId) {
     	super.setImageResource(resId);
