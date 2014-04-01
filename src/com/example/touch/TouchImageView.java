@@ -6,6 +6,7 @@
  * Updated By: @ipsilondev
  * Updated By: hank-cp
  * Updated By: singpolyma
+ * Updated By: Jonathan Lamothe
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
@@ -93,7 +94,7 @@ public class TouchImageView extends ImageView {
     
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
-    private GestureDetector.OnDoubleTapListener doubleTapListener = null;
+    private GestureDetector.SimpleOnGestureListener gestureListener = null;
     private OnTouchListener touchListener = null;
 
     public TouchImageView(Context context) {
@@ -139,8 +140,8 @@ public class TouchImageView extends ImageView {
         touchListener = l;
     }
 
-    public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
-        doubleTapListener = l;
+    public void setSimpleOnGestureListener(GestureDetector.SimpleOnGestureListener l) {
+        gestureListener = l;
     }
 
     @Override
@@ -771,8 +772,11 @@ public class TouchImageView extends ImageView {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e)
         {
-            if(doubleTapListener != null) {
-            	return doubleTapListener.onSingleTapConfirmed(e);
+            if(gestureListener != null) {
+            	if(gestureListener.onSingleTapConfirmed(e))
+					return true;
+				else
+					return performClick();
             }
         	return performClick();
         }
@@ -780,6 +784,8 @@ public class TouchImageView extends ImageView {
         @Override
         public void onLongPress(MotionEvent e)
         {
+			if(gestureListener != null)
+				gestureListener.onLongPress(e);
         	performLongClick();
         }
         
@@ -801,8 +807,8 @@ public class TouchImageView extends ImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
         	boolean consumed = false;
-            if(doubleTapListener != null) {
-            	consumed = doubleTapListener.onDoubleTap(e);
+            if(gestureListener != null) {
+            	consumed = gestureListener.onDoubleTap(e);
             }
         	if (state == State.NONE) {
 	        	float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
@@ -815,8 +821,8 @@ public class TouchImageView extends ImageView {
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
-            if(doubleTapListener != null) {
-            	return doubleTapListener.onDoubleTapEvent(e);
+            if(gestureListener != null) {
+            	return gestureListener.onDoubleTapEvent(e);
             }
             return false;
         }
