@@ -19,9 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -79,7 +77,9 @@ public class TouchImageView extends ImageView {
     
     private ScaleType mScaleType;
     
+    private boolean imageRenderedAtLeastOnce;
     private boolean onDrawReady;
+    
     private ZoomVariables delayedZoomVariables;
 
     //
@@ -219,7 +219,7 @@ public class TouchImageView extends ImageView {
      * in the prevMatrix and prevView variables.
      */
     private void savePreviousImageValues() {
-    	if (matrix != null) {
+    	if (matrix != null && viewHeight != 0 && viewWidth != 0) {
 	    	matrix.getValues(m);
 	    	prevMatrix.setValues(m);
 	    	prevMatchViewHeight = matchViewHeight;
@@ -240,6 +240,7 @@ public class TouchImageView extends ImageView {
     	bundle.putInt("viewHeight", viewHeight);
     	matrix.getValues(m);
     	bundle.putFloatArray("matrix", m);
+    	bundle.putBoolean("imageRendered", imageRenderedAtLeastOnce);
     	return bundle;
     }
     
@@ -254,6 +255,7 @@ public class TouchImageView extends ImageView {
 	        prevMatchViewWidth = bundle.getFloat("matchViewWidth");
 	        prevViewHeight = bundle.getInt("viewHeight");
 	        prevViewWidth = bundle.getInt("viewWidth");
+	        imageRenderedAtLeastOnce = bundle.getBoolean("imageRendered");
 	        super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
 	        return;
       	}
@@ -264,6 +266,7 @@ public class TouchImageView extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
     	onDrawReady = true;
+    	imageRenderedAtLeastOnce = true;
     	if (delayedZoomVariables != null) {
     		setZoom(delayedZoomVariables.scale, delayedZoomVariables.focusX, delayedZoomVariables.focusY, delayedZoomVariables.scaleType);
     		delayedZoomVariables = null;
@@ -578,7 +581,7 @@ public class TouchImageView extends ImageView {
         float redundantYSpace = viewHeight - (scaleY * drawableHeight);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
-        if (!isZoomed()) {
+        if (!isZoomed() && !imageRenderedAtLeastOnce) {
         	//
         	// Stretch and center image to fit view
         	//
