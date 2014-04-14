@@ -95,7 +95,8 @@ public class TouchImageView extends ImageView {
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
     private GestureDetector.OnDoubleTapListener doubleTapListener = null;
-    private OnTouchListener touchListener = null;
+    private OnTouchListener userTouchListener = null;
+    private OnTouchImageViewListener touchImageViewListener = null;
 
     public TouchImageView(Context context) {
         super(context);
@@ -132,12 +133,16 @@ public class TouchImageView extends ImageView {
         setScaleType(ScaleType.MATRIX);
         setState(State.NONE);
         onDrawReady = false;
-        super.setOnTouchListener(new TouchImageViewListener());
+        super.setOnTouchListener(new PrivateOnTouchListener());
     }
 
     @Override
     public void setOnTouchListener(View.OnTouchListener l) {
-        touchListener = l;
+        userTouchListener = l;
+    }
+    
+    public void setOnTouchImageViewListener(OnTouchImageViewListener l) {
+    	touchImageViewListener = l;
     }
 
     public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
@@ -786,13 +791,17 @@ public class TouchImageView extends ImageView {
         }
     }
     
+    public interface OnTouchImageViewListener {
+    	public void onMove();
+    }
+    
     /**
      * Responsible for all touch events. Handles the heavy lifting of drag and also sends
      * touch events to Scale Detector and Gesture Detector.
      * @author Ortiz
      *
      */
-    private class TouchImageViewListener implements OnTouchListener {
+    private class PrivateOnTouchListener implements OnTouchListener {
     	
     	//
         // Remember last point position for dragging
@@ -801,7 +810,20 @@ public class TouchImageView extends ImageView {
     	
     	@Override
         public boolean onTouch(View v, MotionEvent event) {
-            if(touchListener != null) touchListener.onTouch(v, event); // User-defined handler, maybe
+            //
+    		// User-defined OnTouchListener
+    		//
+    		if(userTouchListener != null) {
+    			userTouchListener.onTouch(v, event);
+    		}
+            
+    		//
+    		// OnTouchImageViewListener is set: TouchImageView dragged by user.
+    		//
+    		if (touchImageViewListener != null) {
+    			touchImageViewListener.onMove();
+    		}
+            
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
@@ -856,6 +878,12 @@ public class TouchImageView extends ImageView {
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+        	//
+        	// OnTouchImageViewListener is set: TouchImageView pinch zoomed by user.
+        	//
+        	if (touchImageViewListener != null) {
+        		touchImageViewListener.onMove();
+        	}
         	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY(), true);
             return true;
         }
@@ -944,6 +972,13 @@ public class TouchImageView extends ImageView {
 
 		@Override
 		public void run() {
+			//
+			// OnTouchImageViewListener is set: double tap runnable updates listener
+			// with every frame.
+			//
+			if (touchImageViewListener != null) {
+				touchImageViewListener.onMove();
+			}
 			float t = interpolate();
 			float deltaScale = calculateDeltaScale(t);
 			scaleImage(deltaScale, bitmapX, bitmapY, stretchImageToSuper);
@@ -1101,6 +1136,13 @@ public class TouchImageView extends ImageView {
         		scroller = null;
         		return;
         	}
+			//
+			// OnTouchImageViewListener is set: TouchImageView listener has been flung by user.
+			// Listener runnable updated with each frame of fling animation.
+			//
+			if (touchImageViewListener != null) {
+				touchImageViewListener.onMove();
+			}
 			
 			if (scroller.computeScrollOffset()) {
 	        	int newX = scroller.getCurrX();
