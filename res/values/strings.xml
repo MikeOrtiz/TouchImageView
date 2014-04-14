@@ -5,7 +5,9 @@
     
     <!-- Activities -->
     <string name="single_touchimageview">Single TouchImageView</string>
+    <string name="mirror_touchimageview">Mirroring Example</string>
     
     <string name="click_for_scroll_position">Click on screen to get TouchImageView scroll position</string>
     <string name="scroll_dummy_text">x: 0.5 y: 0.5</string>
+    <string name="mirroring_text">All touch gestures applied to one TouchImageView will be mirrored on the other.</string>
 </resources>

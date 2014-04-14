@@ -9,5 +9,11 @@
 	    android:id="@+id/single_touchimageview_button"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content" />
+	
+	<Button
+	    android:id="@+id/mirror_touchimageview_button"
+	    android:text="@string/mirror_touchimageview"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
     
 </LinearLayout>

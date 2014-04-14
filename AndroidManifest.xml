@@ -16,5 +16,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SingleTouchImageViewActivity" />
+        <activity android:name=".MirroringExampleActivity" />
     </application>
 </manifest>
