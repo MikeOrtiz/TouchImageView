@@ -2,4 +2,10 @@
 <resources>
     <string name="hello">Hello World, TouchImageViewActivity!</string>
     <string name="app_name">TouchImageView</string>
+    
+    <!-- Activities -->
+    <string name="single_touchimageview">Single TouchImageView</string>
+    
+    <string name="click_for_scroll_position">Click on screen to get TouchImageView scroll position</string>
+    <string name="scroll_dummy_text">x: 0.5 y: 0.5</string>
 </resources>

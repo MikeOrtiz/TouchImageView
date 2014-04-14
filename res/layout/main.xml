@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-	<com.example.touch.TouchImageView
-	    android:id="@+id/img"
-	    android:src="@drawable/nature_1"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
+	<Button
+	    android:text="@string/single_touchimageview"
+	    android:id="@+id/single_touchimageview_button"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
     
 </LinearLayout>
