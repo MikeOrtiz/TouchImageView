@@ -1,34 +1,44 @@
 package com.example.touch;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 import android.app.Activity;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
+
+import com.example.touch.TouchImageView.OnTouchImageViewListener;
 
 
 public class SingleTouchImageViewActivity extends Activity {
 	
 	private TouchImageView image;
-	private TextView textView;
+	private TextView scrollPositionTextView;
+	private TextView zoomedRectTextView;
+	private DecimalFormat df;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_single_touchimageview);
-		textView = (TextView) findViewById(R.id.textview);
+		//
+		// DecimalFormat rounds to 2 decimal places.
+		//
+		df = new DecimalFormat("#.##");
+		scrollPositionTextView = (TextView) findViewById(R.id.scroll_position);
+		zoomedRectTextView = (TextView) findViewById(R.id.zoomed_rect);
 		image = (TouchImageView) findViewById(R.id.img);
-		image.setOnClickListener(new OnClickListener() {
+		image.setOnTouchImageViewListener(new OnTouchImageViewListener() {
 			
 			@Override
-			public void onClick(View v) {
-				setTextWithScrollPosition();
+			public void onMove() {
+				PointF point = image.getScrollPosition();
+				RectF rect = image.getZoomedRect();
+				scrollPositionTextView.setText("x: " + df.format(point.x) + " y: " + df.format(point.y));
+				zoomedRectTextView.setText("left: " + df.format(rect.left) + " top: " + df.format(rect.top)
+						+ "\nright: " + df.format(rect.right) + " bottom: " + df.format(rect.bottom));
 			}
 		});
-	}
-	
-	private void setTextWithScrollPosition() {
-		PointF point = image.getScrollPosition();
-		textView.setText("x: " + point.x + " y: " + point.y);
 	}
 }

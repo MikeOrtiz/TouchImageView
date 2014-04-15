@@ -10,25 +10,48 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
 	
-	<TextView 
-	    android:id="@+id/textview"
-	    android:padding="5dp"
-	    android:text="@string/scroll_dummy_text"
+	<LinearLayout
+	    android:id="@+id/top_text_line"
 	    android:layout_alignParentTop="true"
-	    android:layout_centerHorizontal="true"
-	    android:layout_marginTop="10dp"
-	    android:background="@android:color/black"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="10dp"
+		android:padding="5dp"
+		android:background="@android:color/black"
 	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:layout_height="wrap_content" >
 	
-	<TextView 
-	    android:text="@string/click_for_scroll_position"
-	    android:padding="5dp"
-	    android:layout_alignParentBottom="true"
-	    android:layout_centerHorizontal="true"
-	    android:layout_marginBottom="10dp"
-	    android:background="@android:color/black"
+		<TextView 
+		    android:text="@string/get_scroll_position"
+		    android:paddingRight="3dp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"/>
+		
+		<TextView 
+		    android:id="@+id/scroll_position"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"/>
+		
+	</LinearLayout>
+	
+	<LinearLayout
+	    android:layout_below="@id/top_text_line"
+		android:layout_centerHorizontal="true"
+		android:padding="5dp"
+		android:background="@android:color/black"
 	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"/>
+	    android:layout_height="wrap_content" >
+	
+		<TextView 
+		    android:text="@string/get_zoomed_rect"
+		    android:paddingRight="3dp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content" />
+		
+		<TextView 
+		    android:id="@+id/zoomed_rect"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content" />
+		
+	</LinearLayout>
     
 </RelativeLayout>
