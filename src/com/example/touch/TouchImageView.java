@@ -810,20 +810,6 @@ public class TouchImageView extends ImageView {
     	
     	@Override
         public boolean onTouch(View v, MotionEvent event) {
-            //
-    		// User-defined OnTouchListener
-    		//
-    		if(userTouchListener != null) {
-    			userTouchListener.onTouch(v, event);
-    		}
-            
-    		//
-    		// OnTouchImageViewListener is set: TouchImageView dragged by user.
-    		//
-    		if (touchImageViewListener != null) {
-    			touchImageViewListener.onMove();
-    		}
-            
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
@@ -857,6 +843,21 @@ public class TouchImageView extends ImageView {
             }
             
             setImageMatrix(matrix);
+            
+            //
+    		// User-defined OnTouchListener
+    		//
+    		if(userTouchListener != null) {
+    			userTouchListener.onTouch(v, event);
+    		}
+            
+    		//
+    		// OnTouchImageViewListener is set: TouchImageView dragged by user.
+    		//
+    		if (touchImageViewListener != null) {
+    			touchImageViewListener.onMove();
+    		}
+    		
             //
             // indicate event was handled
             //
@@ -878,13 +879,14 @@ public class TouchImageView extends ImageView {
 
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+        	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY(), true);
+        	
         	//
         	// OnTouchImageViewListener is set: TouchImageView pinch zoomed by user.
         	//
         	if (touchImageViewListener != null) {
         		touchImageViewListener.onMove();
         	}
-        	scaleImage(detector.getScaleFactor(), detector.getFocusX(), detector.getFocusY(), true);
             return true;
         }
         
@@ -972,6 +974,13 @@ public class TouchImageView extends ImageView {
 
 		@Override
 		public void run() {
+			float t = interpolate();
+			float deltaScale = calculateDeltaScale(t);
+			scaleImage(deltaScale, bitmapX, bitmapY, stretchImageToSuper);
+			translateImageToCenterTouchPosition(t);
+			fixScaleTrans();
+			setImageMatrix(matrix);
+			
 			//
 			// OnTouchImageViewListener is set: double tap runnable updates listener
 			// with every frame.
@@ -979,12 +988,6 @@ public class TouchImageView extends ImageView {
 			if (touchImageViewListener != null) {
 				touchImageViewListener.onMove();
 			}
-			float t = interpolate();
-			float deltaScale = calculateDeltaScale(t);
-			scaleImage(deltaScale, bitmapX, bitmapY, stretchImageToSuper);
-			translateImageToCenterTouchPosition(t);
-			fixScaleTrans();
-			setImageMatrix(matrix);
 			
 			if (t < 1f) {
 				//
@@ -1132,10 +1135,7 @@ public class TouchImageView extends ImageView {
     	
 		@Override
 		public void run() {
-			if (scroller.isFinished()) {
-        		scroller = null;
-        		return;
-        	}
+			
 			//
 			// OnTouchImageViewListener is set: TouchImageView listener has been flung by user.
 			// Listener runnable updated with each frame of fling animation.
@@ -1143,6 +1143,11 @@ public class TouchImageView extends ImageView {
 			if (touchImageViewListener != null) {
 				touchImageViewListener.onMove();
 			}
+			
+			if (scroller.isFinished()) {
+        		scroller = null;
+        		return;
+        	}
 			
 			if (scroller.computeScrollOffset()) {
 	        	int newX = scroller.getCurrX();
