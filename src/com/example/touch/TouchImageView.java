@@ -711,6 +711,10 @@ public class TouchImageView extends ImageView {
     	this.state = state;
     }
     
+    public boolean canScrollHorizontallyFroyo(int direction) {
+        return canScrollHorizontally(direction);
+    }
+    
     @Override
     public boolean canScrollHorizontally(int direction) {
     	matrix.getValues(m);

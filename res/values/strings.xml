@@ -6,6 +6,7 @@
     <!-- Activities -->
     <string name="single_touchimageview">Single TouchImageView</string>
     <string name="mirror_touchimageview">Mirroring Example</string>
+    <string name="viewpager_example">ViewPager Example</string>
     
     <string name="get_scroll_position">getScrollPosition():</string>
     <string name="get_zoomed_rect">getZoomedRect():</string>
