@@ -18,5 +18,6 @@
         <activity android:name=".SingleTouchImageViewActivity" />
         <activity android:name=".MirroringExampleActivity" />
         <activity android:name=".ViewPagerExampleActivity" />
+        <activity android:name=".SwitchImageExampleActivity" />
     </application>
 </manifest>

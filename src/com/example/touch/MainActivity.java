@@ -34,5 +34,12 @@ public class MainActivity extends Activity {
 				startActivity(new Intent(MainActivity.this, MirroringExampleActivity.class));
 			}
 		});
+        findViewById(R.id.switch_image_button).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainActivity.this, SwitchImageExampleActivity.class));
+			}
+		});
     }
 }
