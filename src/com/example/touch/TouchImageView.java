@@ -187,6 +187,7 @@ public class TouchImageView extends ImageView {
     		
     	} else {
     		mScaleType = type;
+    		setZoom(this);
     	}
     }
     
@@ -378,7 +379,9 @@ public class TouchImageView extends ImageView {
     		return;
     	}
     	
-    	setScaleType(scaleType);
+    	if (scaleType != mScaleType) {
+    		setScaleType(scaleType);
+    	}
     	resetZoom();
     	scaleImage(scale, viewWidth / 2, viewHeight / 2, true);
     	matrix.getValues(m);
