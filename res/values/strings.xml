@@ -9,5 +9,6 @@
     
     <string name="get_scroll_position">getScrollPosition():</string>
     <string name="get_zoomed_rect">getZoomedRect():</string>
+    <string name="get_current_zoom">getCurrentZoom():</string>
     <string name="mirroring_text">All touch gestures applied to one TouchImageView will be mirrored on the other.</string>
 </resources>

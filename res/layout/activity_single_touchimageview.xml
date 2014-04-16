@@ -53,5 +53,16 @@
 		    android:layout_height="wrap_content" />
 		
 	</LinearLayout>
+	
+	<TextView
+	    android:id="@+id/current_zoom"
+	    android:text="@string/get_current_zoom"
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:padding="5dp"
+	    android:layout_marginBottom="10dp"
+	    android:background="@android:color/black"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
     
 </RelativeLayout>

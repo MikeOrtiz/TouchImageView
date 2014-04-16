@@ -1,5 +1,4 @@
 package com.example.touch;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
@@ -16,6 +15,7 @@ public class SingleTouchImageViewActivity extends Activity {
 	private TouchImageView image;
 	private TextView scrollPositionTextView;
 	private TextView zoomedRectTextView;
+	private TextView currentZoomTextView;
 	private DecimalFormat df;
 
 	@Override
@@ -28,6 +28,7 @@ public class SingleTouchImageViewActivity extends Activity {
 		df = new DecimalFormat("#.##");
 		scrollPositionTextView = (TextView) findViewById(R.id.scroll_position);
 		zoomedRectTextView = (TextView) findViewById(R.id.zoomed_rect);
+		currentZoomTextView = (TextView) findViewById(R.id.current_zoom);
 		image = (TouchImageView) findViewById(R.id.img);
 		image.setOnTouchImageViewListener(new OnTouchImageViewListener() {
 			
@@ -35,9 +36,12 @@ public class SingleTouchImageViewActivity extends Activity {
 			public void onMove() {
 				PointF point = image.getScrollPosition();
 				RectF rect = image.getZoomedRect();
+				float currentZoom = image.getCurrentZoom();
+				boolean isZoomed = image.isZoomed();
 				scrollPositionTextView.setText("x: " + df.format(point.x) + " y: " + df.format(point.y));
 				zoomedRectTextView.setText("left: " + df.format(rect.left) + " top: " + df.format(rect.top)
 						+ "\nright: " + df.format(rect.right) + " bottom: " + df.format(rect.bottom));
+				currentZoomTextView.setText("getCurrentZoom(): " + currentZoom + " isZoomed(): " + isZoomed);
 			}
 		});
 	}
