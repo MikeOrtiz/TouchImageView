@@ -187,7 +187,13 @@ public class TouchImageView extends ImageView {
     		
     	} else {
     		mScaleType = type;
-    		setZoom(this);
+    		if (onDrawReady) {
+    			//
+    			// If the image is already rendered, scaleType has been called programmatically
+    			// and the TouchImageView should be updated with the new scaleType.
+    			//
+    			setZoom(this);
+    		}
     	}
     }
     
