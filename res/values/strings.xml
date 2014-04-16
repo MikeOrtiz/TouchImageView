@@ -12,4 +12,5 @@
     <string name="get_zoomed_rect">getZoomedRect():</string>
     <string name="get_current_zoom">getCurrentZoom():</string>
     <string name="mirroring_text">All touch gestures applied to one TouchImageView will be mirrored on the other.</string>
+    <string name="swipe_viewpager">Swipe left or right to test ViewPager.</string>
 </resources>
