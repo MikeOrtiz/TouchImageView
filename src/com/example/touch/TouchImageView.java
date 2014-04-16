@@ -912,7 +912,7 @@ public class TouchImageView extends ImageView {
         }
     }
     
-    private void scaleImage(float deltaScale, float focusX, float focusY, boolean stretchImageToSuper) {
+    private void scaleImage(double deltaScale, float focusX, float focusY, boolean stretchImageToSuper) {
     	
     	float lowerScale, upperScale;
     	if (stretchImageToSuper) {
@@ -934,7 +934,7 @@ public class TouchImageView extends ImageView {
             deltaScale = lowerScale / origScale;
         }
         
-        matrix.postScale(deltaScale, deltaScale, focusX, focusY);
+        matrix.postScale((float) deltaScale, (float) deltaScale, focusX, focusY);
         fixScaleTrans();
     }
     
@@ -975,7 +975,7 @@ public class TouchImageView extends ImageView {
 		@Override
 		public void run() {
 			float t = interpolate();
-			float deltaScale = calculateDeltaScale(t);
+			double deltaScale = calculateDeltaScale(t);
 			scaleImage(deltaScale, bitmapX, bitmapY, stretchImageToSuper);
 			translateImageToCenterTouchPosition(t);
 			fixScaleTrans();
@@ -1033,8 +1033,8 @@ public class TouchImageView extends ImageView {
 		 * @param t
 		 * @return
 		 */
-		private float calculateDeltaScale(float t) {
-			float zoom = startZoom + t * (targetZoom - startZoom);
+		private double calculateDeltaScale(float t) {
+			double zoom = startZoom + t * (targetZoom - startZoom);
 			return zoom / normalizedScale;
 		}
     }
