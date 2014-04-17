@@ -1,4 +1,4 @@
-package com.example.touch;
+package com.ortiz.touch;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

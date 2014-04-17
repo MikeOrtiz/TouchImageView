@@ -1,4 +1,6 @@
-package com.example.touch;
+package com.ortiz.touch;
+
+import com.example.touch.R;
 
 import android.app.Activity;
 import android.content.Intent;

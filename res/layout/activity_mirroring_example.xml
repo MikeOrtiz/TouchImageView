@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <com.example.touch.TouchImageView 
+    <com.ortiz.touch.TouchImageView 
         android:id="@+id/topImage"
         android:src="@drawable/nature_1"
         android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp" />
     
-    <com.example.touch.TouchImageView 
+    <com.ortiz.touch.TouchImageView 
         android:id="@+id/bottomImage"
         android:src="@drawable/nature_2"
         android:layout_width="wrap_content"

@@ -1,4 +1,4 @@
-package com.example.touch;
+package com.ortiz.touch;
 import java.text.DecimalFormat;
 
 import android.app.Activity;
@@ -7,7 +7,8 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.touch.TouchImageView.OnTouchImageViewListener;
+import com.example.touch.R;
+import com.ortiz.touch.TouchImageView.OnTouchImageViewListener;
 
 
 public class SingleTouchImageViewActivity extends Activity {

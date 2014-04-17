@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <com.example.touch.TouchImageView 
+    <com.ortiz.touch.TouchImageView 
         android:id="@+id/img"
         android:scaleType="center"
         android:src="@drawable/nature_1"

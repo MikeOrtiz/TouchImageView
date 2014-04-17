@@ -1,9 +1,10 @@
-package com.example.touch;
+package com.ortiz.touch;
 
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.example.touch.TouchImageView.OnTouchImageViewListener;
+import com.example.touch.R;
+import com.ortiz.touch.TouchImageView.OnTouchImageViewListener;
 
 public class MirroringExampleActivity extends Activity {
 	

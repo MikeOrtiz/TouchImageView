@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-	<com.example.touch.ExtendedViewPager 
+	<com.ortiz.touch.ExtendedViewPager 
 	    android:id="@+id/view_pager"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
