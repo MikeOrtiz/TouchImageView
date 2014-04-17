@@ -12,7 +12,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         findViewById(R.id.single_touchimageview_button).setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -39,6 +39,13 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(MainActivity.this, SwitchImageExampleActivity.class));
+			}
+		});
+        findViewById(R.id.switch_scaletype_button).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainActivity.this, SwitchScaleTypeExampleActivity.class));
 			}
 		});
     }

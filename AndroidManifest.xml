@@ -19,5 +19,6 @@
         <activity android:name=".MirroringExampleActivity" />
         <activity android:name=".ViewPagerExampleActivity" />
         <activity android:name=".SwitchImageExampleActivity" />
+        <activity android:name=".SwitchScaleTypeExampleActivity" />
     </application>
 </manifest>

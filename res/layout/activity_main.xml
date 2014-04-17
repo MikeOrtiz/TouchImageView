@@ -27,5 +27,11 @@
 	    android:text="@string/switch_image_example"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content" />
+	
+	<Button
+	    android:id="@+id/switch_scaletype_button"
+	    android:text="@string/switch_scaletype_example"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
     
 </LinearLayout>
