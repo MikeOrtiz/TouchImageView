@@ -7,6 +7,32 @@ Contributions by:
  * hank-cp
  * singpolyma
 
+Capabilities:
+----------------------
+TouchImageView extends ImageView and supports all of ImageView’s functionality.
+In addition, TouchImageView adds pinch zoom, dragging, fling, double tap zoom
+functionality and other animation polish. The intention is for TouchImageView to 
+mirror as closely as possible the functionality of zoomable images in Gallery 
+apps.
+
+Examples:
+----------------------
+Please view the sample app which includes examples of the following functionality:
+-Single TouchImageview: basic use of a single TouchImageView. Includes usage
+     of OnTouchImageViewListener, getScrollPosition(), getZoomedRect(), isZoomed(),
+     and getCurrentZoom().
+-ViewPager Example: TouchImageViews placed in a ViewPager like the Gallery app.
+-Mirroring Example: mirror two TouchImageViews using
+     onTouchImageViewListener and setZoom().
+-Switch Image Example: Click on TouchImageView to cycle through images. Note that the
+     zoom state is maintained though the images are switched.
+-Switch ScaleType Example: Click on TouchImageView to cycle through supported ScaleTypes.
+
+Limitations:
+----------------------
+TouchImageView does not yet support pinch image rotation. Also, FIT_START and FIT_END
+scaleTypes are not yet supported.
+
 Support:
 ----------------------
 Minimum API: 8
