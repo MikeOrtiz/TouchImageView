@@ -1222,6 +1222,7 @@ public class TouchImageView extends ImageView {
     		if (isPreGingerbread) {
     			return scroller.computeScrollOffset();
     		} else {
+    			overScroller.computeScrollOffset();
     			return overScroller.computeScrollOffset();
     		}
     	}
