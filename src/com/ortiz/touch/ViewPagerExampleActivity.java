@@ -29,7 +29,7 @@ public class ViewPagerExampleActivity extends Activity {
 
     static class TouchImageAdapter extends PagerAdapter {
 
-        private static int[] images = { R.drawable.nature_1, R.drawable.nature_2, R.drawable.nature_3, R.drawable.nature_4 };
+        private static int[] images = { R.drawable.nature_1, R.drawable.nature_2, R.drawable.nature_3, R.drawable.nature_4, R.drawable.nature_5 };
 
         @Override
         public int getCount() {
