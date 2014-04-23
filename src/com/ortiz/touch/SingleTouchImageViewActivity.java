@@ -31,6 +31,11 @@ public class SingleTouchImageViewActivity extends Activity {
 		zoomedRectTextView = (TextView) findViewById(R.id.zoomed_rect);
 		currentZoomTextView = (TextView) findViewById(R.id.current_zoom);
 		image = (TouchImageView) findViewById(R.id.img);
+		
+		//
+		// Set the OnTouchImageViewListener which updates edit texts
+		// with zoom and scroll diagnostics.
+		//
 		image.setOnTouchImageViewListener(new OnTouchImageViewListener() {
 			
 			@Override

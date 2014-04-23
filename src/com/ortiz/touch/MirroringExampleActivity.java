@@ -17,6 +17,11 @@ public class MirroringExampleActivity extends Activity {
 		setContentView(R.layout.activity_mirroring_example);
 		topImage = (TouchImageView) findViewById(R.id.topImage);
 		bottomImage = (TouchImageView) findViewById(R.id.bottomImage);
+		
+		//
+		// Each image has an OnTouchImageViewListener which uses its own TouchImageView
+		// to set the other TIV with the same zoom variables.
+		//
 		topImage.setOnTouchImageViewListener(new OnTouchImageViewListener() {
 			
 			@Override

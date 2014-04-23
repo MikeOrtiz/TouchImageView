@@ -22,6 +22,10 @@ public class SwitchScaleTypeExampleActivity extends Activity {
 		setContentView(R.layout.activity_switch_scaletype_example);
 		activity = this;
 		image = (TouchImageView) findViewById(R.id.img);
+		
+		//
+		// Set next scaleType with each button click
+		//
 		image.setOnClickListener(new OnClickListener() {
 			
 			@Override

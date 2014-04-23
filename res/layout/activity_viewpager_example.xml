@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <!-- ExtendedViewPager is a custom view and must be referred to by its full package name in XML -->
 	<com.ortiz.touch.ExtendedViewPager 
 	    android:id="@+id/view_pager"
 	    android:layout_width="match_parent"

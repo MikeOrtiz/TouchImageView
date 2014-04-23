@@ -14,8 +14,9 @@ public class ViewPagerExampleActivity extends Activity {
 	/**
 	 * Step 1: Download and set up v4 support library: http://developer.android.com/tools/support-library/setup.html
 	 * Step 2: Create ExtendedViewPager wrapper which calls TouchImageView.canScrollHorizontallyFroyo
-	 * Step 3: Write TouchImageAdapter, located below.
-	 * Step 4. The ViewPager in the XML should be ExtendedViewPager. 
+	 * Step 3: ExtendedViewPager is a custom view and must be referred to by its full package name in XML
+	 * Step 4: Write TouchImageAdapter, located below
+	 * Step 5. The ViewPager in the XML should be ExtendedViewPager
 	 */
 
 	@Override
