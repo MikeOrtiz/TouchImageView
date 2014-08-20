@@ -7,8 +7,12 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.Xfermode;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -28,10 +32,14 @@ import android.widget.OverScroller;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.ortiz.touchview.svg.SVG;
+import com.ortiz.touchview.svg.SVGParser;
+
 @SuppressWarnings("unused")
 public class TouchImageView extends AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
+    private static final Xfermode sXfermode = new PorterDuffXfermode(PorterDuff.Mode.DST_IN);
 
     // SuperMin and SuperMax multipliers. Determine how much the image can be
     // zoomed below or above the zoom boundaries, before animating back to the
@@ -49,6 +57,11 @@ public class TouchImageView extends AppCompatImageView {
     private Matrix matrix, prevMatrix;
     private boolean zoomEnabled;
     private boolean isRotateImageToFitScreen;
+    private Paint mPaint;
+    private int mSvgRawRes;
+    private int mLastWidth;
+    private Bitmap mMaskBitmap;
+    private int mLastHeight;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
 
@@ -139,10 +152,12 @@ public class TouchImageView extends AppCompatImageView {
 
         super.setOnTouchListener(new PrivateOnTouchListener());
 
+        mPaint = new Paint();
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TouchImageView, defStyleAttr, 0);
         try {
             if (!isInEditMode()) {
                 setZoomEnabled(attributes.getBoolean(R.styleable.TouchImageView_zoom_enabled, true));
+                mSvgRawRes = attributes.getResourceId(R.styleable.TouchImageView_mask, -1);
             }
         } finally {
             // release the TypedArray so that it can be reused.
@@ -169,6 +184,17 @@ public class TouchImageView extends AppCompatImageView {
 
     public boolean isZoomEnabled() {
         return zoomEnabled;
+    }
+
+    @Override
+    public void invalidate() {
+        if (mMaskBitmap != null) {
+            mMaskBitmap.recycle();
+        }
+        mLastWidth = 0;
+        mLastHeight = 0;
+
+        super.invalidate();
     }
 
     public void setZoomEnabled(boolean zoomEnabled) {
@@ -337,7 +363,48 @@ public class TouchImageView extends AppCompatImageView {
             setZoom(delayedZoomVariables.scale, delayedZoomVariables.focusX, delayedZoomVariables.focusY, delayedZoomVariables.scaleType);
             delayedZoomVariables = null;
         }
-        super.onDraw(canvas);
+
+        if (mSvgRawRes != -1) {
+            int width = getWidth();
+            int height = getHeight();
+
+            int i = canvas.saveLayer(0f, 0f, width, height, null, Canvas.ALL_SAVE_FLAG);
+
+            super.onDraw(canvas);
+
+            // Skip and use cached mask.
+            if (mMaskBitmap == null || mMaskBitmap.isRecycled() ||
+                    mLastWidth != width || mLastHeight != height) {
+                mMaskBitmap = getMask(width, height);
+            }
+
+            mPaint.setFilterBitmap(false);
+            mPaint.setXfermode(sXfermode);
+            canvas.drawBitmap(mMaskBitmap, 0f, 0f, mPaint);
+
+            canvas.restoreToCount(i);
+        } else {
+            super.onDraw(canvas);
+        }
+    }
+
+    private Bitmap getMask(int width, int height) {
+        SVG svgMask = null;
+        if (mLastWidth != width || mLastHeight != height) {
+            svgMask = SVGParser.getSVGFromInputStream(
+                    getResources().openRawResource(mSvgRawRes), width, height);
+
+            mLastWidth = width;
+            mLastHeight = height;
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        if (svgMask != null) {
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawPicture(svgMask.getPicture());
+        }
+
+        return bitmap;
     }
 
     @Override

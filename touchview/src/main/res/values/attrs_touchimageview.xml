@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="TouchImageView">
         <attr name="zoom_enabled" format="boolean" />
+        <attr name="mask" format="reference" />
     </declare-styleable>
 
 </resources>
