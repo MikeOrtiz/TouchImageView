@@ -6,12 +6,13 @@ Contributions by:
  * @ipsilondev
  * hank-cp
  * singpolyma
+ * Mostafa Gazar
 
 Capabilities:
 ----------------------
 TouchImageView extends ImageView and supports all of ImageView’s functionality.
 In addition, TouchImageView adds pinch zoom, dragging, fling, double tap zoom
-functionality and other animation polish. The intention is for TouchImageView to 
+functionality, other animation polish and masking. The intention is for TouchImageView to
 mirror as closely as possible the functionality of zoomable images in Gallery 
 apps.
 
@@ -58,7 +59,8 @@ name, because it is a custom view. Example:
 <com.example.touch.TouchImageView
 	    android:id="@+id/img”
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
+	    android:layout_height="match_parent"
+	    android:mask="@raw/shape_circle" />
 
 API:
 ----------------------
