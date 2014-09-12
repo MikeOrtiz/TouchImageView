@@ -513,13 +513,9 @@ public class TouchImageView extends ImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Drawable drawable = getDrawable();
-        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
-        	setMeasuredDimension(0, 0);
-        	return;
-        }
         
-        int drawableWidth = drawable.getIntrinsicWidth();
-        int drawableHeight = drawable.getIntrinsicHeight();
+        int drawableWidth = (drawable == null ? 0 : drawable.getIntrinsicWidth());
+        int drawableHeight = (drawable == null ? 0 : drawable.getIntrinsicHeight());
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
@@ -535,7 +531,9 @@ public class TouchImageView extends ImageView {
         //
         // Fit content within view
         //
-        fitImageToView();
+        if (drawable != null) {
+	  fitImageToView();
+        }
     }
     
     /**
