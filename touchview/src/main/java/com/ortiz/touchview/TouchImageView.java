@@ -758,7 +758,7 @@ public class TouchImageView extends ImageView {
     	return true;
     }
 		
-		@Override
+    @Override
     public boolean canScrollVertically(int direction) {
     	matrix.getValues(m);
     	float y = m[Matrix.MTRANS_Y];
