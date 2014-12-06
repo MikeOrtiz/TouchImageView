@@ -741,6 +741,24 @@ public class TouchImageView extends ImageView {
     	
     	return true;
     }
+		
+		@Override
+    public boolean canScrollVertically(int direction) {
+    	matrix.getValues(m);
+    	float y = m[Matrix.MTRANS_Y];
+
+    	if (getImageHeight() < viewHeight) {
+    		return false;
+
+    	} else if (y >= -1 && direction < 0) {
+    		return false;
+
+    	} else if (Math.abs(y) + viewHeight + 1 >= getImageHeight() && direction > 0) {
+    		return false;
+    	}
+
+    	return true;
+    }
     
     /**
      * Gesture Listener detects a single click or long click and passes that on
