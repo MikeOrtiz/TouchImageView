@@ -524,14 +524,17 @@ public class TouchImageView extends ImageView {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        viewWidth = setViewSize(widthMode, widthSize, drawableWidth);
-        viewHeight = setViewSize(heightMode, heightSize, drawableHeight);
-        
+        int totalViewWidth = setViewSize(widthMode, widthSize, drawableWidth);
+        int totalViewHeight = setViewSize(heightMode, heightSize, drawableHeight);
+
+        // Image view width, height must consider padding
+        viewWidth = totalViewWidth - getPaddingLeft() - getPaddingRight();
+        viewHeight = totalViewHeight - getPaddingTop() - getPaddingBottom();
+
         //
         // Set view dimensions
         //
-        setMeasuredDimension(viewWidth, viewHeight);
-        
+        setMeasuredDimension(totalViewWidth, totalViewHeight);        
         //
         // Fit content within view
         //
