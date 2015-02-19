@@ -50,18 +50,22 @@ Usage:
 Place TouchImageView.java in your project. It can then be used the same as
 ImageView. Example:
 
+```java
 TouchImageView img = (TouchImageView) findViewById(R.id.img);
+```
 
 If you are using TouchImageView in xml, then you must provide the full package
 name, because it is a custom view. Example:
 
+```xml
 <com.example.touch.TouchImageView
 	    android:id="@+id/img”
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
-
+```
 API:
 ----------------------
+```java
 // Get the current zoom. This is the zoom relative to the initial
 // scale, not the original resource.
 float getCurrentZoom();
@@ -115,3 +119,4 @@ void setZoom(float scale, float focusX, float focusY, ScaleType scaleType);
 // Set zoom parameters equal to another TouchImageView. Including scale, position,
 // and ScaleType.
 void setZoom(TouchImageView img);
+```
