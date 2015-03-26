@@ -3,22 +3,19 @@
       package="com.example.touch"
       android:versionCode="1"
       android:versionName="1.0">
-    <uses-sdk 	
-        android:minSdkVersion="8" 
-        android:targetSdkVersion="18"/>
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name="com.ortiz.touch.MainActivity"
+        <activity android:name="com.ortiz.touchdemo.MainActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.ortiz.touch.SingleTouchImageViewActivity" />
-        <activity android:name="com.ortiz.touch.MirroringExampleActivity" />
-        <activity android:name="com.ortiz.touch.ViewPagerExampleActivity" />
-        <activity android:name="com.ortiz.touch.SwitchImageExampleActivity" />
-        <activity android:name="com.ortiz.touch.SwitchScaleTypeExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.SingleTouchImageViewActivity" />
+        <activity android:name="com.ortiz.touchdemo.MirroringExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.ViewPagerExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.SwitchImageExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.SwitchScaleTypeExampleActivity" />
     </application>
 </manifest>

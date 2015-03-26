@@ -1,9 +1,11 @@
-package com.ortiz.touch;
+package com.ortiz.touchdemo;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.ortiz.touchview.TouchImageView;
 
 
 public class ExtendedViewPager extends ViewPager {

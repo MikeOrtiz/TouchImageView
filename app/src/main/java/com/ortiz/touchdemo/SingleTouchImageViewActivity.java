@@ -1,5 +1,4 @@
-package com.ortiz.touch;
-import java.text.DecimalFormat;
+package com.ortiz.touchdemo;
 
 import android.app.Activity;
 import android.graphics.PointF;
@@ -8,7 +7,9 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.touch.R;
-import com.ortiz.touch.TouchImageView.OnTouchImageViewListener;
+import com.ortiz.touchview.TouchImageView;
+
+import java.text.DecimalFormat;
 
 
 public class SingleTouchImageViewActivity extends Activity {
@@ -36,7 +37,7 @@ public class SingleTouchImageViewActivity extends Activity {
 		// Set the OnTouchImageViewListener which updates edit texts
 		// with zoom and scroll diagnostics.
 		//
-		image.setOnTouchImageViewListener(new OnTouchImageViewListener() {
+		image.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
 			
 			@Override
 			public void onMove() {
