@@ -1,6 +1,4 @@
-package com.ortiz.touch;
-
-import com.example.touch.R;
+package com.ortiz.touchdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,6 +6,9 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.example.touch.R;
+import com.ortiz.touchview.TouchImageView;
 
 public class ViewPagerExampleActivity extends Activity {
 	

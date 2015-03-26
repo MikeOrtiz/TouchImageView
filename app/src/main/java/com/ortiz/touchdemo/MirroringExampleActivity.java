@@ -1,10 +1,10 @@
-package com.ortiz.touch;
+package com.ortiz.touchdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 import com.example.touch.R;
-import com.ortiz.touch.TouchImageView.OnTouchImageViewListener;
+import com.ortiz.touchview.TouchImageView;
 
 public class MirroringExampleActivity extends Activity {
 	
@@ -22,7 +22,7 @@ public class MirroringExampleActivity extends Activity {
 		// Each image has an OnTouchImageViewListener which uses its own TouchImageView
 		// to set the other TIV with the same zoom variables.
 		//
-		topImage.setOnTouchImageViewListener(new OnTouchImageViewListener() {
+		topImage.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
 			
 			@Override
 			public void onMove() {
@@ -30,7 +30,7 @@ public class MirroringExampleActivity extends Activity {
 			}
 		});
 		
-		bottomImage.setOnTouchImageViewListener(new OnTouchImageViewListener() {
+		bottomImage.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
 			
 			@Override
 			public void onMove() {
