@@ -27,6 +27,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -99,40 +100,47 @@ public class TouchImageView extends ImageView {
     private OnTouchImageViewListener touchImageViewListener = null;
 
     public TouchImageView(Context context) {
-        super(context);
-        sharedConstructing(context);
+        this(context, null);
     }
 
     public TouchImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        sharedConstructing(context);
+        this(context, attrs, 0);
     }
-    
+
     public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
-    	super(context, attrs, defStyle);
-    	sharedConstructing(context);
+        super(context, attrs, defStyle);
+        configureImageView(context);
     }
     
-    private void sharedConstructing(Context context) {
-        super.setClickable(true);
+    private void configureImageView(Context context) {
         this.context = context;
-        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+
+        super.setClickable(true);
+
+        mScaleDetector   = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
-        matrix = new Matrix();
+
+        matrix     = new Matrix();
         prevMatrix = new Matrix();
+
         m = new float[9];
         normalizedScale = 1;
         if (mScaleType == null) {
         	mScaleType = ScaleType.FIT_CENTER;
         }
+
         minScale = 1;
         maxScale = 3;
+
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+
         setImageMatrix(matrix);
         setScaleType(ScaleType.MATRIX);
         setState(State.NONE);
+
         onDrawReady = false;
+
         super.setOnTouchListener(new PrivateOnTouchListener());
     }
 
@@ -140,7 +148,7 @@ public class TouchImageView extends ImageView {
     public void setOnTouchListener(View.OnTouchListener l) {
         userTouchListener = l;
     }
-    
+
     public void setOnTouchImageViewListener(OnTouchImageViewListener l) {
     	touchImageViewListener = l;
     }
@@ -188,10 +196,10 @@ public class TouchImageView extends ImageView {
     	} else {
     		mScaleType = type;
     		if (onDrawReady) {
-    			//
+                //
     			// If the image is already rendered, scaleType has been called programmatically
     			// and the TouchImageView should be updated with the new scaleType.
-    			//
+                //
     			setZoom(this);
     		}
     	}
@@ -276,7 +284,7 @@ public class TouchImageView extends ImageView {
     }
     
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
     	onDrawReady = true;
     	imageRenderedAtLeastOnce = true;
     	if (delayedZoomVariables != null) {
@@ -401,7 +409,7 @@ public class TouchImageView extends ImageView {
     /**
      * Set zoom parameters equal to another TouchImageView. Including scale, position,
      * and ScaleType.
-     * @param TouchImageView
+     * @param img
      */
     public void setZoom(TouchImageView img) {
     	PointF center = img.getScrollPosition();
@@ -926,7 +934,6 @@ public class TouchImageView extends ImageView {
     }
     
     private void scaleImage(double deltaScale, float focusX, float focusY, boolean stretchImageToSuper) {
-    	
     	float lowerScale, upperScale;
     	if (stretchImageToSuper) {
     		lowerScale = superMinScale;
