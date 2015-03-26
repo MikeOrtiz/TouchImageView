@@ -57,7 +57,7 @@ Place TouchImageView.java in your project. It can then be used the same as Image
 
 If you are using TouchImageView in XML, then you must provide the full package name, because it is a custom view.
 
-    <com.example.touch.TouchImageView
+    <com.ortiz.touchview.TouchImageView
 	    android:id="@+id/img”
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
