@@ -642,8 +642,7 @@ public class TouchImageView extends ImageView {
         	//
             float transX = m[Matrix.MTRANS_X];
             float transY = m[Matrix.MTRANS_Y];
-            Log.e("TRANSLATE X", "" + transX);
-            Log.e("TRANSLATE Y", "" + transY);
+
             //
             // Width
             //
