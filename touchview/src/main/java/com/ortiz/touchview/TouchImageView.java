@@ -159,6 +159,7 @@ public class TouchImageView extends ImageView {
 
     @Override
     public void setImageResource(int resId) {
+        imageRenderedAtLeastOnce = false;
     	super.setImageResource(resId);
     	savePreviousImageValues();
     	fitImageToView();
@@ -166,6 +167,7 @@ public class TouchImageView extends ImageView {
     
     @Override
     public void setImageBitmap(Bitmap bm) {
+        imageRenderedAtLeastOnce = false;
     	super.setImageBitmap(bm);
     	savePreviousImageValues();
     	fitImageToView();
@@ -173,6 +175,7 @@ public class TouchImageView extends ImageView {
     
     @Override
     public void setImageDrawable(Drawable drawable) {
+        imageRenderedAtLeastOnce = false;
     	super.setImageDrawable(drawable);
     	savePreviousImageValues();
     	fitImageToView();
@@ -180,6 +183,7 @@ public class TouchImageView extends ImageView {
     
     @Override
     public void setImageURI(Uri uri) {
+        imageRenderedAtLeastOnce = false;
     	super.setImageURI(uri);
     	savePreviousImageValues();
     	fitImageToView();
@@ -542,7 +546,8 @@ public class TouchImageView extends ImageView {
         //
         // Set view dimensions
         //
-        setMeasuredDimension(totalViewWidth, totalViewHeight);        
+        setMeasuredDimension(viewWidth, viewHeight);
+        
         //
         // Fit content within view
         //
@@ -637,7 +642,8 @@ public class TouchImageView extends ImageView {
         	//
             float transX = m[Matrix.MTRANS_X];
             float transY = m[Matrix.MTRANS_Y];
-            
+            Log.e("TRANSLATE X", "" + transX);
+            Log.e("TRANSLATE Y", "" + transY);
             //
             // Width
             //
