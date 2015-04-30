@@ -191,9 +191,6 @@ public class TouchImageView extends ImageView {
     
     @Override
     public void setScaleType(ScaleType type) {
-    	if (type == ScaleType.FIT_START || type == ScaleType.FIT_END) {
-    		throw new UnsupportedOperationException("TouchImageView does not support FIT_START or FIT_END");
-    	}
     	if (type == ScaleType.MATRIX) {
     		super.setScaleType(ScaleType.MATRIX);
     		
@@ -590,6 +587,8 @@ public class TouchImageView extends ImageView {
         	scaleX = scaleY = Math.min(1, Math.min(scaleX, scaleY));
         	
         case FIT_CENTER:
+        case FIT_START:
+        case FIT_END:
         	scaleX = scaleY = Math.min(scaleX, scaleY);
         	break;
         	
@@ -597,11 +596,6 @@ public class TouchImageView extends ImageView {
         	break;
         	
     	default:
-    		//
-    		// FIT_START and FIT_END not supported
-    		//
-    		throw new UnsupportedOperationException("TouchImageView does not support FIT_START or FIT_END");
-        	
         }
 
         //
@@ -616,7 +610,16 @@ public class TouchImageView extends ImageView {
         	// Stretch and center image to fit view
         	//
         	matrix.setScale(scaleX, scaleY);
-        	matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
+        	switch (mScaleType) {
+        	case FIT_START:
+        		matrix.postTranslate(0, 0);
+        		break;
+        	case FIT_END:
+        		matrix.postTranslate(redundantXSpace, redundantYSpace);
+        		break;
+        	default:
+        		matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
+        	}
         	normalizedScale = 1;
         	
         } else {
