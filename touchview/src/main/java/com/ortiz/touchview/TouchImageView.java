@@ -242,7 +242,7 @@ public class TouchImageView extends ImageView {
      * Save the current matrix and view dimensions
      * in the prevMatrix and prevView variables.
      */
-    private void savePreviousImageValues() {
+    public void savePreviousImageValues() {
     	if (matrix != null && viewHeight != 0 && viewWidth != 0) {
 	    	matrix.getValues(m);
 	    	prevMatrix.setValues(m);
@@ -625,9 +625,9 @@ public class TouchImageView extends ImageView {
         	// to NaN in translateMatrixAfterRotate. To avoid this, call savePreviousImageValues
         	// to set them equal to the current values.
         	//
-        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
+//        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
         		savePreviousImageValues();
-        	}
+//        	}
         	
         	prevMatrix.getValues(m);
         	
