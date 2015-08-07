@@ -27,7 +27,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -285,7 +284,7 @@ public class TouchImageView extends ImageView {
     }
     
     @Override
-    protected void onDraw(@NonNull Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
     	onDrawReady = true;
     	imageRenderedAtLeastOnce = true;
     	if (delayedZoomVariables != null) {

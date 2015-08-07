@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../storehome/trail_apps_android" external.system.id="GRADLE" external.system.module.group="trail_apps_android" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":TouchImageView:touchview" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="code.TouchImageView" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":touchview" />
+        <option name="GRADLE_PROJECT_PATH" value=":TouchImageView:touchview" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -13,8 +13,11 @@
         <option name="ASSEMBLE_TASK_NAME" value="assembleDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileDebugSources" />
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleDebugAndroidTest" />
-        <option name="SOURCE_GEN_TASK_NAME" value="generateDebugSources" />
-        <option name="TEST_SOURCE_GEN_TASK_NAME" value="generateDebugAndroidTestSources" />
+        <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileDebugAndroidTestSources" />
+        <afterSyncTasks>
+          <task>generateDebugAndroidTestSources</task>
+          <task>generateDebugSources</task>
+        </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
@@ -24,7 +27,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/debug" />
     <exclude-output />
@@ -86,9 +89,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-22.0.0" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-22.0.0" level="project" />
+    <orderEntry type="library" name="support-annotations-22.2.1" level="project" />
   </component>
 </module>
-
