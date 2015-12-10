@@ -6,6 +6,7 @@
  * Updated By: @ipsilondev
  * Updated By: hank-cp
  * Updated By: singpolyma
+ * Updated By: therealkilian
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
@@ -34,6 +35,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
@@ -406,6 +408,36 @@ public class TouchImageView extends ImageView {
     public void setZoom(TouchImageView img) {
     	PointF center = img.getScrollPosition();
     	setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
+    }
+    
+    /**
+     * Set zoom to the specified scale with a linearly interpolated animation. Image will be
+     * centered around the point (focusX, focusY). These floats range from 0 to 1 and denote the
+     * focus point as a fraction from the left and top of the view. For example, the top left
+     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+     * @param scale
+     * @param focusX
+     * @param focusY
+     */
+    public void setZoomAnimated(float scale, float focusX, float focusY) {
+        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY));
+        compatPostOnAnimation(animation);
+    }
+
+    /**
+     * Set zoom to the specified scale with a linearly interpolated animation. Image will be
+     * centered around the point (focusX, focusY). These floats range from 0 to 1 and denote the
+     * focus point as a fraction from the left and top of the view. For example, the top left
+     * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
+     * @param scale
+     * @param focusX
+     * @param focusY
+     * @param listener the listener, which will be notified, once the animation ended
+     */
+    public void setZoomAnimated(float scale, float focusX, float focusY, OnZoomFinishedListener listener){
+        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY));
+        animation.setListener(listener);
+        compatPostOnAnimation(animation);
     }
     
     /**
@@ -808,6 +840,10 @@ public class TouchImageView extends ImageView {
     	public void onMove();
     }
     
+    public interface OnZoomFinishedListener {
+        void onZoomFinished();
+    }
+    
     /**
      * Responsible for all touch events. Handles the heavy lifting of drag and also sends
      * touch events to Scale Detector and Gesture Detector.
@@ -1175,6 +1211,74 @@ public class TouchImageView extends ImageView {
 	            compatPostOnAnimation(this);
         	}
 		}
+    }
+    
+    /**
+     * AnimatedZoom calls a series of runnables which apply
+     * an animated zoom to the specified target focus at the specified zoom level.
+     * @author therealkilian
+     */
+    private class AnimatedZoom implements Runnable {
+
+        private long startTime;
+        private static final float ZOOM_TIME = 500;
+        private float startZoom, targetZoom;
+        private PointF startFocus, targetFocus;
+        private LinearInterpolator interpolator = new LinearInterpolator();
+        private OnZoomFinishedListener listener;
+
+        AnimatedZoom(float targetZoom, PointF focus) {
+            setState(State.ANIMATE_ZOOM);
+            startTime = System.currentTimeMillis();
+            this.startZoom = normalizedScale;
+            this.targetZoom = targetZoom;
+
+            //
+            // Used for translating image during zooming
+            //
+            startFocus = getScrollPosition();
+            targetFocus = focus;
+        }
+
+        @Override
+        public void run() {
+            float t = interpolate();
+
+            // Calculate the next focus and zoom based on the progress of the interpolation
+            float nextZoom = startZoom + (targetZoom - startZoom) * t;
+            float nextX = startFocus.x + (targetFocus.x - startFocus.x) * t;
+            float nextY = startFocus.y + (targetFocus.y - startFocus.y) * t;
+            setZoom(nextZoom, nextX, nextY);
+
+            if (t < 1f) {
+                //
+                // We haven't finished zooming
+                //
+                compatPostOnAnimation(this);
+
+            } else {
+                //
+                // Finished zooming
+                //
+                setState(State.NONE);
+                if (listener != null) listener.onZoomFinished();
+            }
+        }
+
+        /**
+         * Use interpolator to get t
+         * @return progress of the interpolation
+         */
+        private float interpolate() {
+            long currTime = System.currentTimeMillis();
+            float elapsed = (currTime - startTime) / ZOOM_TIME;
+            elapsed = Math.min(1f, elapsed);
+            return interpolator.getInterpolation(elapsed);
+        }
+
+        public void setListener(OnZoomFinishedListener listener) {
+            this.listener = listener;
+        }
     }
     
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
