@@ -1,13 +1,11 @@
 package com.ortiz.touch;
 
-import com.example.touch.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
+import android.widget.Toast;
 
 public class SwitchScaleTypeExampleActivity extends Activity {
 	

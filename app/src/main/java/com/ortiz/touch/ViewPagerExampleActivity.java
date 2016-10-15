@@ -1,7 +1,5 @@
 package com.ortiz.touch;
 
-import com.example.touch.R;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
