@@ -1,14 +1,15 @@
+apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.library'
 apply plugin: 'android-maven'
 
 version '2.1'
 
 repositories {
-   jcenter()
+    jcenter()
 }
 
 dependencies {
-        compile "com.android.support:support-v4:25.0.0"
+    compile "com.android.support:support-v4:25.0.0"
 }
 
 android {
