@@ -1,6 +1,9 @@
-This is a fork of TouchImageView from Mike Ortiz et al. 
+This is a fork of TouchImageView from Mike Ortiz et al. Maintained to easily get it via jitpack with gradle and no copying of files. There where some PRs regarding this but they did not get merged for over a year.
+Also some commits on top like dropping pre-gingerbread support and code cleanup.
 
 get it via jitpack: [![](https://jitpack.io/v/ligi/touchimageview.svg)](https://jitpack.io/#ligi/touchimageview)
+
+[![Build Status](https://snap-ci.com/ligi/TouchImageView/branch/master/build_image)](https://snap-ci.com/ligi/TouchImageView/branch/master)
 
 Android: TouchImageView
 Created by: Mike Ortiz
