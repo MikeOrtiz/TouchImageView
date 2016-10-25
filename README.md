@@ -1,3 +1,7 @@
+This is a fork of TouchImageView from Mike Ortiz et al. 
+
+get it via jitpack: [![](https://jitpack.io/v/ligi/touchimageview.svg)](https://jitpack.io/#ligi/touchimageview)
+
 Android: TouchImageView
 Created by: Mike Ortiz
 Contributions by: 
