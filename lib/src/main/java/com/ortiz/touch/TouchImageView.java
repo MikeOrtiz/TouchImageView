@@ -28,7 +28,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -36,7 +35,6 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.OverScroller;
-import android.widget.Scroller;
 
 public class TouchImageView extends ImageView {
 
@@ -150,29 +148,8 @@ public class TouchImageView extends ImageView {
     }
 
     @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-        savePreviousImageValues();
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        savePreviousImageValues();
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageDrawable(Drawable drawable) {
-        super.setImageDrawable(drawable);
-        savePreviousImageValues();
-        fitImageToView();
-    }
-
-    @Override
-    public void setImageURI(Uri uri) {
-        super.setImageURI(uri);
+    public void invalidate() {
+        super.invalidate();
         savePreviousImageValues();
         fitImageToView();
     }
@@ -666,29 +643,19 @@ public class TouchImageView extends ImageView {
      *
      * @param mode
      * @param size
-     * @param drawableWidth
+     * @param drawableSize
      * @return
      */
-    private int setViewSize(int mode, int size, int drawableWidth) {
-        int viewSize;
+    private int setViewSize(int mode, int size, int drawableSize) {
         switch (mode) {
-            case MeasureSpec.EXACTLY:
-                viewSize = size;
-                break;
-
             case MeasureSpec.AT_MOST:
-                viewSize = Math.min(drawableWidth, size);
-                break;
-
+                return Math.min(drawableSize, size);
             case MeasureSpec.UNSPECIFIED:
-                viewSize = drawableWidth;
-                break;
-
+                return drawableSize;
+            case MeasureSpec.EXACTLY:
             default:
-                viewSize = size;
-                break;
+                return size;
         }
-        return viewSize;
     }
 
     /**
@@ -813,7 +780,7 @@ public class TouchImageView extends ImageView {
     }
 
     public interface OnTouchImageViewListener {
-        public void onMove();
+        void onMove();
     }
 
     /**
