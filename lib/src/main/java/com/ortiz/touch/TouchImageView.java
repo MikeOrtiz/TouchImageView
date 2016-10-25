@@ -40,8 +40,6 @@ import android.widget.Scroller;
 
 public class TouchImageView extends ImageView {
 
-    private static final String DEBUG = "DEBUG";
-
     //
     // SuperMin and SuperMax multipliers. Determine how much the image can be
     // zoomed below or above the zoom boundaries, before animating back to the
@@ -1152,7 +1150,7 @@ public class TouchImageView extends ImageView {
             currY = startY;
         }
 
-        public void cancelFling() {
+        void cancelFling() {
             if (scroller != null) {
                 setState(State.NONE);
                 scroller.forceFinished(true);
@@ -1196,7 +1194,7 @@ public class TouchImageView extends ImageView {
         OverScroller overScroller;
         boolean isPreGingerbread;
 
-        public CompatScroller(Context context) {
+        CompatScroller(Context context) {
             if (VERSION.SDK_INT < VERSION_CODES.GINGERBREAD) {
                 isPreGingerbread = true;
                 scroller = new Scroller(context);
@@ -1207,7 +1205,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
+         void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
             if (isPreGingerbread) {
                 scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
             } else {
@@ -1215,7 +1213,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public void forceFinished(boolean finished) {
+         void forceFinished(boolean finished) {
             if (isPreGingerbread) {
                 scroller.forceFinished(finished);
             } else {
@@ -1223,7 +1221,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public boolean isFinished() {
+         boolean isFinished() {
             if (isPreGingerbread) {
                 return scroller.isFinished();
             } else {
@@ -1231,7 +1229,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public boolean computeScrollOffset() {
+         boolean computeScrollOffset() {
             if (isPreGingerbread) {
                 return scroller.computeScrollOffset();
             } else {
@@ -1240,7 +1238,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public int getCurrX() {
+         int getCurrX() {
             if (isPreGingerbread) {
                 return scroller.getCurrX();
             } else {
@@ -1248,7 +1246,7 @@ public class TouchImageView extends ImageView {
             }
         }
 
-        public int getCurrY() {
+        int getCurrY() {
             if (isPreGingerbread) {
                 return scroller.getCurrY();
             } else {
@@ -1268,12 +1266,12 @@ public class TouchImageView extends ImageView {
     }
 
     private class ZoomVariables {
-        public float scale;
-        public float focusX;
-        public float focusY;
-        public ScaleType scaleType;
+        float scale;
+        float focusX;
+        float focusY;
+        ScaleType scaleType;
 
-        public ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
+        ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
             this.scale = scale;
             this.focusX = focusX;
             this.focusY = focusY;
@@ -1281,9 +1279,4 @@ public class TouchImageView extends ImageView {
         }
     }
 
-    private void printMatrixInfo() {
-        float[] n = new float[9];
-        matrix.getValues(n);
-        Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
-    }
 }
