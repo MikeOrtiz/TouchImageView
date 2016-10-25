@@ -1,0 +1,23 @@
+apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
+
+repositories {
+   jcenter()
+}
+
+dependencies {
+        compile "com.android.support:support-v4:25.0.0"
+}
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+
+}
