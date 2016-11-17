@@ -22,4 +22,5 @@
         <activity android:name="com.ortiz.touch.SwitchImageExampleActivity" />
         <activity android:name="com.ortiz.touch.SwitchScaleTypeExampleActivity" />
     </application>
+	<!--Outra tag comentada local-->
 </manifest>
