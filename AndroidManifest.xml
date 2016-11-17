@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.example.touch"
+	<!--Uma tag comentada no local-->
+	<!--Para tag comentada local-->
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk 	
@@ -14,6 +16,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+	<!-- Intent filter coment test -->
         </activity>
         <activity android:name="com.ortiz.touch.SingleTouchImageViewActivity" />
         <activity android:name="com.ortiz.touch.MirroringExampleActivity" />
@@ -21,4 +24,5 @@
         <activity android:name="com.ortiz.touch.SwitchImageExampleActivity" />
         <activity android:name="com.ortiz.touch.SwitchScaleTypeExampleActivity" />
     </application>
+	<!--Outra tag comentada local-->
 </manifest>
