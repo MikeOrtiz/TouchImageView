@@ -16,6 +16,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+	<!-- Intent filter coment test -->
         </activity>
         <activity android:name="com.ortiz.touch.SingleTouchImageViewActivity" />
         <activity android:name="com.ortiz.touch.MirroringExampleActivity" />
