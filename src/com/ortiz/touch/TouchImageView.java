@@ -395,6 +395,7 @@ public class TouchImageView extends ImageView {
     	m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
     	matrix.setValues(m);
     	fixTrans();
+	savePreviousImageValues();
     	setImageMatrix(matrix);
     }
     
