@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion defaultCompileSdkVersion
+    buildToolsVersion defaultBuildToolsVersion
 
     defaultConfig {
         applicationId "com.ortiz.touchdemo"
-        minSdkVersion 8
-        targetSdkVersion 22
+        minSdkVersion 14
+        targetSdkVersion defaultTargetSdkVersion
     }
 
     buildTypes {
@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:23.4.0'
+    compile "com.android.support:support-v4:$supportLib"
     compile project(':touchview')
 }
