@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
@@ -13,7 +13,7 @@ ext {
     defaultTargetSdkVersion = 25
     defaultCompileSdkVersion = 26
     defaultBuildToolsVersion = '26.0.2'
-    supportLib = "27.0.0"
+    supportLib = "27.0.1"
 }
 
 allprojects {
