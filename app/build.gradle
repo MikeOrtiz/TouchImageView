@@ -19,6 +19,6 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:$supportLib"
-    compile project(':touchview')
+    implementation "com.android.support:support-v4:$supportLib"
+    implementation project(':touchview')
 }
