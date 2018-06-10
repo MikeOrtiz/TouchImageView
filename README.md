@@ -19,7 +19,7 @@ allprojects {
 ```
 ```Gradle
 dependencies {
-    implementation 'com.github.hannesa2:TouchImageView:1.2.2'
+    implementation 'com.github.hannesa2:TouchImageView:1.2.3'
 }
 
 ```
