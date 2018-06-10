@@ -1,55 +1,58 @@
-#Android: TouchImageView
+[![](https://jitpack.io/v/hannesa2/TouchImageView.svg)](https://jitpack.io/#hannesa2/TouchImageView)
 
-Created by: Mike Ortiz
-Contributions by: 
- * Patrick Lackemacher
- * Babay88
- * @ipsilondev
- * hank-cp
- * singpolyma
- * JVillella
+# TouchImageView for Android
 
-##Capabilities
+## Capabilities
 
 TouchImageView extends ImageView and supports all of ImageView’s functionality. In addition, TouchImageView adds pinch zoom,dragging, fling, double tap zoom functionality and other animation polish. The intention is for TouchImageView to  mirror as closely as possible the functionality of zoomable images in Gallery  apps.
 
-##Examples
+## Download 
+Repository available on https://jitpack.io
+
+```Gradle
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+```Gradle
+dependencies {
+    implementation 'com.github.hannesa2:TouchImageView:1.2.2'
+}
+
+```
+
+## Examples
 
 Please view the sample app which includes examples of the following functionality:
 
-####Single TouchImageView
+#### Single TouchImageView
 
 Basic use of a single TouchImageView. Includes usage of `OnTouchImageViewListener`, `getScrollPosition()`, `getZoomedRect()`, `isZoomed()`, and `getCurrentZoom()`.
 
-####ViewPager Example
+#### ViewPager Example
 
 TouchImageViews placed in a ViewPager like the Gallery app.
 
-####Mirroring Example
+#### Mirroring Example
 
 Mirror two TouchImageViews using `onTouchImageViewListener` and `setZoom()`.
 
-####Switch Image Example
+#### Switch Image Example
 
 Click on TouchImageView to cycle through images. Note that the zoom state is maintained though the images are switched.
 
-####Switch ScaleType Example
+#### Switch ScaleType Example
 
 Click on TouchImageView to cycle through supported ScaleTypes.
 
-##Limitations
+## Limitations
 
 TouchImageView does not yet support pinch image rotation. Also, `FIT_START` and `FIT_END scaleTypes are not yet supported.
 
-##Support
-
-Minimum API: 8
-
-##Contributing
-
-Before creating an issue, please make sure that a ticket is not already open. Also,  please check that your issue has not already been fixed in the dev branch. If the issue is reproducible on the dev branch, please provide clear repro instructions in the issue. Last, if you’d like to contribute code, please open all pull requests against the dev branch.
-
-##Usage
+## Usage
 
 Place TouchImageView.java in your project. It can then be used the same as ImageView.
 
@@ -61,8 +64,8 @@ If you are using TouchImageView in XML, then you must provide the full package n
 	    android:id="@+id/img”
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent" />
-
-##API
+	    
+## API
 
 Get the current zoom. This is the zoom relative to the initial scale, not the original resource.
 
@@ -119,6 +122,17 @@ Set zoom to the specified scale. Image will be centered around the point (focusX
 Set zoom parameters equal to another `TouchImageView`. Including scale, position, and `ScaleType`.
 
     void setZoom(TouchImageView img);
+    
+## created by
+
+Created by: Mike Ortiz
+Contributions by: 
+ * Patrick Lackemacher
+ * Babay88
+ * @ipsilondev
+ * hank-cp
+ * singpolyma
+ * JVillella
 
 ## License
 
