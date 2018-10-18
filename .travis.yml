@@ -30,36 +30,36 @@ install:
   - echo $ANDROID_HOME # We assume this is correctly set when setting path
   - sdkmanager --list || true # Look at the packages
   - echo yes | sdkmanager "tools" # Ensure tools is updated
-  - echo yes | sdkmanager "emulator" # Ensure emulator is present
+#  - echo yes | sdkmanager "emulator" # Ensure emulator is present
 
   # Install emulator
-  - export EMULATOR="system-images;android-$EMULATOR_API;$EMULATOR_TAG;$EMULATOR_ABI"
-  - echo yes | sdkmanager "platforms;android-$EMULATOR_API" # Install sdk
-  - echo yes | sdkmanager "$EMULATOR" # Install system image
-  - sdkmanager --list || true # Check everything is updated
+#  - export EMULATOR="system-images;android-$EMULATOR_API;$EMULATOR_TAG;$EMULATOR_ABI"
+#  - echo yes | sdkmanager "platforms;android-$EMULATOR_API" # Install sdk
+#  - echo yes | sdkmanager "$EMULATOR" # Install system image
+#  - sdkmanager --list || true # Check everything is updated
 
   # Create and start emulator
-  - echo no | avdmanager create avd -n test -k "$EMULATOR" -f # Create emulator
-  - which emulator # ensure we are using the right emulator (home/emulator/)
-  - emulator -avd test -no-window -camera-back emulated -camera-front emulated -memory 2048 -writable-system & # Launch
-  - adb wait-for-device # Wait for adb process
-  - adb remount # Mount as writable
+#  - echo no | avdmanager create avd -n test -k "$EMULATOR" -f # Create emulator
+#  - which emulator # ensure we are using the right emulator (home/emulator/)
+#  - emulator -avd test -no-window -camera-back emulated -camera-front emulated -memory 2048 -writable-system & # Launch
+#  - adb wait-for-device # Wait for adb process
+#  - adb remount # Mount as writable
 
-before_script:
-  - android-wait-for-emulator # Wait for emulator ready to interact
-  - adb shell settings put global window_animation_scale 0 & # Disable animations
-  - adb shell settings put global transition_animation_scale 0 & # Disable animations
-  - adb shell settings put global animator_duration_scale 0 & # Disable animations
-
-  # Would be great to use -v color to adb logcat but looks not supported on travis.
-  - sleep 20 # Sleep 20 seconds just in case
-  - adb shell input keyevent 82 & # Dispatch unlock event
-  - adb logcat --help # See if this version supports color
-  - adb logcat -c # Clear logcat
+#before_script:
+#  - android-wait-for-emulator # Wait for emulator ready to interact
+#  - adb shell settings put global window_animation_scale 0 & # Disable animations
+#  - adb shell settings put global transition_animation_scale 0 & # Disable animations
+#  - adb shell settings put global animator_duration_scale 0 & # Disable animations
+#
+#  # Would be great to use -v color to adb logcat but looks not supported on travis.
+#  - sleep 20 # Sleep 20 seconds just in case
+#  - adb shell input keyevent 82 & # Dispatch unlock event
+#  - adb logcat --help # See if this version supports color
+#  - adb logcat -c # Clear logcat
 
 script:
   - set -o pipefail
-  - ./gradlew clean build :app:assembleDebugAndroidTest :app:check --profile --continue 2>&1 | tee build.log
+  - ./gradlew clean build :app:check --profile --continue 2>&1 | tee build.log
   - set +o pipefail
   #- ./gradlew :app:connectedAndroidTest
 
@@ -72,12 +72,12 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-after_failure:
-  #- cat /home/travis/build/hannesa2/DbPreferences/DBPrefs/build/reports/androidTests/connected/index.html
-  - export MY_MOD="app"
-  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/reports/androidTests/connected/"
-  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
-  #- sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
-  #- lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
-  #- lynx --dump com.android.builder.testing.html > myTesting.log
-  - for file in *.html; do echo "$file"; echo "====================="; cat "$file"; done || true
+#after_failure:
+#  #- cat /home/travis/build/hannesa2/DbPreferences/DBPrefs/build/reports/androidTests/connected/index.html
+#  - export MY_MOD="app"
+#  - export MY_LOG_DIR="$(pwd)/${MY_MOD}/build/reports/androidTests/connected/"
+#  - pwd && cd "${MY_LOG_DIR:-.}" && pwd && ls -al
+#  #- sudo apt-get install -qq lynx && lynx --dump index.html > myIndex.log
+#  #- lynx --dump com.android.builder.testing.ConnectedDevice.html > myConnectedDevice.log
+#  #- lynx --dump com.android.builder.testing.html > myTesting.log
+#  - for file in *.html; do echo "$file"; echo "====================="; cat "$file"; done || true
