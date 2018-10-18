@@ -2,7 +2,9 @@ package com.ortiz.touchdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,7 +26,7 @@ public class ViewPagerExampleActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager_example);
-        ExtendedViewPager mViewPager = (ExtendedViewPager) findViewById(R.id.view_pager);
+        ExtendedViewPager mViewPager = findViewById(R.id.view_pager);
         mViewPager.setAdapter(new TouchImageAdapter());
     }
 
@@ -37,8 +39,9 @@ public class ViewPagerExampleActivity extends Activity {
         	return images.length;
         }
 
+        @NonNull
         @Override
-        public View instantiateItem(ViewGroup container, int position) {
+        public View instantiateItem(@NonNull ViewGroup container, int position) {
             TouchImageView img = new TouchImageView(container.getContext());
             img.setImageResource(images[position]);
             container.addView(img, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -46,12 +49,12 @@ public class ViewPagerExampleActivity extends Activity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
