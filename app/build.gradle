@@ -18,6 +18,6 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-v4:$supportLib"
+    implementation "androidx.legacy:legacy-support-v4:$supportLib"
     implementation project(':touchview')
 }
