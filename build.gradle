@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+    }
+}
+
+ext {
+    defaultTargetSdkVersion = 28
+    defaultCompileSdkVersion = 28
+    supportLib = "1.0.0"
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+    }
+}
