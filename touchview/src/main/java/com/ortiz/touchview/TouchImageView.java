@@ -859,6 +859,11 @@ public class TouchImageView extends ImageView {
     	
     	@Override
         public boolean onTouch(View v, MotionEvent event) {
+            if (getDrawable() == null) {
+                setState(State.NONE);
+                return false;
+            }
+            mScaleDetector.onTouchEvent(event);
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
@@ -1022,6 +1027,10 @@ public class TouchImageView extends ImageView {
 
 		@Override
 		public void run() {
+			if (getDrawable() == null) {
+				setState(State.NONE);
+				return;
+			}
 			float t = interpolate();
 			double deltaScale = calculateDeltaScale(t);
 			scaleImage(deltaScale, bitmapX, bitmapY, stretchImageToSuper);
