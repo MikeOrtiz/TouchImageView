@@ -12,7 +12,6 @@ buildscript {
 ext {
     defaultTargetSdkVersion = 28
     defaultCompileSdkVersion = 28
-    supportLib = "1.0.0"
 }
 
 allprojects {
