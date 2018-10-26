@@ -63,6 +63,11 @@ public class TouchImageView extends ImageView {
     //
     private Matrix matrix, prevMatrix;
 
+    public enum ViewSizeChangeBehavior { MAINTAIN_CENTER_POSITION, MAINTAIN_BOTTOM_RIGHT_POSITION, MAINTAIN_TOP_LEFT_POSITION }
+    private ViewSizeChangeBehavior orientationChangeBehavior = ViewSizeChangeBehavior.MAINTAIN_CENTER_POSITION;
+    private ViewSizeChangeBehavior viewSizeChangeBehavior = ViewSizeChangeBehavior.MAINTAIN_CENTER_POSITION;
+    private boolean orientationJustChanged = false;
+
     private enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
 
     private State state;
@@ -162,7 +167,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageResource(resId);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -170,7 +175,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageBitmap(bm);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -178,7 +183,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageDrawable(drawable);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -186,7 +191,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageURI(uri);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -209,6 +214,22 @@ public class TouchImageView extends ImageView {
     @Override
     public ScaleType getScaleType() {
         return mScaleType;
+    }
+
+    public ViewSizeChangeBehavior getOrientationChangeBehavior() {
+        return orientationChangeBehavior;
+    }
+
+    public void setOrientationChangeBehavior(ViewSizeChangeBehavior orientationChangeBehavior) {
+        this.orientationChangeBehavior = orientationChangeBehavior;
+    }
+
+    public ViewSizeChangeBehavior getViewSizeChangeBehavior() {
+        return viewSizeChangeBehavior;
+    }
+
+    public void setViewSizeChangeBehavior(ViewSizeChangeBehavior viewSizeChangeBehavior) {
+        this.viewSizeChangeBehavior = viewSizeChangeBehavior;
     }
 
     /**
@@ -300,6 +321,7 @@ public class TouchImageView extends ImageView {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        orientationJustChanged = true;
         savePreviousImageValues();
     }
 
@@ -356,7 +378,7 @@ public class TouchImageView extends ImageView {
      */
     public void resetZoom() {
         normalizedScale = 1;
-        fitImageToView();
+        fitImageToView(false);
     }
 
     /**
@@ -549,6 +571,10 @@ public class TouchImageView extends ImageView {
         int totalViewWidth = setViewSize(widthMode, widthSize, drawableWidth);
         int totalViewHeight = setViewSize(heightMode, heightSize, drawableHeight);
 
+        if (!orientationJustChanged) {
+            savePreviousImageValues();
+        }
+
         // Image view width, height must consider padding
         viewWidth = totalViewWidth - getPaddingLeft() - getPaddingRight();
         viewHeight = totalViewHeight - getPaddingTop() - getPaddingBottom();
@@ -561,15 +587,29 @@ public class TouchImageView extends ImageView {
         //
         // Fit content within view
         //
-        fitImageToView();
+        fitImageToView(orientationJustChanged);
+        orientationJustChanged = false;
     }
 
     /**
-     * If the normalizedScale is equal to 1, then the image is made to fit the screen. Otherwise,
-     * it is made to fit the screen according to the dimensions of the previous image matrix. This
-     * allows the image to maintain its zoom after rotation.
+     * This function can be called:
+     * 1. When a new image is loaded (setImageResource|Bitmap|Drawable|URI).
+     * 2. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
+     * 3. When the view is resized (onMeasure).
+     * 4. When the zoom is reset (resetZoom).
+     *
+     * In cases 1, 2 and 3, we try to maintain the zoom state and position as directed by
+     * orientationChangeBehavior and resizeBehavior (if there is an existing zoom state and
+     * position, which there might not be in case 1).
+     *
+     * If the normalizedScale is equal to 1, then the image is made to fit the View. Otherwise, we
+     * maintain zoom level and attempt to roughly put the same part of the image in the View as was
+     * there before, paying attention to orientationChangeBehavior or resizeBehavior.
      */
-    private void fitImageToView() {
+    private void fitImageToView(boolean isOrientationChange) {
+        ViewSizeChangeBehavior changeBehavior = orientationJustChanged ?
+                orientationChangeBehavior : viewSizeChangeBehavior;
+
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
             return;
@@ -641,9 +681,9 @@ public class TouchImageView extends ImageView {
             // to NaN in translateMatrixAfterRotate. To avoid this, call savePreviousImageValues
             // to set them equal to the current values.
             //
-//        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
-            savePreviousImageValues();
-//        	}
+        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
+                savePreviousImageValues();
+        	}
 
             prevMatrix.getValues(m);
 
