@@ -6,6 +6,7 @@
  * Updated By: @ipsilondev
  * Updated By: hank-cp
  * Updated By: singpolyma
+ * Updated By: Bartholomew Furrow
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
@@ -63,7 +64,7 @@ public class TouchImageView extends ImageView {
     //
     private Matrix matrix, prevMatrix;
 
-    public enum ViewSizeChangeBehavior { MAINTAIN_CENTER_POSITION, MAINTAIN_BOTTOM_RIGHT_POSITION, MAINTAIN_TOP_LEFT_POSITION }
+    public enum ViewSizeChangeBehavior { MAINTAIN_CENTER_POSITION, MAINTAIN_TOP_LEFT_POSITION, MAINTAIN_BOTTOM_RIGHT_POSITION }
     private ViewSizeChangeBehavior orientationChangeBehavior = ViewSizeChangeBehavior.MAINTAIN_CENTER_POSITION;
     private ViewSizeChangeBehavior viewSizeChangeBehavior = ViewSizeChangeBehavior.MAINTAIN_CENTER_POSITION;
     private boolean orientationJustChanged = false;
@@ -285,6 +286,8 @@ public class TouchImageView extends ImageView {
         matrix.getValues(m);
         bundle.putFloatArray("matrix", m);
         bundle.putBoolean("imageRendered", imageRenderedAtLeastOnce);
+        bundle.putSerializable("sizeChangeBehavior", viewSizeChangeBehavior);
+        bundle.putSerializable("orientationChangeBehavior", orientationChangeBehavior);
         return bundle;
     }
 
@@ -300,6 +303,8 @@ public class TouchImageView extends ImageView {
             prevViewHeight = bundle.getInt("viewHeight");
             prevViewWidth = bundle.getInt("viewWidth");
             imageRenderedAtLeastOnce = bundle.getBoolean("imageRendered");
+            viewSizeChangeBehavior = (ViewSizeChangeBehavior) bundle.getSerializable("sizeChangeBehavior");
+            orientationChangeBehavior = (ViewSizeChangeBehavior) bundle.getSerializable("orientationChangeBehavior");
             super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
             return;
         }
@@ -607,7 +612,7 @@ public class TouchImageView extends ImageView {
      * there before, paying attention to orientationChangeBehavior or resizeBehavior.
      */
     private void fitImageToView(boolean isOrientationChange) {
-        ViewSizeChangeBehavior changeBehavior = orientationJustChanged ?
+        ViewSizeChangeBehavior changeBehavior = isOrientationChange ?
                 orientationChangeBehavior : viewSizeChangeBehavior;
 
         Drawable drawable = getDrawable();
@@ -652,7 +657,7 @@ public class TouchImageView extends ImageView {
         }
 
         //
-        // Center the image
+        // Put the image's center in the right place.
         //
         float redundantXSpace = viewWidth - (scaleX * drawableWidth);
         float redundantYSpace = viewHeight - (scaleY * drawableHeight);
@@ -674,17 +679,17 @@ public class TouchImageView extends ImageView {
                     matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
             }
             normalizedScale = 1;
-
         } else {
             //
             // These values should never be 0 or we will set viewWidth and viewHeight
-            // to NaN in translateMatrixAfterRotate. To avoid this, call savePreviousImageValues
+            // to NaN in newTranslationAfterChange. To avoid this, call savePreviousImageValues
             // to set them equal to the current values.
             //
         	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
                 savePreviousImageValues();
         	}
 
+        	// Use the previous matrix as our starting point for the new matrix.
             prevMatrix.getValues(m);
 
             //
@@ -704,14 +709,14 @@ public class TouchImageView extends ImageView {
             //
             float prevActualWidth = prevMatchViewWidth * normalizedScale;
             float actualWidth = getImageWidth();
-            translateMatrixAfterRotate(Matrix.MTRANS_X, transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth);
+            m[Matrix.MTRANS_X] = newTranslationAfterChange(transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth, changeBehavior);
 
             //
             // Height
             //
             float prevActualHeight = prevMatchViewHeight * normalizedScale;
             float actualHeight = getImageHeight();
-            translateMatrixAfterRotate(Matrix.MTRANS_Y, transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight);
+            m[Matrix.MTRANS_Y] = newTranslationAfterChange(transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight, changeBehavior);
 
             //
             // Set the matrix to the adjusted scale and translate values.
@@ -753,38 +758,53 @@ public class TouchImageView extends ImageView {
     }
 
     /**
-     * After rotating, the matrix needs to be translated. This function finds the area of image
-     * which was previously centered and adjusts translations so that is again the center, post-rotation.
+     * After any change described in the comments for fitImageToView, the matrix needs to be
+     * translated. This function translates the image so that the appropriate part of the image
+     * stays in the same part of the View. The "appropriate part" is specified by sizeChangeBehavior.
      *
-     * @param axis          Matrix.MTRANS_X or Matrix.MTRANS_Y
-     * @param trans         the value of trans in that axis before the rotation
-     * @param prevImageSize the width/height of the image before the rotation
-     * @param imageSize     width/height of the image after rotation
-     * @param prevViewSize  width/height of view before rotation
-     * @param viewSize      width/height of view after rotation
-     * @param drawableSize  width/height of drawable
+     * @param trans              the value of trans in that axis before the rotation
+     * @param prevImageSize      the width/height of the image before the rotation
+     * @param imageSize          width/height of the image after rotation
+     * @param prevViewSize       width/height of view before rotation
+     * @param viewSize           width/height of view after rotation
+     * @param drawableSize       width/height of drawable
+     * @param sizeChangeBehavior how we should choose the fixed point
      */
-    private void translateMatrixAfterRotate(int axis, float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize) {
+    private float newTranslationAfterChange(float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize, ViewSizeChangeBehavior sizeChangeBehavior) {
         if (imageSize < viewSize) {
             //
             // The width/height of image is less than the view's width/height. Center it.
             //
-            m[axis] = (viewSize - (drawableSize * m[Matrix.MSCALE_X])) * 0.5f;
+            return (viewSize - (drawableSize * m[Matrix.MSCALE_X])) * 0.5f;
 
         } else if (trans > 0) {
             //
-            // The image is larger than the view, but was not before rotation. Center it.
+            // The image is larger than the view, but was not before the view changed. Center it.
             //
-            m[axis] = -((imageSize - viewSize) * 0.5f);
+            return -((imageSize - viewSize) * 0.5f);
 
         } else {
             //
-            // Find the area of the image which was previously centered in the view. Determine its distance
-            // from the left/top side of the view as a fraction of the entire image's width/height. Use that percentage
-            // to calculate the trans in the new view width/height.
+            // Where is the pixel in the View that we are keeping stable, as a fraction of the
+            // width/height of the View?
             //
-            float percentage = (Math.abs(trans) + (0.5f * prevViewSize)) / prevImageSize;
-            m[axis] = -((percentage * imageSize) - (viewSize * 0.5f));
+            float stablePixelPositionInView = 0.5f;  // MAINTAIN_CENTER_POSITION
+            if (sizeChangeBehavior == ViewSizeChangeBehavior.MAINTAIN_BOTTOM_RIGHT_POSITION) {
+                stablePixelPositionInView = 1.0f;
+            } else if (sizeChangeBehavior == ViewSizeChangeBehavior.MAINTAIN_TOP_LEFT_POSITION) {
+                stablePixelPositionInView = 0.0f;
+            }
+            //
+            // Where is the pixel in the Image that we are keeping stable, as a fraction of the
+            // width/height of the Image?
+            //
+            float stablePixelPositionInImage = (-trans + (stablePixelPositionInView * prevViewSize)) / prevImageSize;
+            //
+            // Here's what the new translation should be so that, after whatever change triggered
+            // this function to be called, the pixel at stablePixelPositionInView of the View is
+            // still the pixel at stablePixelPositionInImage of the image.
+            //
+            return -((stablePixelPositionInImage * imageSize) - (viewSize * stablePixelPositionInView));
         }
     }
 
