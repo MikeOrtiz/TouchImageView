@@ -39,6 +39,9 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
+import static android.widget.ImageView.ScaleType.CENTER;
+import static android.widget.ImageView.ScaleType.CENTER_CROP;
+
 public class TouchImageView extends ImageView {
 
     private static final String DEBUG = "DEBUG";
@@ -73,6 +76,11 @@ public class TouchImageView extends ImageView {
 
     private State state;
 
+    /**
+     * If setMinZoom(AUTOMATIC_MIN_ZOOM), then we'll set the min scale to include the whole image.
+     */
+    public static final float AUTOMATIC_MIN_ZOOM = -1.0f;
+    private float userSpecifiedMinScale;
     private float minScale;
     private float maxScale;
     private float superMinScale;
@@ -374,7 +382,27 @@ public class TouchImageView extends ImageView {
      * @param min min zoom multiplier.
      */
     public void setMinZoom(float min) {
-        minScale = min;
+        userSpecifiedMinScale = min;
+        if (min == AUTOMATIC_MIN_ZOOM) {
+            if (mScaleType == CENTER || mScaleType == CENTER_CROP) {
+                Drawable drawable = getDrawable();
+                int drawableWidth = drawable.getIntrinsicWidth();
+                int drawableHeight = drawable.getIntrinsicHeight();
+                if (drawable != null && drawableWidth > 0 && drawableHeight > 0) {
+                    float widthRatio = (float) viewWidth / drawableWidth;
+                    float heightRatio = (float) viewHeight / drawableHeight;
+                    if (mScaleType == CENTER) {
+                        minScale = Math.min(widthRatio, heightRatio);
+                    } else {  // CENTER_CROP
+                        minScale = Math.min(widthRatio, heightRatio) / Math.max(widthRatio, heightRatio);
+                    }
+                }
+            } else {
+                minScale = 1.0f;
+            }
+        } else {
+            minScale = userSpecifiedMinScale;
+        }
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
     }
 
@@ -430,6 +458,7 @@ public class TouchImageView extends ImageView {
             delayedZoomVariables = new ZoomVariables(scale, focusX, focusY, scaleType);
             return;
         }
+        setMinZoom(userSpecifiedMinScale);  // In case it's AUTOMATIC_MIN_ZOOM.
 
         if (scaleType != mScaleType) {
             setScaleType(scaleType);
@@ -623,6 +652,8 @@ public class TouchImageView extends ImageView {
         if (matrix == null || prevMatrix == null) {
             return;
         }
+
+        setMinZoom(userSpecifiedMinScale);  // In case it's AUTOMATIC_MIN_ZOOM.
 
         int drawableWidth = drawable.getIntrinsicWidth();
         int drawableHeight = drawable.getIntrinsicHeight();

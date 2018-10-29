@@ -35,6 +35,7 @@ public class ChangeSizeExampleActivity extends Activity {
         setContentView(R.layout.activity_change_size);
         image = findViewById(R.id.img);
         image.setBackgroundColor(Color.LTGRAY);
+        image.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
         image.setMaxZoom(6.0f);
         imageContainer = findViewById(R.id.image_container);
 
