@@ -598,12 +598,13 @@ public class TouchImageView extends ImageView {
 
     /**
      * This function can be called:
-     * 1. When a new image is loaded (setImageResource|Bitmap|Drawable|URI).
-     * 2. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
-     * 3. When the view is resized (onMeasure).
-     * 4. When the zoom is reset (resetZoom).
+     * 1. When the TouchImageView is first loaded (onMeasure).
+     * 2. When a new image is loaded (setImageResource|Bitmap|Drawable|URI).
+     * 3. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
+     * 4. When the view is resized (onMeasure).
+     * 5. When the zoom is reset (resetZoom).
      *
-     * In cases 1, 2 and 3, we try to maintain the zoom state and position as directed by
+     * In cases 2, 3 and 4, we try to maintain the zoom state and position as directed by
      * orientationChangeBehavior and resizeBehavior (if there is an existing zoom state and
      * position, which there might not be in case 1).
      *
@@ -689,11 +690,13 @@ public class TouchImageView extends ImageView {
                 savePreviousImageValues();
         	}
 
+        	//
         	// Use the previous matrix as our starting point for the new matrix.
+            //
             prevMatrix.getValues(m);
 
             //
-            // Rescale Matrix after rotation
+            // Rescale Matrix if appropriate
             //
             m[Matrix.MSCALE_X] = matchViewWidth / drawableWidth * normalizedScale;
             m[Matrix.MSCALE_Y] = matchViewHeight / drawableHeight * normalizedScale;
@@ -705,21 +708,21 @@ public class TouchImageView extends ImageView {
             float transY = m[Matrix.MTRANS_Y];
 
             //
-            // Width
+            // X position
             //
             float prevActualWidth = prevMatchViewWidth * normalizedScale;
             float actualWidth = getImageWidth();
             m[Matrix.MTRANS_X] = newTranslationAfterChange(transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth, changeBehavior);
 
             //
-            // Height
+            // Y position
             //
             float prevActualHeight = prevMatchViewHeight * normalizedScale;
             float actualHeight = getImageHeight();
             m[Matrix.MTRANS_Y] = newTranslationAfterChange(transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight, changeBehavior);
 
             //
-            // Set the matrix to the adjusted scale and translate values.
+            // Set the matrix to the adjusted scale and translation values.
             //
             matrix.setValues(m);
         }
