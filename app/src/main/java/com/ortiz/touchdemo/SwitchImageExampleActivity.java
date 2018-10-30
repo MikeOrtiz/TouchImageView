@@ -11,7 +11,7 @@ import com.ortiz.touchview.TouchImageView;
 public class SwitchImageExampleActivity extends Activity {
 	
 	private TouchImageView image;
-	private static int[] images = { R.drawable.nature_1, R.drawable.nature_2, R.drawable.nature_3, R.drawable.nature_4 };
+	private static int[] images = { R.drawable.nature_1, R.drawable.nature_4, R.drawable.nature_6, R.drawable.nature_7, R.drawable.nature_8 };
 	int index;
 	
 	@Override

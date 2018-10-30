@@ -57,6 +57,9 @@ public class ChangeSizeExampleActivity extends Activity {
             ImageView.ScaleType.FIT_CENTER};
     private int scaleTypeIndex = 0;
 
+    private static int[] images = { R.drawable.nature_1, R.drawable.nature_2, R.drawable.nature_6, R.drawable.nature_7, R.drawable.nature_8 };
+    private int imageIndex = 0;
+
     private SizeBehaviorAdjuster resizeAdjuster;
     private SizeBehaviorAdjuster rotateAdjuster;
 
@@ -90,10 +93,20 @@ public class ChangeSizeExampleActivity extends Activity {
             }
         });
 
+        findViewById(R.id.switch_image_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageIndex = (imageIndex + 1) % images.length;
+                image.setImageResource(images[imageIndex]);
+            }
+        });
+
         if (savedInstanceState != null) {
             scaleTypeIndex = savedInstanceState.getInt("scaleTypeIndex");
             resizeAdjuster.setIndex((Button) findViewById(R.id.resize), savedInstanceState.getInt("resizeAdjusterIndex"));
             rotateAdjuster.setIndex((Button) findViewById(R.id.rotate), savedInstanceState.getInt("rotateAdjusterIndex"));
+            imageIndex = savedInstanceState.getInt("imageIndex");
+            image.setImageResource(images[imageIndex]);
         }
 
         image.post(new Runnable() {
@@ -110,6 +123,7 @@ public class ChangeSizeExampleActivity extends Activity {
         outState.putInt("scaleTypeIndex", scaleTypeIndex);
         outState.putInt("resizeAdjusterIndex", resizeAdjuster.index);
         outState.putInt("rotateAdjusterIndex", rotateAdjuster.index);
+        outState.putInt("imageIndex", imageIndex);
     }
 
     private void processScaleType(ImageView.ScaleType scaleType) {

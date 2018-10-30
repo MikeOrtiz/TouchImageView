@@ -78,6 +78,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="center"/>
+            <Button
+                android:id="@+id/switch_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="change image"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
