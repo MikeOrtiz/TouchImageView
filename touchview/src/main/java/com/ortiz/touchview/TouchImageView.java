@@ -79,6 +79,8 @@ public class TouchImageView extends ImageView {
     public static final float AUTOMATIC_MIN_ZOOM = -1.0f;
     private float userSpecifiedMinScale;
     private float minScale;
+    private boolean maxScaleIsSetByMultiplier = false;
+    private float maxScaleMultiplier;
     private float maxScale;
     private float superMinScale;
     private float superMaxScale;
@@ -345,13 +347,26 @@ public class TouchImageView extends ImageView {
     }
 
     /**
-     * Set the max zoom multiplier. Default value: 3.
+     * Set the max zoom multiplier to a constant. Default value: 3.
      *
      * @param max max zoom multiplier.
      */
     public void setMaxZoom(float max) {
         maxScale = max;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+        maxScaleIsSetByMultiplier = false;
+    }
+
+    /**
+     * Set the max zoom multiplier as a multiple of minZoom, whatever minZoom may change to. By
+     * default, this is not done, and maxZoom has a fixed value of 3.
+     *
+     * @param max max zoom multiplier, as a multiple of minZoom
+     */
+    public void setMaxZoomRatio(float max) {
+        maxScaleMultiplier = max;
+        maxScale = minScale * maxScaleMultiplier;
+        maxScaleIsSetByMultiplier = true;
     }
 
     /**
@@ -399,6 +414,9 @@ public class TouchImageView extends ImageView {
             }
         } else {
             minScale = userSpecifiedMinScale;
+        }
+        if (maxScaleIsSetByMultiplier) {
+            setMaxZoomRatio(maxScaleMultiplier);
         }
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
     }

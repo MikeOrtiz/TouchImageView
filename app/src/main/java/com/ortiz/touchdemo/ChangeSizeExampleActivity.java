@@ -21,7 +21,7 @@ import com.ortiz.touchview.TouchImageView;
  *
  *   image.setScaleType(CENTER);
  *   image.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
- *   image.setMaxZoomRatio(3.0f);  // TODO
+ *   image.setMaxZoomRatio(3.0f);
  *   float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
  *   float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
  *   image.setZoom(Math.max(widthRatio, heightRatio));  // For an initial view that looks like CENTER_CROP
@@ -67,7 +67,7 @@ public class ChangeSizeExampleActivity extends Activity {
         image = findViewById(R.id.img);
         image.setBackgroundColor(Color.LTGRAY);
         image.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
-        image.setMaxZoom(6.0f);
+        image.setMaxZoomRatio(6.0f);
         imageContainer = findViewById(R.id.image_container);
 
         findViewById(R.id.left).setOnClickListener(new SizeAdjuster(-1, 0));
