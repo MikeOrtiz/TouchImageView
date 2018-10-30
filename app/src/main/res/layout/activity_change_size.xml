@@ -62,12 +62,12 @@
                 android:id="@+id/resize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="resize: mid"/>
+                android:text="resize: center"/>
             <Button
                 android:id="@+id/rotate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="rotate: mid"/>
+                android:text="rotate: center"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

@@ -13,22 +13,53 @@ import android.widget.ImageView;
 import com.example.touch.R;
 import com.ortiz.touchview.TouchImageView;
 
+/**
+ * An example Activity for how to handle a TouchImageView that might be resized.
+ *
+ * If you want your image to look like it's being cropped or sliding when you resize it, instead of
+ * changing its zoom level, you probably want ScaleType.CENTER. Here's an example of how to use it:
+ *
+ *   image.setScaleType(CENTER);
+ *   image.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
+ *   image.setMaxZoomRatio(3.0f);  // TODO
+ *   float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
+ *   float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
+ *   image.setZoom(Math.max(widthRatio, heightRatio));  // For an initial view that looks like CENTER_CROP
+ *   image.setZoom(Math.min(widthRatio, heightRatio));  // For an initial view that looks like FIT_CENTER
+ *
+ * That code is run when the button displays "CENTER (with X zoom)".
+ *
+ * You can use other ScaleTypes, but for all of them, the size of the image depends somehow on the
+ * size of the TouchImageView, just like it does in ImageView. You can thus expect your image to
+ * change magnification as its View changes sizes.
+ */
 public class ChangeSizeExampleActivity extends Activity {
     private TouchImageView image;
     private FrameLayout imageContainer;
+    private Button switchScaleTypeButton;
 
     ValueAnimator xSizeAnimator = new ValueAnimator();
     ValueAnimator ySizeAnimator = new ValueAnimator();
     private int xSizeAdjustment = 0;
     private int ySizeAdjustment = 0;
 
-    private static final ImageView.ScaleType[] scaleTypes = { ImageView.ScaleType.CENTER, ImageView.ScaleType.CENTER_CROP, ImageView.ScaleType.CENTER_INSIDE, ImageView.ScaleType.FIT_XY, ImageView.ScaleType.FIT_CENTER };
+    //
+    // Two of the ScaleTypes are stand-ins for CENTER with different initial zoom levels. This is
+    // special-cased in processScaleType.
+    //
+    private static final ImageView.ScaleType[] scaleTypes = {
+            ImageView.ScaleType.CENTER,
+            ImageView.ScaleType.CENTER_CROP,
+            ImageView.ScaleType.FIT_START, // stand-in for CENTER with initial zoom that looks like FIT_CENTER
+            ImageView.ScaleType.FIT_END,  // stand-in for CENTER with initial zoom that looks like CENTER_CROP
+            ImageView.ScaleType.CENTER_INSIDE,
+            ImageView.ScaleType.FIT_XY,
+            ImageView.ScaleType.FIT_CENTER};
     private int scaleTypeIndex = 0;
 
     private SizeBehaviorAdjuster resizeAdjuster;
     private SizeBehaviorAdjuster rotateAdjuster;
 
-    // TODO: Understand CENTER_CROP resizing itself on scroll.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,23 +80,28 @@ public class ChangeSizeExampleActivity extends Activity {
         findViewById(R.id.resize).setOnClickListener(resizeAdjuster);
         findViewById(R.id.rotate).setOnClickListener(rotateAdjuster);
 
-        findViewById(R.id.switch_scaletype_button).setOnClickListener(new View.OnClickListener() {
+
+        switchScaleTypeButton = findViewById(R.id.switch_scaletype_button);
+        switchScaleTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scaleTypeIndex = (scaleTypeIndex + 1) % scaleTypes.length;
-                ImageView.ScaleType scaleType = scaleTypes[scaleTypeIndex];
-                ((Button) v).setText(scaleType.name());
-                image.setScaleType(scaleType);
-                image.resetZoom();
+                processScaleType(scaleTypes[scaleTypeIndex]);
             }
         });
 
         if (savedInstanceState != null) {
             scaleTypeIndex = savedInstanceState.getInt("scaleTypeIndex");
-            ((Button) findViewById(R.id.switch_scaletype_button)).setText(scaleTypes[scaleTypeIndex].name());
             resizeAdjuster.setIndex((Button) findViewById(R.id.resize), savedInstanceState.getInt("resizeAdjusterIndex"));
             rotateAdjuster.setIndex((Button) findViewById(R.id.rotate), savedInstanceState.getInt("rotateAdjusterIndex"));
         }
+
+        image.post(new Runnable() {
+            @Override
+            public void run() {
+                processScaleType(scaleTypes[scaleTypeIndex]);
+            }
+        });
     }
 
     @Override
@@ -74,6 +110,26 @@ public class ChangeSizeExampleActivity extends Activity {
         outState.putInt("scaleTypeIndex", scaleTypeIndex);
         outState.putInt("resizeAdjusterIndex", resizeAdjuster.index);
         outState.putInt("rotateAdjusterIndex", rotateAdjuster.index);
+    }
+
+    private void processScaleType(ImageView.ScaleType scaleType) {
+        if (scaleType == ImageView.ScaleType.FIT_END) {
+            switchScaleTypeButton.setText(ImageView.ScaleType.CENTER.name() + " (with " + ImageView.ScaleType.CENTER_CROP.name() + " zoom)");
+            image.setScaleType(ImageView.ScaleType.CENTER);
+            float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
+            float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
+            image.setZoom(Math.max(widthRatio, heightRatio));
+        } else if (scaleType == ImageView.ScaleType.FIT_START) {
+            switchScaleTypeButton.setText(ImageView.ScaleType.CENTER.name() + " (with " + ImageView.ScaleType.FIT_CENTER.name() + " zoom)");
+            image.setScaleType(ImageView.ScaleType.CENTER);
+            float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
+            float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
+            image.setZoom(Math.min(widthRatio, heightRatio));
+        } else {
+            switchScaleTypeButton.setText(scaleType.name());
+            image.setScaleType(scaleType);
+            image.resetZoom();
+        }
     }
 
     private void adjustImageSize() {
@@ -127,8 +183,7 @@ public class ChangeSizeExampleActivity extends Activity {
     }
 
     private class SizeBehaviorAdjuster implements View.OnClickListener {
-        final TouchImageView.ViewSizeChangeBehavior[] values = TouchImageView.ViewSizeChangeBehavior.values();
-        final String[] names = {"mid", "top-left", "bottom-right"};
+        private final TouchImageView.ViewSizeChangeFixedPixel[] values = TouchImageView.ViewSizeChangeFixedPixel.values();
         private int index = 0;
         private boolean forOrientationChanges;
         private String buttonPrefix;
@@ -150,11 +205,11 @@ public class ChangeSizeExampleActivity extends Activity {
         public void setIndex(Button b, int index) {
             this.index = index;
             if (forOrientationChanges) {
-                image.setOrientationChangeBehavior(values[index]);
+                image.setOrientationChangeFixedPixel(values[index]);
             } else {
-                image.setViewSizeChangeBehavior(values[index]);
+                image.setViewSizeChangeFixedPixel(values[index]);
             }
-            b.setText(buttonPrefix + names[index]);
+            b.setText(buttonPrefix + values[index].name());
         }
     }
 }
