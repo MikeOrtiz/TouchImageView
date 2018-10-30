@@ -83,13 +83,12 @@ public class ChangeSizeExampleActivity extends Activity {
         findViewById(R.id.resize).setOnClickListener(resizeAdjuster);
         findViewById(R.id.rotate).setOnClickListener(rotateAdjuster);
 
-
         switchScaleTypeButton = findViewById(R.id.switch_scaletype_button);
         switchScaleTypeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 scaleTypeIndex = (scaleTypeIndex + 1) % scaleTypes.length;
-                processScaleType(scaleTypes[scaleTypeIndex]);
+                processScaleType(scaleTypes[scaleTypeIndex], true);
             }
         });
 
@@ -112,7 +111,7 @@ public class ChangeSizeExampleActivity extends Activity {
         image.post(new Runnable() {
             @Override
             public void run() {
-                processScaleType(scaleTypes[scaleTypeIndex]);
+                processScaleType(scaleTypes[scaleTypeIndex], false);
             }
         });
     }
@@ -126,23 +125,29 @@ public class ChangeSizeExampleActivity extends Activity {
         outState.putInt("imageIndex", imageIndex);
     }
 
-    private void processScaleType(ImageView.ScaleType scaleType) {
+    private void processScaleType(ImageView.ScaleType scaleType, boolean resetZoom) {
         if (scaleType == ImageView.ScaleType.FIT_END) {
             switchScaleTypeButton.setText(ImageView.ScaleType.CENTER.name() + " (with " + ImageView.ScaleType.CENTER_CROP.name() + " zoom)");
             image.setScaleType(ImageView.ScaleType.CENTER);
             float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
             float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
-            image.setZoom(Math.max(widthRatio, heightRatio));
+            if (resetZoom) {
+                image.setZoom(Math.max(widthRatio, heightRatio));
+            }
         } else if (scaleType == ImageView.ScaleType.FIT_START) {
             switchScaleTypeButton.setText(ImageView.ScaleType.CENTER.name() + " (with " + ImageView.ScaleType.FIT_CENTER.name() + " zoom)");
             image.setScaleType(ImageView.ScaleType.CENTER);
             float widthRatio = (float) image.getMeasuredWidth() / image.getDrawable().getIntrinsicWidth();
             float heightRatio = (float) image.getMeasuredHeight() / image.getDrawable().getIntrinsicHeight();
-            image.setZoom(Math.min(widthRatio, heightRatio));
+            if (resetZoom) {
+                image.setZoom(Math.min(widthRatio, heightRatio));
+            }
         } else {
             switchScaleTypeButton.setText(scaleType.name());
             image.setScaleType(scaleType);
-            image.resetZoom();
+            if (resetZoom) {
+                image.resetZoom();
+            }
         }
     }
 
