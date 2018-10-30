@@ -105,7 +105,7 @@ public class ChangeSizeExampleActivity extends Activity {
             resizeAdjuster.setIndex((Button) findViewById(R.id.resize), savedInstanceState.getInt("resizeAdjusterIndex"));
             rotateAdjuster.setIndex((Button) findViewById(R.id.rotate), savedInstanceState.getInt("rotateAdjusterIndex"));
             imageIndex = savedInstanceState.getInt("imageIndex");
-            image.setImageResource(images[imageIndex]);
+            // We don't need to call setImageResource, because the TouchImageView remembers its resource.
         }
 
         image.post(new Runnable() {

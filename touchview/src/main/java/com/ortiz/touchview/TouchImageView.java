@@ -88,6 +88,7 @@ public class TouchImageView extends ImageView {
 
     private Context context;
     private Fling fling;
+    private int orientation;
 
     private ScaleType mScaleType;
 
@@ -130,6 +131,7 @@ public class TouchImageView extends ImageView {
 
         super.setClickable(true);
 
+        orientation = getResources().getConfiguration().orientation;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
 
@@ -285,6 +287,7 @@ public class TouchImageView extends ImageView {
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putInt("orientation", orientation);
         bundle.putFloat("saveScale", normalizedScale);
         bundle.putFloat("matchViewHeight", matchViewHeight);
         bundle.putFloat("matchViewWidth", matchViewWidth);
@@ -312,6 +315,10 @@ public class TouchImageView extends ImageView {
             imageRenderedAtLeastOnce = bundle.getBoolean("imageRendered");
             viewSizeChangeFixedPixel = (ViewSizeChangeFixedPixel) bundle.getSerializable("viewSizeChangeFixedPixel");
             orientationChangeFixedPixel = (ViewSizeChangeFixedPixel) bundle.getSerializable("orientationChangeFixedPixel");
+            int oldOrientation = bundle.getInt("orientation");
+            if (orientation != oldOrientation) {
+                orientationJustChanged = true;
+            }
             super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
             return;
         }
@@ -333,7 +340,11 @@ public class TouchImageView extends ImageView {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        orientationJustChanged = true;
+        int newOrientation = getResources().getConfiguration().orientation;
+        if (newOrientation != orientation) {
+            orientationJustChanged = true;
+            orientation = newOrientation;
+        }
         savePreviousImageValues();
     }
 
@@ -639,10 +650,22 @@ public class TouchImageView extends ImageView {
         setMeasuredDimension(viewWidth, viewHeight);
 
         //
-        // Fit content within view
+        // Fit content within view.
+        //
+        // onMeasure doesn't get a parameter to tell us whether this call to it was due to an
+        // orientation change or not, so we look at the current orientation in
+        // onRestoreInstanceState and onConfigurationChanged, and see if it's different from what
+        // the orientation used to be. If so, we take the orientation to have changed. When that
+        // happens, onMeasure may be called several times. Resetting orientationJustChanged to false
+        // inside post() appears to cause it to be reset at the end of those calls.
         //
         fitImageToView(orientationJustChanged);
-        orientationJustChanged = false;
+        post(new Runnable() {
+            @Override
+            public void run() {
+                orientationJustChanged = false;
+            }
+        });
     }
 
     /**
@@ -672,6 +695,7 @@ public class TouchImageView extends ImageView {
         if (matrix == null || prevMatrix == null) {
             return;
         }
+        Log.d("TIV", "fitv. ioc: " + isOrientationChange);
 
         if (userSpecifiedMinScale == AUTOMATIC_MIN_ZOOM) {
             setMinZoom(AUTOMATIC_MIN_ZOOM);
