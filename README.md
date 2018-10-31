@@ -4,7 +4,7 @@
 
 ## Capabilities
 
-TouchImageView extends ImageView and supports all of ImageView’s functionality. In addition, TouchImageView adds pinch zoom,dragging, fling, double tap zoom functionality and other animation polish. The intention is for TouchImageView to  mirror as closely as possible the functionality of zoomable images in Gallery  apps.
+TouchImageView extends ImageView and supports all of ImageView’s functionality. In addition, TouchImageView adds pinch zoom, dragging, fling, double tap zoom functionality and other animation polish. The intention is for TouchImageView to  mirror as closely as possible the functionality of zoomable images in Gallery apps.
 
 ## Download 
 Repository available on https://jitpack.io
@@ -50,9 +50,13 @@ Click on TouchImageView to cycle through images. Note that the zoom state is mai
 
 Click on TouchImageView to cycle through supported ScaleTypes.
 
+#### Resize Example
+
+Click on the arrow buttons to change the shape and size of the TouchImageView. See how the view looks when it shrinks with various "resize" settings. Read ChangeSizeExampleActivity.java's comment for advice on how to set up a TouchImageView that's going to be resized.
+
 ## Limitations
 
-TouchImageView does not yet support pinch image rotation. Also, `FIT_START` and `FIT_END scaleTypes are not yet supported.
+TouchImageView does not yet support pinch image rotation. Also, `FIT_START` and `FIT_END` scaleTypes are not yet supported.
 
 ## Usage
 
@@ -101,9 +105,13 @@ Set the max zoom multiplier. Default value is 3.
 
     void setMaxZoom(float max);
 
-Set the min zoom multiplier. Default value is 1.
+Set the min zoom multiplier. Default value is 1. Set to AUTOMATIC_MIN_ZOOM to make it possible to see the whole image.
 
     void setMinZoom(float min);
+    
+Set the max zoom multiplier to stay at a fixed multiple of the min zoom multiplier.
+
+    void setMaxZoomRatio(float max);
 
 Set the focus point of the zoomed image. The focus points are denoted as a fraction from the left and top of the view. The focus points can range in value between 0 and 1.
 
@@ -125,6 +133,14 @@ Set zoom parameters equal to another `TouchImageView`. Including scale, position
 
     void setZoom(TouchImageView img);
     
+Set which part of the image should remain fixed if the TouchImageView is resized.
+    
+    setViewSizeChangeFixedPixel(FixedPixel fixedPixel)
+    
+Set which part of the image should remain fixed if the screen is rotated.
+
+    setOrientationChangeFixedPixel(FixedPixel fixedPixel)
+    
 ## created by
 
 Created by: Mike Ortiz
@@ -135,6 +151,7 @@ Contributions by:
  * hank-cp
  * singpolyma
  * JVillella
+ * Bartholomew Furrow
 
 ## License
 

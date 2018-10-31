@@ -64,9 +64,9 @@ public class TouchImageView extends ImageView {
     //
     private Matrix matrix, prevMatrix;
 
-    public enum ViewSizeChangeFixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
-    private ViewSizeChangeFixedPixel orientationChangeFixedPixel = ViewSizeChangeFixedPixel.CENTER;
-    private ViewSizeChangeFixedPixel viewSizeChangeFixedPixel = ViewSizeChangeFixedPixel.CENTER;
+    public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
+    private FixedPixel orientationChangeFixedPixel = FixedPixel.CENTER;
+    private FixedPixel viewSizeChangeFixedPixel = FixedPixel.CENTER;
     private boolean orientationJustChanged = false;
 
     private enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
@@ -226,19 +226,19 @@ public class TouchImageView extends ImageView {
         return mScaleType;
     }
 
-    public ViewSizeChangeFixedPixel getOrientationChangeFixedPixel() {
+    public FixedPixel getOrientationChangeFixedPixel() {
         return orientationChangeFixedPixel;
     }
 
-    public void setOrientationChangeFixedPixel(ViewSizeChangeFixedPixel orientationChangeFixedPixel) {
-        this.orientationChangeFixedPixel = orientationChangeFixedPixel;
+    public void setOrientationChangeFixedPixel(FixedPixel fixedPixel) {
+        this.orientationChangeFixedPixel = fixedPixel;
     }
 
-    public ViewSizeChangeFixedPixel getViewSizeChangeFixedPixel() {
+    public FixedPixel getViewSizeChangeFixedPixel() {
         return viewSizeChangeFixedPixel;
     }
 
-    public void setViewSizeChangeFixedPixel(ViewSizeChangeFixedPixel viewSizeChangeFixedPixel) {
+    public void setViewSizeChangeFixedPixel(FixedPixel viewSizeChangeFixedPixel) {
         this.viewSizeChangeFixedPixel = viewSizeChangeFixedPixel;
     }
 
@@ -313,8 +313,8 @@ public class TouchImageView extends ImageView {
             prevViewHeight = bundle.getInt("viewHeight");
             prevViewWidth = bundle.getInt("viewWidth");
             imageRenderedAtLeastOnce = bundle.getBoolean("imageRendered");
-            viewSizeChangeFixedPixel = (ViewSizeChangeFixedPixel) bundle.getSerializable("viewSizeChangeFixedPixel");
-            orientationChangeFixedPixel = (ViewSizeChangeFixedPixel) bundle.getSerializable("orientationChangeFixedPixel");
+            viewSizeChangeFixedPixel = (FixedPixel) bundle.getSerializable("viewSizeChangeFixedPixel");
+            orientationChangeFixedPixel = (FixedPixel) bundle.getSerializable("orientationChangeFixedPixel");
             int oldOrientation = bundle.getInt("orientation");
             if (orientation != oldOrientation) {
                 orientationJustChanged = true;
@@ -685,8 +685,8 @@ public class TouchImageView extends ImageView {
      * there before, paying attention to orientationChangeFixedPixel or viewSizeChangeFixedPixel.
      */
     private void fitImageToView(boolean isOrientationChange) {
-        ViewSizeChangeFixedPixel fixedPixel = isOrientationChange ?
-                orientationChangeFixedPixel : viewSizeChangeFixedPixel;
+        FixedPixel fixedPixel = isOrientationChange ?
+                orientationChangeFixedPixel : this.viewSizeChangeFixedPixel;
 
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
@@ -853,7 +853,7 @@ public class TouchImageView extends ImageView {
      * @param drawableSize         width/height of drawable
      * @param sizeChangeFixedPixel how we should choose the fixed pixel
      */
-    private float newTranslationAfterChange(float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize, ViewSizeChangeFixedPixel sizeChangeFixedPixel) {
+    private float newTranslationAfterChange(float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize, FixedPixel sizeChangeFixedPixel) {
         if (imageSize < viewSize) {
             //
             // The width/height of image is less than the view's width/height. Center it.
@@ -872,9 +872,9 @@ public class TouchImageView extends ImageView {
             // width/height of the View?
             //
             float fixedPixelPositionInView = 0.5f;  // CENTER
-            if (sizeChangeFixedPixel == ViewSizeChangeFixedPixel.BOTTOM_RIGHT) {
+            if (sizeChangeFixedPixel == FixedPixel.BOTTOM_RIGHT) {
                 fixedPixelPositionInView = 1.0f;
-            } else if (sizeChangeFixedPixel == ViewSizeChangeFixedPixel.TOP_LEFT) {
+            } else if (sizeChangeFixedPixel == FixedPixel.TOP_LEFT) {
                 fixedPixelPositionInView = 0.0f;
             }
             //

@@ -202,7 +202,7 @@ public class ChangeSizeExampleActivity extends Activity {
     }
 
     private class SizeBehaviorAdjuster implements View.OnClickListener {
-        private final TouchImageView.ViewSizeChangeFixedPixel[] values = TouchImageView.ViewSizeChangeFixedPixel.values();
+        private final TouchImageView.FixedPixel[] values = TouchImageView.FixedPixel.values();
         private int index = 0;
         private boolean forOrientationChanges;
         private String buttonPrefix;
