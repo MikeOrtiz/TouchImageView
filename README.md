@@ -105,7 +105,7 @@ Set the max zoom multiplier. Default value is 3.
 
     void setMaxZoom(float max);
 
-Set the min zoom multiplier. Default value is 1. Set to AUTOMATIC_MIN_ZOOM to make it possible to see the whole image.
+Set the min zoom multiplier. Default value is 1. Set to `TouchImageView.AUTOMATIC_MIN_ZOOM` to make it possible to see the whole image.
 
     void setMinZoom(float min);
     
@@ -141,7 +141,7 @@ Set which part of the image should remain fixed if the screen is rotated.
 
     setOrientationChangeFixedPixel(FixedPixel fixedPixel)
     
-## created by
+## Created by
 
 Created by: Mike Ortiz
 Contributions by: 
