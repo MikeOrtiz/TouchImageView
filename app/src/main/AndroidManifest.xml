@@ -17,5 +17,6 @@
         <activity android:name="com.ortiz.touchdemo.ViewPagerExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.SwitchImageExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.SwitchScaleTypeExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.ChangeSizeExampleActivity" />
     </application>
 </manifest>

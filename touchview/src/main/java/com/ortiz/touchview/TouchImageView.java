@@ -6,6 +6,7 @@
  * Updated By: @ipsilondev
  * Updated By: hank-cp
  * Updated By: singpolyma
+ * Updated By: Bartholomew Furrow
  * -------------------
  * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
  */
@@ -63,11 +64,23 @@ public class TouchImageView extends ImageView {
     //
     private Matrix matrix, prevMatrix;
 
+    public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
+    private FixedPixel orientationChangeFixedPixel = FixedPixel.CENTER;
+    private FixedPixel viewSizeChangeFixedPixel = FixedPixel.CENTER;
+    private boolean orientationJustChanged = false;
+
     private enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
 
     private State state;
 
+    /**
+     * If setMinZoom(AUTOMATIC_MIN_ZOOM), then we'll set the min scale to include the whole image.
+     */
+    public static final float AUTOMATIC_MIN_ZOOM = -1.0f;
+    private float userSpecifiedMinScale;
     private float minScale;
+    private boolean maxScaleIsSetByMultiplier = false;
+    private float maxScaleMultiplier;
     private float maxScale;
     private float superMinScale;
     private float superMaxScale;
@@ -75,6 +88,7 @@ public class TouchImageView extends ImageView {
 
     private Context context;
     private Fling fling;
+    private int orientation;
 
     private ScaleType mScaleType;
 
@@ -117,6 +131,7 @@ public class TouchImageView extends ImageView {
 
         super.setClickable(true);
 
+        orientation = getResources().getConfiguration().orientation;
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
 
@@ -162,7 +177,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageResource(resId);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -170,7 +185,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageBitmap(bm);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -178,7 +193,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageDrawable(drawable);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -186,7 +201,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageURI(uri);
         savePreviousImageValues();
-        fitImageToView();
+        fitImageToView(false);
     }
 
     @Override
@@ -209,6 +224,22 @@ public class TouchImageView extends ImageView {
     @Override
     public ScaleType getScaleType() {
         return mScaleType;
+    }
+
+    public FixedPixel getOrientationChangeFixedPixel() {
+        return orientationChangeFixedPixel;
+    }
+
+    public void setOrientationChangeFixedPixel(FixedPixel fixedPixel) {
+        this.orientationChangeFixedPixel = fixedPixel;
+    }
+
+    public FixedPixel getViewSizeChangeFixedPixel() {
+        return viewSizeChangeFixedPixel;
+    }
+
+    public void setViewSizeChangeFixedPixel(FixedPixel viewSizeChangeFixedPixel) {
+        this.viewSizeChangeFixedPixel = viewSizeChangeFixedPixel;
     }
 
     /**
@@ -256,6 +287,7 @@ public class TouchImageView extends ImageView {
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putParcelable("instanceState", super.onSaveInstanceState());
+        bundle.putInt("orientation", orientation);
         bundle.putFloat("saveScale", normalizedScale);
         bundle.putFloat("matchViewHeight", matchViewHeight);
         bundle.putFloat("matchViewWidth", matchViewWidth);
@@ -264,6 +296,8 @@ public class TouchImageView extends ImageView {
         matrix.getValues(m);
         bundle.putFloatArray("matrix", m);
         bundle.putBoolean("imageRendered", imageRenderedAtLeastOnce);
+        bundle.putSerializable("viewSizeChangeFixedPixel", viewSizeChangeFixedPixel);
+        bundle.putSerializable("orientationChangeFixedPixel", orientationChangeFixedPixel);
         return bundle;
     }
 
@@ -279,6 +313,12 @@ public class TouchImageView extends ImageView {
             prevViewHeight = bundle.getInt("viewHeight");
             prevViewWidth = bundle.getInt("viewWidth");
             imageRenderedAtLeastOnce = bundle.getBoolean("imageRendered");
+            viewSizeChangeFixedPixel = (FixedPixel) bundle.getSerializable("viewSizeChangeFixedPixel");
+            orientationChangeFixedPixel = (FixedPixel) bundle.getSerializable("orientationChangeFixedPixel");
+            int oldOrientation = bundle.getInt("orientation");
+            if (orientation != oldOrientation) {
+                orientationJustChanged = true;
+            }
             super.onRestoreInstanceState(bundle.getParcelable("instanceState"));
             return;
         }
@@ -300,6 +340,11 @@ public class TouchImageView extends ImageView {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        int newOrientation = getResources().getConfiguration().orientation;
+        if (newOrientation != orientation) {
+            orientationJustChanged = true;
+            orientation = newOrientation;
+        }
         savePreviousImageValues();
     }
 
@@ -313,13 +358,26 @@ public class TouchImageView extends ImageView {
     }
 
     /**
-     * Set the max zoom multiplier. Default value: 3.
+     * Set the max zoom multiplier to a constant. Default value: 3.
      *
      * @param max max zoom multiplier.
      */
     public void setMaxZoom(float max) {
         maxScale = max;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
+        maxScaleIsSetByMultiplier = false;
+    }
+
+    /**
+     * Set the max zoom multiplier as a multiple of minZoom, whatever minZoom may change to. By
+     * default, this is not done, and maxZoom has a fixed value of 3.
+     *
+     * @param max max zoom multiplier, as a multiple of minZoom
+     */
+    public void setMaxZoomRatio(float max) {
+        maxScaleMultiplier = max;
+        maxScale = minScale * maxScaleMultiplier;
+        maxScaleIsSetByMultiplier = true;
     }
 
     /**
@@ -347,7 +405,30 @@ public class TouchImageView extends ImageView {
      * @param min min zoom multiplier.
      */
     public void setMinZoom(float min) {
-        minScale = min;
+        userSpecifiedMinScale = min;
+        if (min == AUTOMATIC_MIN_ZOOM) {
+            if (mScaleType == ScaleType.CENTER || mScaleType == ScaleType.CENTER_CROP) {
+                Drawable drawable = getDrawable();
+                int drawableWidth = drawable.getIntrinsicWidth();
+                int drawableHeight = drawable.getIntrinsicHeight();
+                if (drawable != null && drawableWidth > 0 && drawableHeight > 0) {
+                    float widthRatio = (float) viewWidth / drawableWidth;
+                    float heightRatio = (float) viewHeight / drawableHeight;
+                    if (mScaleType == ScaleType.CENTER) {
+                        minScale = Math.min(widthRatio, heightRatio);
+                    } else {  // CENTER_CROP
+                        minScale = Math.min(widthRatio, heightRatio) / Math.max(widthRatio, heightRatio);
+                    }
+                }
+            } else {
+                minScale = 1.0f;
+            }
+        } else {
+            minScale = userSpecifiedMinScale;
+        }
+        if (maxScaleIsSetByMultiplier) {
+            setMaxZoomRatio(maxScaleMultiplier);
+        }
         superMinScale = SUPER_MIN_MULTIPLIER * minScale;
     }
 
@@ -356,7 +437,7 @@ public class TouchImageView extends ImageView {
      */
     public void resetZoom() {
         normalizedScale = 1;
-        fitImageToView();
+        fitImageToView(false);
     }
 
     /**
@@ -402,6 +483,12 @@ public class TouchImageView extends ImageView {
         if (!onDrawReady) {
             delayedZoomVariables = new ZoomVariables(scale, focusX, focusY, scaleType);
             return;
+        }
+        if (userSpecifiedMinScale == AUTOMATIC_MIN_ZOOM) {
+            setMinZoom(AUTOMATIC_MIN_ZOOM);
+            if (normalizedScale < minScale) {
+                normalizedScale = minScale;
+            }
         }
 
         if (scaleType != mScaleType) {
@@ -549,6 +636,10 @@ public class TouchImageView extends ImageView {
         int totalViewWidth = setViewSize(widthMode, widthSize, drawableWidth);
         int totalViewHeight = setViewSize(heightMode, heightSize, drawableHeight);
 
+        if (!orientationJustChanged) {
+            savePreviousImageValues();
+        }
+
         // Image view width, height must consider padding
         viewWidth = totalViewWidth - getPaddingLeft() - getPaddingRight();
         viewHeight = totalViewHeight - getPaddingTop() - getPaddingBottom();
@@ -559,23 +650,58 @@ public class TouchImageView extends ImageView {
         setMeasuredDimension(viewWidth, viewHeight);
 
         //
-        // Fit content within view
+        // Fit content within view.
         //
-        fitImageToView();
+        // onMeasure doesn't get a parameter to tell us whether this call to it was due to an
+        // orientation change or not, so we look at the current orientation in
+        // onRestoreInstanceState and onConfigurationChanged, and see if it's different from what
+        // the orientation used to be. If so, we take the orientation to have changed. When that
+        // happens, onMeasure may be called several times. Resetting orientationJustChanged to false
+        // inside post() appears to cause it to be reset at the end of those calls.
+        //
+        fitImageToView(orientationJustChanged);
+        post(new Runnable() {
+            @Override
+            public void run() {
+                orientationJustChanged = false;
+            }
+        });
     }
 
     /**
-     * If the normalizedScale is equal to 1, then the image is made to fit the screen. Otherwise,
-     * it is made to fit the screen according to the dimensions of the previous image matrix. This
-     * allows the image to maintain its zoom after rotation.
+     * This function can be called:
+     * 1. When the TouchImageView is first loaded (onMeasure).
+     * 2. When a new image is loaded (setImageResource|Bitmap|Drawable|URI).
+     * 3. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
+     * 4. When the view is resized (onMeasure).
+     * 5. When the zoom is reset (resetZoom).
+     *
+     * In cases 2, 3 and 4, we try to maintain the zoom state and position as directed by
+     * orientationChangeFixedPixel or viewSizeChangeFixedPixel (if there is an existing zoom state
+     * and position, which there might not be in case 2).
+     *
+     * If the normalizedScale is equal to 1, then the image is made to fit the View. Otherwise, we
+     * maintain zoom level and attempt to roughly put the same part of the image in the View as was
+     * there before, paying attention to orientationChangeFixedPixel or viewSizeChangeFixedPixel.
      */
-    private void fitImageToView() {
+    private void fitImageToView(boolean isOrientationChange) {
+        FixedPixel fixedPixel = isOrientationChange ?
+                orientationChangeFixedPixel : this.viewSizeChangeFixedPixel;
+
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
             return;
         }
         if (matrix == null || prevMatrix == null) {
             return;
+        }
+        Log.d("TIV", "fitv. ioc: " + isOrientationChange);
+
+        if (userSpecifiedMinScale == AUTOMATIC_MIN_ZOOM) {
+            setMinZoom(AUTOMATIC_MIN_ZOOM);
+            if (normalizedScale < minScale) {
+                normalizedScale = minScale;
+            }
         }
 
         int drawableWidth = drawable.getIntrinsicWidth();
@@ -612,7 +738,7 @@ public class TouchImageView extends ImageView {
         }
 
         //
-        // Center the image
+        // Put the image's center in the right place.
         //
         float redundantXSpace = viewWidth - (scaleX * drawableWidth);
         float redundantYSpace = viewHeight - (scaleY * drawableHeight);
@@ -634,21 +760,23 @@ public class TouchImageView extends ImageView {
                     matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
             }
             normalizedScale = 1;
-
         } else {
             //
             // These values should never be 0 or we will set viewWidth and viewHeight
-            // to NaN in translateMatrixAfterRotate. To avoid this, call savePreviousImageValues
+            // to NaN in newTranslationAfterChange. To avoid this, call savePreviousImageValues
             // to set them equal to the current values.
             //
-//        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
-            savePreviousImageValues();
-//        	}
+        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
+                savePreviousImageValues();
+        	}
 
+        	//
+        	// Use the previous matrix as our starting point for the new matrix.
+            //
             prevMatrix.getValues(m);
 
             //
-            // Rescale Matrix after rotation
+            // Rescale Matrix if appropriate
             //
             m[Matrix.MSCALE_X] = matchViewWidth / drawableWidth * normalizedScale;
             m[Matrix.MSCALE_Y] = matchViewHeight / drawableHeight * normalizedScale;
@@ -660,21 +788,21 @@ public class TouchImageView extends ImageView {
             float transY = m[Matrix.MTRANS_Y];
 
             //
-            // Width
+            // X position
             //
             float prevActualWidth = prevMatchViewWidth * normalizedScale;
             float actualWidth = getImageWidth();
-            translateMatrixAfterRotate(Matrix.MTRANS_X, transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth);
+            m[Matrix.MTRANS_X] = newTranslationAfterChange(transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth, fixedPixel);
 
             //
-            // Height
+            // Y position
             //
             float prevActualHeight = prevMatchViewHeight * normalizedScale;
             float actualHeight = getImageHeight();
-            translateMatrixAfterRotate(Matrix.MTRANS_Y, transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight);
+            m[Matrix.MTRANS_Y] = newTranslationAfterChange(transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight, fixedPixel);
 
             //
-            // Set the matrix to the adjusted scale and translate values.
+            // Set the matrix to the adjusted scale and translation values.
             //
             matrix.setValues(m);
         }
@@ -713,38 +841,53 @@ public class TouchImageView extends ImageView {
     }
 
     /**
-     * After rotating, the matrix needs to be translated. This function finds the area of image
-     * which was previously centered and adjusts translations so that is again the center, post-rotation.
+     * After any change described in the comments for fitImageToView, the matrix needs to be
+     * translated. This function translates the image so that the fixed pixel in the image
+     * stays in the same place in the View.
      *
-     * @param axis          Matrix.MTRANS_X or Matrix.MTRANS_Y
-     * @param trans         the value of trans in that axis before the rotation
-     * @param prevImageSize the width/height of the image before the rotation
-     * @param imageSize     width/height of the image after rotation
-     * @param prevViewSize  width/height of view before rotation
-     * @param viewSize      width/height of view after rotation
-     * @param drawableSize  width/height of drawable
+     * @param trans                the value of trans in that axis before the rotation
+     * @param prevImageSize        the width/height of the image before the rotation
+     * @param imageSize            width/height of the image after rotation
+     * @param prevViewSize         width/height of view before rotation
+     * @param viewSize             width/height of view after rotation
+     * @param drawableSize         width/height of drawable
+     * @param sizeChangeFixedPixel how we should choose the fixed pixel
      */
-    private void translateMatrixAfterRotate(int axis, float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize) {
+    private float newTranslationAfterChange(float trans, float prevImageSize, float imageSize, int prevViewSize, int viewSize, int drawableSize, FixedPixel sizeChangeFixedPixel) {
         if (imageSize < viewSize) {
             //
             // The width/height of image is less than the view's width/height. Center it.
             //
-            m[axis] = (viewSize - (drawableSize * m[Matrix.MSCALE_X])) * 0.5f;
+            return (viewSize - (drawableSize * m[Matrix.MSCALE_X])) * 0.5f;
 
         } else if (trans > 0) {
             //
-            // The image is larger than the view, but was not before rotation. Center it.
+            // The image is larger than the view, but was not before the view changed. Center it.
             //
-            m[axis] = -((imageSize - viewSize) * 0.5f);
+            return -((imageSize - viewSize) * 0.5f);
 
         } else {
             //
-            // Find the area of the image which was previously centered in the view. Determine its distance
-            // from the left/top side of the view as a fraction of the entire image's width/height. Use that percentage
-            // to calculate the trans in the new view width/height.
+            // Where is the pixel in the View that we are keeping stable, as a fraction of the
+            // width/height of the View?
             //
-            float percentage = (Math.abs(trans) + (0.5f * prevViewSize)) / prevImageSize;
-            m[axis] = -((percentage * imageSize) - (viewSize * 0.5f));
+            float fixedPixelPositionInView = 0.5f;  // CENTER
+            if (sizeChangeFixedPixel == FixedPixel.BOTTOM_RIGHT) {
+                fixedPixelPositionInView = 1.0f;
+            } else if (sizeChangeFixedPixel == FixedPixel.TOP_LEFT) {
+                fixedPixelPositionInView = 0.0f;
+            }
+            //
+            // Where is the pixel in the Image that we are keeping stable, as a fraction of the
+            // width/height of the Image?
+            //
+            float fixedPixelPositionInImage = (-trans + (fixedPixelPositionInView * prevViewSize)) / prevImageSize;
+            //
+            // Here's what the new translation should be so that, after whatever change triggered
+            // this function to be called, the pixel at fixedPixelPositionInView of the View is
+            // still the pixel at fixedPixelPositionInImage of the image.
+            //
+            return -((fixedPixelPositionInImage * imageSize) - (viewSize * fixedPixelPositionInView));
         }
     }
 

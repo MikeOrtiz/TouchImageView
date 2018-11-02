@@ -9,7 +9,8 @@
     <string name="viewpager_example">ViewPager Example</string>
     <string name="switch_image_example">Switch Image Example</string>
     <string name="switch_scaletype_example">Switch ScaleType Example</string>
-    
+    <string name="resize_button_example">Resize Example</string>
+
     <string name="get_scroll_position">getScrollPosition():</string>
     <string name="get_zoomed_rect">getZoomedRect():</string>
     <string name="get_current_zoom">getCurrentZoom():</string>
