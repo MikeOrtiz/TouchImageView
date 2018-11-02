@@ -134,6 +134,7 @@ public class TouchImageView extends ImageView {
         setState(State.NONE);
         onDrawReady = false;
         super.setOnTouchListener(new PrivateOnTouchListener());
+        setImageBitmap(null);
     }
 
     @Override
