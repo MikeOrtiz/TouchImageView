@@ -695,7 +695,6 @@ public class TouchImageView extends ImageView {
         if (matrix == null || prevMatrix == null) {
             return;
         }
-        Log.d("TIV", "fitv. ioc: " + isOrientationChange);
 
         if (userSpecifiedMinScale == AUTOMATIC_MIN_ZOOM) {
             setMinZoom(AUTOMATIC_MIN_ZOOM);
