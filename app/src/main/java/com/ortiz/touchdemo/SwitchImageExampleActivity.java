@@ -12,33 +12,35 @@ public class SwitchImageExampleActivity extends Activity {
 	
 	private TouchImageView image;
 	private static int[] images = { R.drawable.nature_1, R.drawable.nature_4, R.drawable.nature_6, R.drawable.nature_7, R.drawable.nature_8 };
-	int index;
+	int index = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_switch_image_example);
 		image = (TouchImageView) findViewById(R.id.img);
-		index = 0;
 		//
 		// Set first image
 		//
-		setCurrentImage();
+		if (savedInstanceState != null) {
+			index = savedInstanceState.getInt("index");
+		}
+		image.setImageResource(images[index]);
 		//
 		// Set next image with each button click
 		//
 		image.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				setCurrentImage();
+				index = (index + 1) % images.length;
+				image.setImageResource(images[index]);
 			}
 		});
 	}
-	
-	private void setCurrentImage() {
-		image.setImageResource(images[index]);
-		index = (++index % images.length);
-	}
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("index", index);
+	}
 }
