@@ -377,6 +377,7 @@ public class TouchImageView extends ImageView {
     public void setMaxZoomRatio(float max) {
         maxScaleMultiplier = max;
         maxScale = minScale * maxScaleMultiplier;
+        superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
         maxScaleIsSetByMultiplier = true;
     }
 
