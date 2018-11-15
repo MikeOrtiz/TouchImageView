@@ -177,7 +177,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageResource(resId);
         savePreviousImageValues();
-        fitImageToView(false);
+        fitImageToView();
     }
 
     @Override
@@ -185,7 +185,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageBitmap(bm);
         savePreviousImageValues();
-        fitImageToView(false);
+        fitImageToView();
     }
 
     @Override
@@ -193,7 +193,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageDrawable(drawable);
         savePreviousImageValues();
-        fitImageToView(false);
+        fitImageToView();
     }
 
     @Override
@@ -201,7 +201,7 @@ public class TouchImageView extends ImageView {
         imageRenderedAtLeastOnce = false;
         super.setImageURI(uri);
         savePreviousImageValues();
-        fitImageToView(false);
+        fitImageToView();
     }
 
     @Override
@@ -437,7 +437,7 @@ public class TouchImageView extends ImageView {
      */
     public void resetZoom() {
         normalizedScale = 1;
-        fitImageToView(false);
+        fitImageToView();
     }
 
     /**
@@ -641,32 +641,42 @@ public class TouchImageView extends ImageView {
         }
 
         // Image view width, height must consider padding
-        viewWidth = totalViewWidth - getPaddingLeft() - getPaddingRight();
-        viewHeight = totalViewHeight - getPaddingTop() - getPaddingBottom();
+        int width = totalViewWidth - getPaddingLeft() - getPaddingRight();
+        int height = totalViewHeight - getPaddingTop() - getPaddingBottom();
 
         //
         // Set view dimensions
         //
-        setMeasuredDimension(viewWidth, viewHeight);
+        setMeasuredDimension(width, height);
 
         //
         // Fit content within view.
         //
-        // onMeasure doesn't get a parameter to tell us whether this call to it was due to an
-        // orientation change or not, so we look at the current orientation in
-        // onRestoreInstanceState and onConfigurationChanged, and see if it's different from what
-        // the orientation used to be. If so, we take the orientation to have changed. When that
-        // happens, onMeasure may be called several times. Resetting orientationJustChanged to false
-        // inside post() appears to cause it to be reset at the end of those calls.
+        // onMeasure may be called multiple times for each layout change, including orientation
+        // changes. For example, if the TouchImageView is inside a ConstraintLayout, onMeasure may
+        // be called with:
+        // widthMeasureSpec == "AT_MOST 2556" and then immediately with
+        // widthMeasureSpec == "EXACTLY 1404", then back and forth multiple times in quick
+        // succession, as the ConstraintLayout tries to solve its constraints.
         //
-        fitImageToView(orientationJustChanged);
-        post(new Runnable() {
-            @Override
-            public void run() {
-                orientationJustChanged = false;
-            }
-        });
+        // So we make all changes to class members, such as fitting the image into the new shape of
+        // the TouchImageView, after the final size has been determined. This helps us avoid both
+        // repeated computations, and making irreversible changes (e.g. making the View temporarily too
+        // big or too small, thus making the current zoom fall outside of an automatically-changing
+        // minZoom and maxZoom).
+        //
+        removeCallbacks(processFinalViewSize);
+        post(processFinalViewSize);
     }
+
+    private Runnable processFinalViewSize = new Runnable() {
+        @Override
+        public void run() {
+            viewWidth = getMeasuredWidth();
+            viewHeight = getMeasuredHeight();
+            fitImageToView();
+        }
+    };
 
     /**
      * This function can be called:
@@ -684,9 +694,10 @@ public class TouchImageView extends ImageView {
      * maintain zoom level and attempt to roughly put the same part of the image in the View as was
      * there before, paying attention to orientationChangeFixedPixel or viewSizeChangeFixedPixel.
      */
-    private void fitImageToView(boolean isOrientationChange) {
-        FixedPixel fixedPixel = isOrientationChange ?
-                orientationChangeFixedPixel : this.viewSizeChangeFixedPixel;
+    private void fitImageToView() {
+        FixedPixel fixedPixel = orientationJustChanged ?
+                orientationChangeFixedPixel : viewSizeChangeFixedPixel;
+        orientationJustChanged = false;
 
         Drawable drawable = getDrawable();
         if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
