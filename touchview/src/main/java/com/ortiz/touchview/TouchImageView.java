@@ -41,16 +41,16 @@ import android.widget.Scroller;
 import androidx.appcompat.widget.AppCompatImageView;
 
 public class TouchImageView extends AppCompatImageView {
-	
-	private static final String DEBUG = "DEBUG";
-	
-	//
-	// SuperMin and SuperMax multipliers. Determine how much the image can be
-	// zoomed below or above the zoom boundaries, before animating back to the
-	// min/max zoom boundary.
-	//
-	private static final float SUPER_MIN_MULTIPLIER = .75f;
-	private static final float SUPER_MAX_MULTIPLIER = 1.25f;
+
+    private static final String DEBUG = "DEBUG";
+
+    //
+    // SuperMin and SuperMax multipliers. Determine how much the image can be
+    // zoomed below or above the zoom boundaries, before animating back to the
+    // min/max zoom boundary.
+    //
+    private static final float SUPER_MIN_MULTIPLIER = .75f;
+    private static final float SUPER_MAX_MULTIPLIER = 1.25f;
 
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
@@ -66,6 +66,7 @@ public class TouchImageView extends AppCompatImageView {
     private Matrix matrix, prevMatrix;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
+
     private FixedPixel orientationChangeFixedPixel = FixedPixel.CENTER;
     private FixedPixel viewSizeChangeFixedPixel = FixedPixel.CENTER;
     private boolean orientationJustChanged = false;
