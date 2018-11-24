@@ -35,21 +35,22 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-public class TouchImageView extends ImageView {
+import androidx.appcompat.widget.AppCompatImageView;
 
-    private static final String DEBUG = "DEBUG";
-
-    //
-    // SuperMin and SuperMax multipliers. Determine how much the image can be
-    // zoomed below or above the zoom boundaries, before animating back to the
-    // min/max zoom boundary.
-    //
-    private static final float SUPER_MIN_MULTIPLIER = .75f;
-    private static final float SUPER_MAX_MULTIPLIER = 1.25f;
+public class TouchImageView extends AppCompatImageView {
+	
+	private static final String DEBUG = "DEBUG";
+	
+	//
+	// SuperMin and SuperMax multipliers. Determine how much the image can be
+	// zoomed below or above the zoom boundaries, before animating back to the
+	// min/max zoom boundary.
+	//
+	private static final float SUPER_MIN_MULTIPLIER = .75f;
+	private static final float SUPER_MAX_MULTIPLIER = 1.25f;
 
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
