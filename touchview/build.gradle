@@ -21,3 +21,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
+dependencies {
+    api 'androidx.appcompat:appcompat:1.0.2'
+}

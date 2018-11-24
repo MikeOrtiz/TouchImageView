@@ -35,11 +35,12 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-public class TouchImageView extends ImageView {
+import androidx.appcompat.widget.AppCompatImageView;
+
+public class TouchImageView extends AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
 
@@ -65,6 +66,7 @@ public class TouchImageView extends ImageView {
     private Matrix matrix, prevMatrix;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
+
     private FixedPixel orientationChangeFixedPixel = FixedPixel.CENTER;
     private FixedPixel viewSizeChangeFixedPixel = FixedPixel.CENTER;
     private boolean orientationJustChanged = false;
