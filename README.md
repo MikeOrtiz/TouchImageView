@@ -21,7 +21,7 @@ allprojects {
 dependencies {
     implementation 'com.github.hannesa2:TouchImageView:1.4.0' // Support Lib
     // or
-    implementation 'com.github.hannesa2:TouchImageView:2.0.0' // Android X
+    implementation 'com.github.hannesa2:TouchImageView:2.1.1' // Android X
 }
 
 ```
