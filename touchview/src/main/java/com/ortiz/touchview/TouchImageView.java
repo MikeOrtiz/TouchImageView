@@ -1031,7 +1031,6 @@ public class TouchImageView extends AppCompatImageView {
                 return false;
             }
             mScaleDetector.onTouchEvent(event);
-            mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
 
