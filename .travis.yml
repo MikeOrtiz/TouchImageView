@@ -1,9 +1,8 @@
 language: android
 
-#branches:
-#  only:
-#    - master
-#    - /^v\d+\.\d+\.\d+$/
+branches:
+  only:
+    - master
 
 sudo: true
 
