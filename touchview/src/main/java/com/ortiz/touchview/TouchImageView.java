@@ -651,6 +651,11 @@ public class TouchImageView extends AppCompatImageView {
         // Set view dimensions
         //
         setMeasuredDimension(width, height);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
 
         //
         // Fit content within view.
@@ -662,24 +667,17 @@ public class TouchImageView extends AppCompatImageView {
         // widthMeasureSpec == "EXACTLY 1404", then back and forth multiple times in quick
         // succession, as the ConstraintLayout tries to solve its constraints.
         //
-        // So we make all changes to class members, such as fitting the image into the new shape of
-        // the TouchImageView, after the final size has been determined. This helps us avoid both
+        // onSizeChanged is called once after the final onMeasure is called. So we make all changes
+        // to class members, such as fitting the image into the new shape of the TouchImageView,
+        // here, after the final size has been determined. This helps us avoid both
         // repeated computations, and making irreversible changes (e.g. making the View temporarily too
         // big or too small, thus making the current zoom fall outside of an automatically-changing
         // minZoom and maxZoom).
         //
-        removeCallbacks(processFinalViewSize);
-        post(processFinalViewSize);
+        viewWidth = w;
+        viewHeight = h;
+        fitImageToView();
     }
-
-    private Runnable processFinalViewSize = new Runnable() {
-        @Override
-        public void run() {
-            viewWidth = getMeasuredWidth();
-            viewHeight = getMeasuredHeight();
-            fitImageToView();
-        }
-    };
 
     /**
      * This function can be called:
@@ -779,12 +777,12 @@ public class TouchImageView extends AppCompatImageView {
             // to NaN in newTranslationAfterChange. To avoid this, call savePreviousImageValues
             // to set them equal to the current values.
             //
-        	if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
+            if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
                 savePreviousImageValues();
-        	}
+            }
 
-        	//
-        	// Use the previous matrix as our starting point for the new matrix.
+            //
+            // Use the previous matrix as our starting point for the new matrix.
             //
             prevMatrix.getValues(m);
 
