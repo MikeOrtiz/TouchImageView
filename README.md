@@ -57,19 +57,6 @@ Click on the arrow buttons to change the shape and size of the TouchImageView. S
 ## Limitations
 
 TouchImageView does not yet support pinch image rotation. Also, `FIT_START` and `FIT_END` scaleTypes are not yet supported.
-
-## Usage
-
-Place TouchImageView.java in your project. It can then be used the same as ImageView.
-
-    TouchImageView img = (TouchImageView) findViewById(R.id.img);
-
-If you are using TouchImageView in XML, then you must provide the full package name, because it is a custom view.
-
-    <com.ortiz.touchview.TouchImageView
-	    android:id="@+id/img”
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
 	    
 ## API
 
@@ -140,18 +127,6 @@ Set which part of the image should remain fixed if the TouchImageView is resized
 Set which part of the image should remain fixed if the screen is rotated.
 
     setOrientationChangeFixedPixel(FixedPixel fixedPixel)
-    
-## Created by
-
-Created by: Mike Ortiz
-Contributions by: 
- * Patrick Lackemacher
- * Babay88
- * @ipsilondev
- * hank-cp
- * singpolyma
- * JVillella
- * Bartholomew Furrow
 
 ## License
 
