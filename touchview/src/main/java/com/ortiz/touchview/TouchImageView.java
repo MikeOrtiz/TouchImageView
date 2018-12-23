@@ -673,11 +673,11 @@ public class TouchImageView extends AppCompatImageView {
      * 3. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
      * 4. When the view is resized (onMeasure).
      * 5. When the zoom is reset (resetZoom).
-     *
+     * <p>
      * In cases 2, 3 and 4, we try to maintain the zoom state and position as directed by
      * orientationChangeFixedPixel or viewSizeChangeFixedPixel (if there is an existing zoom state
      * and position, which there might not be in case 2).
-     *
+     * <p>
      * If the normalizedScale is equal to 1, then the image is made to fit the View. Otherwise, we
      * maintain zoom level and attempt to roughly put the same part of the image in the View as was
      * there before, paying attention to orientationChangeFixedPixel or viewSizeChangeFixedPixel.
@@ -1380,60 +1380,34 @@ public class TouchImageView extends AppCompatImageView {
     private class CompatScroller {
         Scroller scroller;
         OverScroller overScroller;
-        boolean isPreGingerbread;
 
-        public CompatScroller(Context context) {
-            isPreGingerbread = false;
+        CompatScroller(Context context) {
             overScroller = new OverScroller(context);
         }
 
-        public void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
-            if (isPreGingerbread) {
-                scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
-            } else {
-                overScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
-            }
+        void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
+            overScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
         }
 
-        public void forceFinished(boolean finished) {
-            if (isPreGingerbread) {
-                scroller.forceFinished(finished);
-            } else {
-                overScroller.forceFinished(finished);
-            }
+        void forceFinished(boolean finished) {
+            overScroller.forceFinished(finished);
         }
 
         public boolean isFinished() {
-            if (isPreGingerbread) {
-                return scroller.isFinished();
-            } else {
-                return overScroller.isFinished();
-            }
+            return overScroller.isFinished();
         }
 
-        public boolean computeScrollOffset() {
-            if (isPreGingerbread) {
-                return scroller.computeScrollOffset();
-            } else {
-                overScroller.computeScrollOffset();
-                return overScroller.computeScrollOffset();
-            }
+        boolean computeScrollOffset() {
+            overScroller.computeScrollOffset();
+            return overScroller.computeScrollOffset();
         }
 
-        public int getCurrX() {
-            if (isPreGingerbread) {
-                return scroller.getCurrX();
-            } else {
-                return overScroller.getCurrX();
-            }
+        int getCurrX() {
+            return overScroller.getCurrX();
         }
 
-        public int getCurrY() {
-            if (isPreGingerbread) {
-                return scroller.getCurrY();
-            } else {
-                return overScroller.getCurrY();
-            }
+        int getCurrY() {
+            return overScroller.getCurrY();
         }
     }
 
