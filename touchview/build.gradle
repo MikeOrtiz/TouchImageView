@@ -1,0 +1,27 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion defaultCompileSdkVersion
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion defaultTargetSdkVersion
+        versionCode 2
+        versionName "1.4.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api 'androidx.appcompat:appcompat:1.0.2'
+}
