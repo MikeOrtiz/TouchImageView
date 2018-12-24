@@ -18,7 +18,7 @@ public class SwitchImageExampleActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_switch_image_example);
-		image = (TouchImageView) findViewById(R.id.img);
+		image = findViewById(R.id.img);
 		//
 		// Set first image
 		//

@@ -15,8 +15,8 @@ public class MirroringExampleActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mirroring_example);
-		topImage = (TouchImageView) findViewById(R.id.topImage);
-		bottomImage = (TouchImageView) findViewById(R.id.bottomImage);
+		topImage = findViewById(R.id.topImage);
+		bottomImage = findViewById(R.id.bottomImage);
 		
 		//
 		// Each image has an OnTouchImageViewListener which uses its own TouchImageView

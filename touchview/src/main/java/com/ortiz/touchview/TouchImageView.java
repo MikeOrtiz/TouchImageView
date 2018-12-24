@@ -1422,12 +1422,12 @@ public class TouchImageView extends AppCompatImageView {
     }
 
     private class ZoomVariables {
-        public float scale;
-        public float focusX;
-        public float focusY;
-        public ScaleType scaleType;
+        float scale;
+        float focusX;
+        float focusY;
+        ScaleType scaleType;
 
-        public ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
+        ZoomVariables(float scale, float focusX, float focusY, ScaleType scaleType) {
             this.scale = scale;
             this.focusX = focusX;
             this.focusY = focusY;
