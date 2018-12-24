@@ -28,10 +28,10 @@ public class SingleTouchImageViewActivity extends Activity {
 		// DecimalFormat rounds to 2 decimal places.
 		//
 		df = new DecimalFormat("#.##");
-		scrollPositionTextView = (TextView) findViewById(R.id.scroll_position);
-		zoomedRectTextView = (TextView) findViewById(R.id.zoomed_rect);
-		currentZoomTextView = (TextView) findViewById(R.id.current_zoom);
-		image = (TouchImageView) findViewById(R.id.img);
+		scrollPositionTextView = findViewById(R.id.scroll_position);
+		zoomedRectTextView = findViewById(R.id.zoomed_rect);
+		currentZoomTextView = findViewById(R.id.current_zoom);
+		image = findViewById(R.id.img);
 		
 		//
 		// Set the OnTouchImageViewListener which updates edit texts

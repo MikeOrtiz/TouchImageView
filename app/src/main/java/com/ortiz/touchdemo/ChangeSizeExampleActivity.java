@@ -1,6 +1,7 @@
 package com.ortiz.touchdemo;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -125,6 +126,7 @@ public class ChangeSizeExampleActivity extends Activity {
         outState.putInt("imageIndex", imageIndex);
     }
 
+    @SuppressLint("SetTextI18n")
     private void processScaleType(ImageView.ScaleType scaleType, boolean resetZoom) {
         if (scaleType == ImageView.ScaleType.FIT_END) {
             switchScaleTypeButton.setText(ImageView.ScaleType.CENTER.name() + " (with " + ImageView.ScaleType.CENTER_CROP.name() + " zoom)");
@@ -183,7 +185,7 @@ public class ChangeSizeExampleActivity extends Activity {
     private class SizeAdjuster implements View.OnClickListener {
         int dx, dy;
 
-        public SizeAdjuster(int dx, int dy) {
+        SizeAdjuster(int dx, int dy) {
             this.dx = dx;
             this.dy = dy;
         }
@@ -207,7 +209,7 @@ public class ChangeSizeExampleActivity extends Activity {
         private boolean forOrientationChanges;
         private String buttonPrefix;
 
-        public SizeBehaviorAdjuster(boolean forOrientationChanges, String buttonPrefix) {
+        SizeBehaviorAdjuster(boolean forOrientationChanges, String buttonPrefix) {
             this.forOrientationChanges = forOrientationChanges;
             this.buttonPrefix = buttonPrefix;
         }
@@ -221,7 +223,8 @@ public class ChangeSizeExampleActivity extends Activity {
             return index;
         }
 
-        public void setIndex(Button b, int index) {
+        @SuppressLint("SetTextI18n")
+        void setIndex(Button b, int index) {
             this.index = index;
             if (forOrientationChanges) {
                 image.setOrientationChangeFixedPixel(values[index]);
