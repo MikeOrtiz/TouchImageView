@@ -3,6 +3,7 @@ package com.ortiz.touchview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -51,6 +52,7 @@ public class TouchImageView extends AppCompatImageView {
     // saved prior to the screen rotating.
     //
     private Matrix matrix, prevMatrix;
+    private boolean zoomEnabled;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
 
@@ -112,10 +114,10 @@ public class TouchImageView extends AppCompatImageView {
 
     public TouchImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        configureImageView(context);
+        configureImageView(context, attrs, defStyle);
     }
 
-    private void configureImageView(Context context) {
+    private void configureImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         this.context = context;
 
         super.setClickable(true);
@@ -146,6 +148,16 @@ public class TouchImageView extends AppCompatImageView {
         onDrawReady = false;
 
         super.setOnTouchListener(new PrivateOnTouchListener());
+
+        final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TouchImageView, defStyleAttr, 0);
+        try {
+            if (attributes != null && !isInEditMode()) {
+                zoomEnabled = attributes.getBoolean(R.styleable.TouchImageView_zoom_enabled, true);
+            }
+        } finally {
+            // release the TypedArray so that it can be reused.
+            attributes.recycle();
+        }
     }
 
     @Override
@@ -971,14 +983,16 @@ public class TouchImageView extends AppCompatImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             boolean consumed = false;
-            if (doubleTapListener != null) {
-                consumed = doubleTapListener.onDoubleTap(e);
-            }
-            if (state == State.NONE) {
-                float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
-                DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
-                compatPostOnAnimation(doubleTap);
-                consumed = true;
+            if (zoomEnabled) {
+                if (doubleTapListener != null) {
+                    consumed = doubleTapListener.onDoubleTap(e);
+                }
+                if (state == State.NONE) {
+                    float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
+                    DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
+                    compatPostOnAnimation(doubleTap);
+                    consumed = true;
+                }
             }
             return consumed;
         }
