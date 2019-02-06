@@ -152,11 +152,13 @@ public class TouchImageView extends AppCompatImageView {
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TouchImageView, defStyleAttr, 0);
         try {
             if (attributes != null && !isInEditMode()) {
-                zoomEnabled = attributes.getBoolean(R.styleable.TouchImageView_zoom_enabled, true);
+                setZoomEnabled(attributes.getBoolean(R.styleable.TouchImageView_zoom_enabled, true));
             }
         } finally {
             // release the TypedArray so that it can be reused.
-            attributes.recycle();
+            if (attributes != null) {
+                attributes.recycle();
+            }
         }
     }
 
@@ -171,6 +173,14 @@ public class TouchImageView extends AppCompatImageView {
 
     public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
         doubleTapListener = l;
+    }
+
+    public boolean isZoomEnabled() {
+        return zoomEnabled;
+    }
+
+    public void setZoomEnabled(boolean zoomEnabled) {
+        this.zoomEnabled = zoomEnabled;
     }
 
     @Override
@@ -983,7 +993,7 @@ public class TouchImageView extends AppCompatImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             boolean consumed = false;
-            if (zoomEnabled) {
+            if (isZoomEnabled()) {
                 if (doubleTapListener != null) {
                     consumed = doubleTapListener.onDoubleTap(e);
                 }
@@ -1454,4 +1464,5 @@ public class TouchImageView extends AppCompatImageView {
         matrix.getValues(n);
         Log.d(DEBUG, "Scale: " + n[Matrix.MSCALE_X] + " TransX: " + n[Matrix.MTRANS_X] + " TransY: " + n[Matrix.MTRANS_Y]);
     }
+
 }
