@@ -21,7 +21,7 @@ allprojects {
 dependencies {
     implementation 'com.github.MikeOrtiz:TouchImageView:1.4.0' // Support Lib
     // or
-    implementation 'com.github.MikeOrtiz:TouchImageView:2.1.1' // Android X
+    implementation 'com.github.MikeOrtiz:TouchImageView:2.2.0' // Android X
 }
 
 ```
