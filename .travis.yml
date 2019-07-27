@@ -7,7 +7,9 @@ branches:
 sudo: true
 
 jdk:
-  - oraclejdk8
+  - openjdk8
+
+dist: trusty
 
 env:
   global:
