@@ -53,6 +53,7 @@ public class TouchImageView extends AppCompatImageView {
     //
     private Matrix matrix, prevMatrix;
     private boolean zoomEnabled;
+    private boolean isRotateImageToFitScreen;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
 
@@ -160,6 +161,10 @@ public class TouchImageView extends AppCompatImageView {
                 attributes.recycle();
             }
         }
+    }
+
+    public void setRotateImageToFitScreen(boolean rotateImageToFitScreen) {
+        isRotateImageToFitScreen = rotateImageToFitScreen;
     }
 
     @Override
@@ -274,8 +279,8 @@ public class TouchImageView extends AppCompatImageView {
         PointF topLeft = transformCoordTouchToBitmap(0, 0, true);
         PointF bottomRight = transformCoordTouchToBitmap(viewWidth, viewHeight, true);
 
-        float w = getDrawable().getIntrinsicWidth();
-        float h = getDrawable().getIntrinsicHeight();
+        float w = getDrawableWidth(getDrawable());
+        float h = getDrawableHeight(getDrawable());
         return new RectF(topLeft.x / w, topLeft.y / h, bottomRight.x / w, bottomRight.y / h);
     }
 
@@ -421,8 +426,8 @@ public class TouchImageView extends AppCompatImageView {
         if (min == AUTOMATIC_MIN_ZOOM) {
             if (mScaleType == ScaleType.CENTER || mScaleType == ScaleType.CENTER_CROP) {
                 Drawable drawable = getDrawable();
-                int drawableWidth = drawable.getIntrinsicWidth();
-                int drawableHeight = drawable.getIntrinsicHeight();
+                int drawableWidth = getDrawableWidth(drawable);
+                int drawableHeight = getDrawableHeight(drawable);
                 if (drawable != null && drawableWidth > 0 && drawableHeight > 0) {
                     float widthRatio = (float) viewWidth / drawableWidth;
                     float heightRatio = (float) viewHeight / drawableHeight;
@@ -540,13 +545,31 @@ public class TouchImageView extends AppCompatImageView {
         if (drawable == null) {
             return null;
         }
-        int drawableWidth = drawable.getIntrinsicWidth();
-        int drawableHeight = drawable.getIntrinsicHeight();
+        int drawableWidth = getDrawableWidth(drawable);
+        int drawableHeight = getDrawableHeight(drawable);
 
         PointF point = transformCoordTouchToBitmap(viewWidth / 2, viewHeight / 2, true);
         point.x /= drawableWidth;
         point.y /= drawableHeight;
         return point;
+    }
+
+    private boolean orientationMismatch(Drawable drawable) {
+        return viewWidth > viewHeight != drawable.getIntrinsicWidth() > drawable.getIntrinsicHeight();
+    }
+
+    private int getDrawableWidth(Drawable drawable) {
+        if (orientationMismatch(drawable) && isRotateImageToFitScreen) {
+            return drawable.getIntrinsicHeight();
+        }
+        return drawable.getIntrinsicWidth();
+    }
+
+    private int getDrawableHeight(Drawable drawable) {
+        if (orientationMismatch(drawable) && isRotateImageToFitScreen) {
+            return drawable.getIntrinsicWidth();
+        }
+        return drawable.getIntrinsicHeight();
     }
 
     /**
@@ -569,12 +592,14 @@ public class TouchImageView extends AppCompatImageView {
         float transX = m[Matrix.MTRANS_X];
         float transY = m[Matrix.MTRANS_Y];
 
-        float fixTransX = getFixTrans(transX, viewWidth, getImageWidth());
-        float fixTransY = getFixTrans(transY, viewHeight, getImageHeight());
-
-        if (fixTransX != 0 || fixTransY != 0) {
-            matrix.postTranslate(fixTransX, fixTransY);
+        float offset = 0;
+        if (isRotateImageToFitScreen && orientationMismatch(getDrawable())) {
+            offset = getImageWidth();
         }
+        float fixTransX = getFixTrans(transX, viewWidth, getImageWidth(), offset);
+        float fixTransY = getFixTrans(transY, viewHeight, getImageHeight(), 0);
+
+        matrix.postTranslate(fixTransX, fixTransY);
     }
 
     /**
@@ -588,7 +613,11 @@ public class TouchImageView extends AppCompatImageView {
         fixTrans();
         matrix.getValues(m);
         if (getImageWidth() < viewWidth) {
-            m[Matrix.MTRANS_X] = (viewWidth - getImageWidth()) / 2;
+            float xOffset = (viewWidth - getImageWidth()) / 2;
+            if (isRotateImageToFitScreen && orientationMismatch(getDrawable())) {
+                xOffset += getImageWidth();
+            }
+            m[Matrix.MTRANS_X] = xOffset;
         }
 
         if (getImageHeight() < viewHeight) {
@@ -597,16 +626,16 @@ public class TouchImageView extends AppCompatImageView {
         matrix.setValues(m);
     }
 
-    private float getFixTrans(float trans, float viewSize, float contentSize) {
+    private float getFixTrans(float trans, float viewSize, float contentSize, float offset) {
         float minTrans, maxTrans;
 
         if (contentSize <= viewSize) {
-            minTrans = 0;
-            maxTrans = viewSize - contentSize;
+            minTrans = offset;
+            maxTrans = offset + viewSize - contentSize;
 
         } else {
-            minTrans = viewSize - contentSize;
-            maxTrans = 0;
+            minTrans = offset + viewSize - contentSize;
+            maxTrans = offset;
         }
 
         if (trans < minTrans)
@@ -634,8 +663,13 @@ public class TouchImageView extends AppCompatImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Drawable drawable = getDrawable();
-        int drawableWidth = (drawable == null ? 0 : drawable.getIntrinsicWidth());
-        int drawableHeight = (drawable == null ? 0 : drawable.getIntrinsicHeight());
+        if (drawable == null || drawable.getIntrinsicWidth() == 0 || drawable.getIntrinsicHeight() == 0) {
+            setMeasuredDimension(0, 0);
+            return;
+        }
+
+        int drawableWidth = getDrawableWidth(drawable);
+        int drawableHeight = getDrawableHeight(drawable);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
@@ -719,8 +753,8 @@ public class TouchImageView extends AppCompatImageView {
             }
         }
 
-        int drawableWidth = drawable.getIntrinsicWidth();
-        int drawableHeight = drawable.getIntrinsicHeight();
+        int drawableWidth = getDrawableWidth(drawable);
+        int drawableHeight = getDrawableHeight(drawable);
 
         //
         // Scale image for view
@@ -760,10 +794,19 @@ public class TouchImageView extends AppCompatImageView {
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
         if (!isZoomed() && !imageRenderedAtLeastOnce) {
+
             //
             // Stretch and center image to fit view
             //
-            matrix.setScale(scaleX, scaleY);
+
+            if (isRotateImageToFitScreen && orientationMismatch(drawable)) {
+                matrix.setRotate(90);
+                matrix.postTranslate(drawableWidth, 0);
+                matrix.postScale(scaleX, scaleY);
+            } else {
+                matrix.setScale(scaleX, scaleY);
+            }
+
             switch (mScaleType) {
                 case FIT_START:
                     matrix.postTranslate(0, 0);
@@ -774,6 +817,7 @@ public class TouchImageView extends AppCompatImageView {
                 default:
                     matrix.postTranslate(redundantXSpace / 2, redundantYSpace / 2);
             }
+
             normalizedScale = 1;
         } else {
             //
@@ -1335,6 +1379,10 @@ public class TouchImageView extends AppCompatImageView {
             int startX = (int) m[Matrix.MTRANS_X];
             int startY = (int) m[Matrix.MTRANS_Y];
             int minX, maxX, minY, maxY;
+
+            if (isRotateImageToFitScreen && orientationMismatch(getDrawable())) {
+                startX -= getImageWidth();
+            }
 
             if (getImageWidth() > viewWidth) {
                 minX = viewWidth - (int) getImageWidth();
