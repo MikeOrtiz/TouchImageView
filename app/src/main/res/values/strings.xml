@@ -2,7 +2,7 @@
 <resources>
     <string name="hello">Hello World, TouchImageViewActivity!</string>
     <string name="app_name">TouchImageView</string>
-    
+
     <!-- Activities -->
     <string name="single_touchimageview">Single TouchImageView</string>
     <string name="mirror_touchimageview">Mirroring Example</string>

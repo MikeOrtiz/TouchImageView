@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <FrameLayout
         android:id="@+id/image_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_above="@id/buttonContainer"
         android:layout_alignParentLeft="true"
-        android:layout_above="@id/buttonContainer">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true">
+
         <com.ortiz.touchview.TouchImageView
-            android:id="@+id/img"
-            android:src="@drawable/nature_1"
+            android:id="@+id/imageChangeSize"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="center" />
+            android:scaleType="center"
+            android:src="@drawable/nature_1" />
     </FrameLayout>
+
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
@@ -25,64 +30,76 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="←"/>
+                android:text="←"
+                android:textSize="24sp" />
+
             <Button
                 android:id="@+id/right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="→"/>
+                android:text="→"
+                android:textSize="24sp" />
+
             <Button
                 android:id="@+id/up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="↑"/>
+                android:text="↑"
+                android:textSize="24sp" />
+
             <Button
                 android:id="@+id/down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="↓"/>
+                android:text="↓"
+                android:textSize="24sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/resize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="resize: center"/>
+                android:text="resize: center" />
+
             <Button
                 android:id="@+id/rotate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="rotate: center"/>
+                android:text="rotate: center" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/switch_scaletype_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="center"/>
+                android:text="center"
+                tools:ignore="HardcodedText" />
+
             <Button
                 android:id="@+id/switch_image_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="change image"/>
+                android:text="change image" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
