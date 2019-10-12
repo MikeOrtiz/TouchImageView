@@ -40,4 +40,10 @@
         android:layout_height="wrap_content"
         android:text="@string/resize_button_example" />
 
+    <Button
+        android:id="@+id/recycler_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RecyclerView" />
+
 </LinearLayout>

@@ -18,5 +18,6 @@ class MainActivity : AppCompatActivity() {
         switch_image_button.setOnClickListener { startActivity(Intent(this@MainActivity, SwitchImageExampleActivity::class.java)) }
         switch_scaletype_button.setOnClickListener { startActivity(Intent(this@MainActivity, SwitchScaleTypeExampleActivity::class.java)) }
         resize_button.setOnClickListener { startActivity(Intent(this@MainActivity, ChangeSizeExampleActivity::class.java)) }
+        recycler_button.setOnClickListener { startActivity(Intent(this@MainActivity, RecyclerExampleActivity::class.java)) }
     }
 }
