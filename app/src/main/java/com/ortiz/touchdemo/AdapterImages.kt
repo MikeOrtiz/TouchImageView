@@ -21,7 +21,7 @@ class AdapterImages(private val photoList: IntArray) : RecyclerView.Adapter<Adap
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(TouchImageView(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(700, MATCH_PARENT)
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
         })
     }
 
