@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
     
     <com.ortiz.touchview.TouchImageView
-        android:id="@+id/imgageScale"
+        android:id="@+id/imageScale"
         android:scaleType="center"
         android:src="@drawable/nature_1"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
 	    android:layout_centerHorizontal="true"
 	    android:padding="5dp"
 	    android:layout_marginTop="10dp"
-	    android:background="@android:color/black"
+	    android:background="@android:color/white"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content" />
     

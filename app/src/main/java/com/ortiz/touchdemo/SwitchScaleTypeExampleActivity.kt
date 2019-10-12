@@ -5,7 +5,6 @@ import android.widget.ImageView.ScaleType
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.touch.R
-import kotlinx.android.synthetic.main.activity_single_touchimageview.*
 import kotlinx.android.synthetic.main.activity_switch_scaletype_example.*
 
 class SwitchScaleTypeExampleActivity : AppCompatActivity() {
@@ -17,10 +16,10 @@ class SwitchScaleTypeExampleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_switch_scaletype_example)
 
         // Set next scaleType with each button click
-        imgageScale.setOnClickListener {
+        imageScale.setOnClickListener {
             index = ++index % scaleTypes.size
             val currScaleType = scaleTypes[index]
-            image!!.scaleType = currScaleType
+            imageScale!!.scaleType = currScaleType
             Toast.makeText(this, "ScaleType: $currScaleType", Toast.LENGTH_SHORT).show()
         }
     }
