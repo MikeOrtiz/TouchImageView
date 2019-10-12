@@ -18,13 +18,12 @@ class SingleTouchImageViewActivity : AppCompatActivity() {
         // DecimalFormat rounds to 2 decimal places.
         val df: DecimalFormat? = DecimalFormat("#.##")
 
-        // Set the OnTouchImageViewListener which updates edit texts
-        // with zoom and scroll diagnostics.
-        image!!.setOnTouchImageViewListener {
-            val point = image.scrollPosition
-            val rect = image.zoomedRect
-            val currentZoom = image.currentZoom
-            val isZoomed = image.isZoomed
+        // Set the OnTouchImageViewListener which updates edit texts with zoom and scroll diagnostics.
+        imageSingle!!.setOnTouchImageViewListener {
+            val point = imageSingle.scrollPosition
+            val rect = imageSingle.zoomedRect
+            val currentZoom = imageSingle.currentZoom
+            val isZoomed = imageSingle.isZoomed
             scroll_position.text = "x: " + df!!.format(point!!.x.toDouble()) + " y: " + df.format(point.y.toDouble())
             zoomed_rect.text = ("left: " + df.format(rect.left.toDouble()) + " top: " + df.format(rect.top.toDouble())
                     + "\nright: " + df.format(rect.right.toDouble()) + " bottom: " + df.format(rect.bottom.toDouble()))
