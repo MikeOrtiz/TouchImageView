@@ -501,6 +501,7 @@ public class TouchImageView extends AppCompatImageView {
         m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
         matrix.setValues(m);
         fixTrans();
+        savePreviousImageValues();
         setImageMatrix(matrix);
     }
 
