@@ -25,5 +25,6 @@
         <activity android:name="com.ortiz.touchdemo.SwitchScaleTypeExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.ChangeSizeExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.RecyclerExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.AnimateZoomActivity" />
     </application>
 </manifest>
