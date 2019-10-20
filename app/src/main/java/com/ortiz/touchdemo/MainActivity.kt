@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         single_touchimageview_button.setOnClickListener { startActivity(Intent(this@MainActivity, SingleTouchImageViewActivity::class.java)) }
         viewpager_example_button.setOnClickListener { startActivity(Intent(this@MainActivity, ViewPagerExampleActivity::class.java)) }
+        viewpager2_example_button.setOnClickListener { startActivity(Intent(this@MainActivity, ViewPager2ExampleActivity::class.java)) }
         mirror_touchimageview_button.setOnClickListener { startActivity(Intent(this@MainActivity, MirroringExampleActivity::class.java)) }
         switch_image_button.setOnClickListener { startActivity(Intent(this@MainActivity, SwitchImageExampleActivity::class.java)) }
         switch_scaletype_button.setOnClickListener { startActivity(Intent(this@MainActivity, SwitchScaleTypeExampleActivity::class.java)) }

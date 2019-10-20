@@ -21,6 +21,7 @@
         <activity android:name="com.ortiz.touchdemo.SingleTouchImageViewActivity" />
         <activity android:name="com.ortiz.touchdemo.MirroringExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.ViewPagerExampleActivity" />
+        <activity android:name="com.ortiz.touchdemo.ViewPager2ExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.SwitchImageExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.SwitchScaleTypeExampleActivity" />
         <activity android:name="com.ortiz.touchdemo.ChangeSizeExampleActivity" />
