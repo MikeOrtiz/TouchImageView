@@ -17,6 +17,12 @@
         android:text="@string/viewpager_example" />
 
     <Button
+        android:id="@+id/viewpager2_example_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/viewpager2_example" />
+
+    <Button
         android:id="@+id/mirror_touchimageview_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
