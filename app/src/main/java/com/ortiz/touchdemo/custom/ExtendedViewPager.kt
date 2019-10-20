@@ -1,4 +1,4 @@
-package com.ortiz.touchdemo
+package com.ortiz.touchdemo.custom
 
 import android.content.Context
 import android.util.AttributeSet

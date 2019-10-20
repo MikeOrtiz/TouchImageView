@@ -1,4 +1,4 @@
-package com.ortiz.touchdemo
+package com.ortiz.touchdemo.custom
 
 import android.view.MotionEvent
 import android.view.ViewGroup

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.ortiz.touchdemo.custom.AdapterImages
 import kotlinx.android.synthetic.main.activity_recyclerview.*
 
 
