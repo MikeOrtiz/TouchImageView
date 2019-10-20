@@ -15,11 +15,7 @@ class ExtendedViewPager : ViewPager {
 
     override fun canScroll(view: View, checkV: Boolean, dx: Int, x: Int, y: Int): Boolean {
         return if (view is TouchImageView) {
-            // canScrollHorizontally is not supported for Api < 14. To get around this issue,
-            // ViewPager is extended and canScrollHorizontallyFroyo, a wrapper around
-            // canScrollHorizontally supporting Api >= 8, is called.
-            view.canScrollHorizontallyFroyo(-dx)
-
+            view.canScrollHorizontally(-dx)
         } else {
             super.canScroll(view, checkV, dx, x, y)
         }

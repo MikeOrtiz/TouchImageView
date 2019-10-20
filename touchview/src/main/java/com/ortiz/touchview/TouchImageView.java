@@ -929,6 +929,7 @@ public class TouchImageView extends AppCompatImageView {
         this.state = state;
     }
 
+    @Deprecated
     public boolean canScrollHorizontallyFroyo(int direction) {
         return canScrollHorizontally(direction);
     }
