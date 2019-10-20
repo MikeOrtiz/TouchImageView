@@ -1,9 +1,8 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.touch.R
 import kotlinx.android.synthetic.main.activity_single_touchimageview.*
 import java.text.DecimalFormat
 

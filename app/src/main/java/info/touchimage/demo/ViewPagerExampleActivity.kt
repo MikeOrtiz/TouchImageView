@@ -1,4 +1,4 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.os.Bundle
 import android.view.View
@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
-import com.example.touch.R
 import com.ortiz.touchview.TouchImageView
 import kotlinx.android.synthetic.main.activity_viewpager_example.*
 

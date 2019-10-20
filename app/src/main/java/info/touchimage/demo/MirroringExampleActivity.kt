@@ -1,8 +1,7 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.touch.R
 import kotlinx.android.synthetic.main.activity_mirroring_example.*
 
 class MirroringExampleActivity : AppCompatActivity() {

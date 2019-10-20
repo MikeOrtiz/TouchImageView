@@ -1,10 +1,9 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.touch.R
 import kotlinx.android.synthetic.main.activity_switch_scaletype_example.*
 
 class SwitchScaleTypeExampleActivity : AppCompatActivity() {
@@ -19,7 +18,7 @@ class SwitchScaleTypeExampleActivity : AppCompatActivity() {
         imageScale.setOnClickListener {
             index = ++index % scaleTypes.size
             val currScaleType = scaleTypes[index]
-            imageScale!!.scaleType = currScaleType
+            imageScale.scaleType = currScaleType
             Toast.makeText(this, "ScaleType: $currScaleType", Toast.LENGTH_SHORT).show()
         }
     }

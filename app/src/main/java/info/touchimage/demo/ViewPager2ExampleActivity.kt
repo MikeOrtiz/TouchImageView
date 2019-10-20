@@ -1,9 +1,8 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.touch.R
-import com.ortiz.touchdemo.custom.AdapterImages
+import info.touchimage.demo.custom.AdapterImages
 import kotlinx.android.synthetic.main.activity_viewpager2_example.*
 
 class ViewPager2ExampleActivity : AppCompatActivity() {

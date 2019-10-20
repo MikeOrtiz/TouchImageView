@@ -1,4 +1,4 @@
-package com.ortiz.touchdemo
+package info.touchimage.demo
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.touch.R
 import com.ortiz.touchview.TouchImageView
 import kotlinx.android.synthetic.main.activity_change_size.*
 import kotlin.math.max
