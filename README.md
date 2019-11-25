@@ -19,7 +19,7 @@ allprojects {
 ```
 ```Gradle
 dependencies {
-    implementation 'com.github.MikeOrtiz:TouchImageView:1.4.0' // Support Lib
+    implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1' // Support Lib
     // or
     implementation 'com.github.MikeOrtiz:TouchImageView:2.2.0' // Android X
 }
