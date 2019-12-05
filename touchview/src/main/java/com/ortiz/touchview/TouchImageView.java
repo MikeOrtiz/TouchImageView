@@ -32,25 +32,19 @@ public class TouchImageView extends AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
 
-    //
     // SuperMin and SuperMax multipliers. Determine how much the image can be
     // zoomed below or above the zoom boundaries, before animating back to the
     // min/max zoom boundary.
-    //
     private static final float SUPER_MIN_MULTIPLIER = .75f;
     private static final float SUPER_MAX_MULTIPLIER = 1.25f;
 
-    //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
     // when the image is stretched to fit view.
-    //
     private float normalizedScale;
 
-    //
     // Matrix applied to image. MSCALE_X and MSCALE_Y should always be equal.
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
-    //
     private Matrix matrix, prevMatrix;
     private boolean zoomEnabled;
     private boolean isRotateImageToFitScreen;
@@ -88,14 +82,10 @@ public class TouchImageView extends AppCompatImageView {
 
     private ZoomVariables delayedZoomVariables;
 
-    //
     // Size of view and previous view size (ie before rotation)
-    //
     private int viewWidth, viewHeight, prevViewWidth, prevViewHeight;
 
-    //
     // Size of image when it is stretched to fit view. Before and After rotation.
-    //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
 
     private ScaleGestureDetector mScaleDetector;
@@ -665,9 +655,7 @@ public class TouchImageView extends AppCompatImageView {
         int width = totalViewWidth - getPaddingLeft() - getPaddingRight();
         int height = totalViewHeight - getPaddingTop() - getPaddingBottom();
 
-        //
         // Set view dimensions
-        //
         setMeasuredDimension(width, height);
     }
 
@@ -766,19 +754,14 @@ public class TouchImageView extends AppCompatImageView {
             default:
         }
 
-        //
         // Put the image's center in the right place.
-        //
         float redundantXSpace = viewWidth - (scaleX * drawableWidth);
         float redundantYSpace = viewHeight - (scaleY * drawableHeight);
         matchViewWidth = viewWidth - redundantXSpace;
         matchViewHeight = viewHeight - redundantYSpace;
         if (!isZoomed() && !imageRenderedAtLeastOnce) {
 
-            //
             // Stretch and center image to fit view
-            //
-
             if (isRotateImageToFitScreen && orientationMismatch(drawable)) {
                 matrix.setRotate(90);
                 matrix.postTranslate(drawableWidth, 0);
@@ -800,49 +783,35 @@ public class TouchImageView extends AppCompatImageView {
 
             normalizedScale = 1;
         } else {
-            //
             // These values should never be 0 or we will set viewWidth and viewHeight
             // to NaN in newTranslationAfterChange. To avoid this, call savePreviousImageValues
             // to set them equal to the current values.
-            //
             if (prevMatchViewWidth == 0 || prevMatchViewHeight == 0) {
                 savePreviousImageValues();
             }
 
-            //
             // Use the previous matrix as our starting point for the new matrix.
-            //
             prevMatrix.getValues(m);
 
-            //
             // Rescale Matrix if appropriate
-            //
             m[Matrix.MSCALE_X] = matchViewWidth / drawableWidth * normalizedScale;
             m[Matrix.MSCALE_Y] = matchViewHeight / drawableHeight * normalizedScale;
 
-            //
             // TransX and TransY from previous matrix
-            //
             float transX = m[Matrix.MTRANS_X];
             float transY = m[Matrix.MTRANS_Y];
 
-            //
             // X position
-            //
             float prevActualWidth = prevMatchViewWidth * normalizedScale;
             float actualWidth = getImageWidth();
             m[Matrix.MTRANS_X] = newTranslationAfterChange(transX, prevActualWidth, actualWidth, prevViewWidth, viewWidth, drawableWidth, fixedPixel);
 
-            //
             // Y position
-            //
             float prevActualHeight = prevMatchViewHeight * normalizedScale;
             float actualHeight = getImageHeight();
             m[Matrix.MTRANS_Y] = newTranslationAfterChange(transY, prevActualHeight, actualHeight, prevViewHeight, viewHeight, drawableHeight, fixedPixel);
 
-            //
             // Set the matrix to the adjusted scale and translation values.
-            //
             matrix.setValues(m);
         }
         fixTrans();
@@ -1155,7 +1124,6 @@ public class TouchImageView extends AppCompatImageView {
         if (stretchImageToSuper) {
             lowerScale = superMinScale;
             upperScale = superMaxScale;
-
         } else {
             lowerScale = minScale;
             upperScale = maxScale;
@@ -1178,8 +1146,6 @@ public class TouchImageView extends AppCompatImageView {
     /**
      * DoubleTapZoom calls a series of runnables which apply
      * an animated zoom in/out graphic to the image.
-     *
-     * @author Ortiz
      */
     private class DoubleTapZoom implements Runnable {
 
@@ -1202,9 +1168,7 @@ public class TouchImageView extends AppCompatImageView {
             this.bitmapX = bitmapPoint.x;
             this.bitmapY = bitmapPoint.y;
 
-            //
             // Used for translating image during scaling
-            //
             startTouch = transformCoordBitmapToTouch(bitmapX, bitmapY);
             endTouch = new PointF(viewWidth / 2, viewHeight / 2);
         }
@@ -1222,24 +1186,17 @@ public class TouchImageView extends AppCompatImageView {
             fixScaleTrans();
             setImageMatrix(matrix);
 
-            //
-            // OnTouchImageViewListener is set: double tap runnable updates listener
-            // with every frame.
-            //
+            // double tap runnable updates listener with every frame.
             if (touchImageViewListener != null) {
                 touchImageViewListener.onMove();
             }
 
             if (t < 1f) {
-                //
                 // We haven't finished zooming
-                //
                 compatPostOnAnimation(this);
 
             } else {
-                //
                 // Finished zooming
-                //
                 setState(State.NONE);
             }
         }
@@ -1378,10 +1335,8 @@ public class TouchImageView extends AppCompatImageView {
         @Override
         public void run() {
 
-            //
             // OnTouchImageViewListener is set: TouchImageView listener has been flung by user.
             // Listener runnable updated with each frame of fling animation.
-            //
             if (touchImageViewListener != null) {
                 touchImageViewListener.onMove();
             }
