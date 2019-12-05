@@ -1,0 +1,188 @@
+# Run android emulator on accelerated intel CPU
+# or on emulated ARM CPU.
+# Includes test.
+
+#    +-----------+--------------------+--------------------+
+#    | API Level |     Code Name      | Android OS version |
+#    +-----------+--------------------+--------------------+
+#    |        29 | 10                 |                 10 |
+#    |        28 | Pie                |                  9 |
+#    |        27 | Oreo               |                8.1 |
+#    |        26 | Oreo               |  (dropped ARM) 8.0 |
+#    |        25 | Nougat             |                7.1 |
+#    |        24 | Nougat             |                7.0 |
+#    |        23 | Marshmallow        |                6.0 |
+#    |        22 | Lollipop           |                5.1 |
+#    |        21 | Lollipop           |                5.0 |
+#    |        20 | Not released       |                    |
+#    |        19 | Kitkat             |                4.4 |
+#    |        18 | Jellybean          |                4.3 |
+#    |        17 | Jellybean          |                4.2 |
+#    |        16 | Jellybean          |                4.1 |
+#    |        15 | Ice Cream Sandwich |                4.0 |
+#    |        14 | Not Released       |                    |
+#    |        13 | Not Released       |                    |
+#    |        12 | Not Released       |                    |
+#    |        11 | Not Released       |                    |
+#    |        10 | Gingerbread        |                2.3 |
+#    +-----------+--------------------+--------------------+
+# "https://en.wikipedia.org/wiki/Android_(operating_system)#Platform_information"
+# Note: Flutter supports down to API 16
+
+timeout_in: 15m
+
+# matrix of APIxABIxGOO
+# (see "sdkmanager --list --verbose| grep ^system-images" for full list)
+task:
+  matrix:
+    - name: accel, playstore, 29-25
+      container:
+        image: cirrusci/flutter:latest
+        cpu: 4
+        memory: 10G
+        kvm: true
+      env:
+        matrix:
+          - API: 29
+          - API: 28
+          - API: 27
+          - API: 26
+          - API: 25
+        matrix:
+          - ABI: x86_64
+          - ABI: x86
+        matrix:
+          - GOO: default
+          - GOO: google_apis
+          - GOO: google_apis_playstore
+    - name: accel, no playstore, 24-21
+      container:
+        image: cirrusci/flutter:latest
+        cpu: 4
+        memory: 10G
+        kvm: true
+      env:
+        matrix:
+          - API: 24
+          - API: 23
+          - API: 22
+          - API: 21
+        matrix:
+          - ABI: x86_64
+          - ABI: x86
+        matrix:
+          - GOO: default
+          - GOO: google_apis
+    - name: accel, x86, 19-16
+      container:
+        image: cirrusci/flutter:latest
+        cpu: 4
+        memory: 10G
+        kvm: true
+      env:
+        matrix:
+          - API: 19
+          - API: 18
+          - API: 17
+          - API: 16
+        ABI: x86
+        matrix:
+          - GOO: default
+          - GOO: google_apis
+    - name: no accel, ARM, 25-24
+      container:
+        image: cirrusci/flutter:latest
+        cpu: 4
+        memory: 10G
+      env:
+        matrix:
+          - API: 25
+          - API: 24
+        matrix:
+          - ABI: armeabi-v7a
+          - ABI: arm64-v8a
+        matrix:
+          - GOO: default
+          - GOO: google_apis
+    - name: no accel, ARM, 23-16
+      container:
+        image: cirrusci/flutter:latest
+        cpu: 4
+        memory: 10G
+      env:
+        matrix:
+          - API: 23
+          - API: 22
+          - API: 21
+          - API: 19
+          - API: 18
+          - API: 17
+          - API: 16
+        ABI: armeabi-v7a
+        matrix:
+          - GOO: default
+          - GOO: google_apis
+  # remove unsupported jobs from job matrix
+  only_if: ($API != "27" || $ABI != "x86_64" || $GOO != "google_apis_playstore") && ($API != "27" || $ABI != "x86_64" || $GOO != "google_apis") && ($API != "26" || $ABI != "x86_64" || $GOO != "google_apis_playstore") && ($API != "25" || $ABI != "x86_64" || $GOO != "google_apis_playstore") && ($API != "24" || $ABI != "x86_64" || $GOO != "google_apis_playstore") && ($API != "24" || $ABI != "x86" || $GOO != "google_apis_playstore") && ($API != "25" || $ABI != "armeabi-v7a" || $GOO != "default") && ($API != "25" || $ABI != "arm64-v8a" || $GOO != "default")
+  # jobs that are flaky or fail consistently
+  allow_failures: ($API == "29" && $ABI == "x86_64" && $GOO == "google_apis_playstore") || ($API == "29" && $ABI == "x86" && $GOO == "google_apis_playstore") || ($API == "29" && $ABI == "x86" && $GOO == "google_apis") || ($API == "29" && $ABI == "x86_64" && $GOO == "google_apis") || ($API == "29" && $ABI == "x86_64" && $GOO == "default") || ($API == "29" && $ABI == "x86" && $GOO == "default") || ($API == "28" && $ABI == "x86_64" && $GOO == "google_apis_playstore") || ($API == "28" && $ABI == "x86" && $GOO == "google_apis_playstore") || ($API == "28" && $ABI == "x86" && $GOO == "google_apis") || ($API == "26" && $ABI == "x86" && $GOO == "default") || ($API == "25" && $ABI == "x86" && $GOO == "google_apis_playstore") || ($API == "25" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "25" && $ABI == "arm64-v8a" && $GOO == "google_apis") || ($API == "24" && $ABI == "x86" && $GOO == "google_apis") || ($API == "24" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "24" && $ABI == "arm64-v8a" && $GOO == "google_apis") || ($API == "24" && $ABI == "armeabi-v7a" && $GOO == "default") || ($API == "24" && $ABI == "arm64-v8a" && $GOO == "default") || ($API == "23" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "23" && $ABI == "armeabi-v7a" && $GOO == "default") || ($API == "22" && $ABI == "x86_64" && $GOO == "default") || ($API == "22" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "21" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "19" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "19" && $ABI == "armeabi-v7a" && $GOO == "default") || ($API == "18" && $ABI == "x86" && $GOO == "google_apis") || ($API == "18" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "17" && $ABI == "x86" && $GOO == "google_apis") || ($API == "17" && $ABI == "x86" && $GOO == "default") || ($API == "16" && $ABI == "x86" && $GOO == "google_apis") || ($API == "16" && $ABI == "x86" && $GOO == "default") || ($API == "16" && $ABI == "armeabi-v7a" && $GOO == "google_apis") || ($API == "16" && $ABI == "armeabi-v7a" && $GOO == "default")
+  fix_kvm_script:
+    - |
+      if [[ $ABI =~ "x86" ]]; then
+        sudo chown cirrus:cirrus /dev/kvm
+      fi
+#  set_timezone_script:
+    # set timezone to avoid emulator warning
+#    - date
+#    - echo "US/Pacific" | sudo tee /etc/timezone
+#    - sudo dpkg-reconfigure --frontend noninteractive tzdata
+#    - export DEBIAN_FRONTEND=noninteractive
+#    - sudo ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+#    - sudo apt-get install -y tzdata
+#    - sudo dpkg-reconfigure --frontend noninteractive tzdata
+#    - date
+
+  install_emulator_script:
+    - sdkmanager "system-images;android-$API;$GOO;$ABI" > /dev/null
+  create_emulator_script:
+    - echo no | avdmanager --verbose create avd --force -n test -k "system-images;android-$API;$GOO;$ABI"
+  pin_arm_emulator_script:
+    - |
+      if [[ $ABI =~ "arm" ]]; then
+        # Download a pinned version of the emulator since default version can cause issues
+        ${ANDROID_HOME}/emulator/emulator -version
+        emulator_version=5264690 # 29.2.1.0 (build_id 5889189) ==> 28.0.23.0 (build_id 5264690)
+        # sudo apt-get install -y libunwind8 libc++1
+        curl -fo emulator.zip "https://dl.google.com/android/repository/emulator-linux-$emulator_version.zip"
+        rm -rf "${ANDROID_HOME}/emulator"
+        unzip -q emulator.zip -d "${ANDROID_HOME}"
+        rm -f emulator.zip
+        # install build tools and platforms for arm (to allow emulator to run)
+        sdkmanager "build-tools;25.0.2" "platforms;android-25" > /dev/null
+      fi
+    - ${ANDROID_HOME}/emulator/emulator -version
+  start_emulator_background_script:
+    - EMU_PARAMS="
+      -avd test
+      -verbose
+      -no-window
+      -no-audio
+      "
+    - |
+      EMU_COMMAND=emulator
+      if [[ $ABI =~ "x86" ]]; then
+        EMU_COMMAND="emulator-headless"
+      else
+        # emulate graphics if running on ARM
+        EMU_PARAMS="${EMU_PARAMS} -gpu swiftshader"
+      fi
+    - ${ANDROID_HOME}/emulator/${EMU_COMMAND} ${EMU_PARAMS}
+  wait_for_emulator_script:
+    - ./script/android-wait-for-emulator.sh
+  doctor_script: flutter doctor -v
+  test_script:
+    # - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - ./gradlew clean build :app:check --profile --continue 2>&1 | tee build.log
+    - ./gradlew :app:connectedAndroidTest
+  #pub_cache:
+  #  folder: ~/.pub-cache
