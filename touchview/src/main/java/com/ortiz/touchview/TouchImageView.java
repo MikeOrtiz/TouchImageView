@@ -71,6 +71,7 @@ public class TouchImageView extends AppCompatImageView {
     private float superMinScale;
     private float superMaxScale;
     private float[] m;
+    private float doubleTapScale;
 
     private Fling fling;
     private int orientation;
@@ -367,6 +368,25 @@ public class TouchImageView extends AppCompatImageView {
         maxScale = max;
         superMaxScale = SUPER_MAX_MULTIPLIER * maxScale;
         maxScaleIsSetByMultiplier = false;
+    }
+
+    /**
+     * Get zoom multiplier for double tap
+     *
+     * @return double tap zoom multiplier.
+     */
+    public float getDoubleTapScale() {
+        return doubleTapScale;
+    }
+
+    /**
+     * Set custom zoom multiplier for double tap.
+     * By default maxScale will be used as value for double tap zoom multiplier.
+     *
+     * @param doubleTapScale zoom multiplier for double tap
+     */
+    public void setDoubleTapScale(float doubleTapScale) {
+        this.doubleTapScale = doubleTapScale;
     }
 
     /**
@@ -976,7 +996,8 @@ public class TouchImageView extends AppCompatImageView {
                     consumed = doubleTapListener.onDoubleTap(e);
                 }
                 if (state == State.NONE) {
-                    float targetZoom = (normalizedScale == minScale) ? maxScale : minScale;
+                    float maxZoomScale = (doubleTapScale == 0) ? maxScale : doubleTapScale;
+                    float targetZoom = (normalizedScale == minScale) ? maxZoomScale : minScale;
                     DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, e.getX(), e.getY(), false);
                     compatPostOnAnimation(doubleTap);
                     consumed = true;
