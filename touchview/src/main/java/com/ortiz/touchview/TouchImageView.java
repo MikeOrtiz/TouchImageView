@@ -28,6 +28,7 @@ import android.widget.OverScroller;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+@SuppressWarnings("unused")
 public class TouchImageView extends AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
@@ -1264,7 +1265,7 @@ public class TouchImageView extends AppCompatImageView {
      *                     to the bounds of the bitmap size.
      * @return Coordinates of the point touched, in the coordinate system of the original drawable.
      */
-    private PointF transformCoordTouchToBitmap(float x, float y, boolean clipToBitmap) {
+    protected PointF transformCoordTouchToBitmap(float x, float y, boolean clipToBitmap) {
         matrix.getValues(m);
         float origW = getDrawable().getIntrinsicWidth();
         float origH = getDrawable().getIntrinsicHeight();
@@ -1289,7 +1290,7 @@ public class TouchImageView extends AppCompatImageView {
      * @param by y-coordinate in original bitmap coordinate system
      * @return Coordinates of the point in the view's coordinate system.
      */
-    private PointF transformCoordBitmapToTouch(float bx, float by) {
+    protected PointF transformCoordBitmapToTouch(float bx, float by) {
         matrix.getValues(m);
         float origW = getDrawable().getIntrinsicWidth();
         float origH = getDrawable().getIntrinsicHeight();
