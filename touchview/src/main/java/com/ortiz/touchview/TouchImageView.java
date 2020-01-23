@@ -537,7 +537,7 @@ public class TouchImageView extends AppCompatImageView {
     public PointF getScrollPosition() {
         Drawable drawable = getDrawable();
         if (drawable == null) {
-            return null;
+            return new PointF(.5F, .5F);
         }
         int drawableWidth = getDrawableWidth(drawable);
         int drawableHeight = getDrawableHeight(drawable);
