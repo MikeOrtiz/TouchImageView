@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/hannesa2/TouchImageView.svg)](https://jitpack.io/#hannesa2/TouchImageView)
+[![](https://jitpack.io/v/MikeOrtiz/TouchImageView.svg)](https://jitpack.io/#hannesa2/TouchImageView)
 
 # TouchImageView for Android
 
