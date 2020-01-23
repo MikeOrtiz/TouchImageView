@@ -26,6 +26,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.OverScroller;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
 @SuppressWarnings("unused")
@@ -521,7 +522,7 @@ public class TouchImageView extends AppCompatImageView {
      * Set zoom parameters equal to another TouchImageView. Including scale, position,
      * and ScaleType.
      */
-    public void setZoom(TouchImageView img) {
+    public void setZoom(@NonNull TouchImageView img) {
         PointF center = img.getScrollPosition();
         setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
     }
