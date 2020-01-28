@@ -1040,7 +1040,9 @@ public class TouchImageView extends AppCompatImageView {
                 setState(State.NONE);
                 return false;
             }
-            mScaleDetector.onTouchEvent(event);
+            if (isZoomEnabled()) {
+                mScaleDetector.onTouchEvent(event);
+            }
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
 
