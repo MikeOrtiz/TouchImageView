@@ -17,17 +17,17 @@ class ViewPagerExampleActivity : AppCompatActivity() {
         view_pager.adapter = TouchImageAdapter()
     }
 
-    internal class TouchImageAdapter : PagerAdapter() {
+    private class TouchImageAdapter : PagerAdapter() {
 
         override fun getCount(): Int {
             return images.size
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): View {
-            val img = TouchImageView(container.context)
-            img.setImageResource(images[position])
-            container.addView(img, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-            return img
+            return TouchImageView(container.context).apply {
+                setImageResource(images[position])
+                container.addView(this, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+            }
         }
 
         override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {

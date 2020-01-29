@@ -14,13 +14,10 @@ class RecyclerExampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recyclerview)
 
-        recycler.layoutManager = LinearLayoutManager(this).apply {
-            orientation = LinearLayoutManager.HORIZONTAL
+        with(recycler) {
+            adapter = AdapterImages(images)
+            PagerSnapHelper().attachToRecyclerView(this)
         }
-        recycler.adapter = AdapterImages(images)
-
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(recycler)
     }
 
     companion object {

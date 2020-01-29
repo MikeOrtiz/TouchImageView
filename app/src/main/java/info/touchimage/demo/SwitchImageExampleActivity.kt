@@ -13,9 +13,7 @@ class SwitchImageExampleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_switch_image_example)
         // Set first image
         //
-        if (savedInstanceState != null) {
-            index = savedInstanceState.getInt("index")
-        }
+        savedInstanceState?.getInt("index")?.let(this::index::set)
         imageSwitch.setImageResource(images[index])
         //
         // Set next image with each button click
