@@ -464,6 +464,10 @@ public class TouchImageView extends AppCompatImageView {
         fitImageToView();
     }
 
+    public void resetZoomAnimated() {
+        setZoomAnimated(1f, 0.5f, 0.5f);
+    }
+
     /**
      * Set zoom to the specified scale. Image will be centered by default.
      */

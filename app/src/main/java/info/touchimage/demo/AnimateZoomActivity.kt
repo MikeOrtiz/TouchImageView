@@ -15,7 +15,10 @@ class AnimateZoomActivity : AppCompatActivity(), TouchImageView.OnZoomFinishedLi
         setContentView(R.layout.activity_single_touchimageview)
 
         current_zoom.setOnClickListener {
-            imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
+            when {
+                imageSingle.isZoomed -> imageSingle.resetZoomAnimated()
+                imageSingle.isZoomed.not() -> imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
+            }
         }
     }
 
