@@ -1494,7 +1494,7 @@ public class TouchImageView extends AppCompatImageView {
      */
     private class AnimatedZoom implements Runnable {
 
-        private final int zoomTime;
+        private final float zoomTime;
         private long startTime;
         private float startZoom, targetZoom;
         private PointF startFocus, targetFocus;
