@@ -39,6 +39,7 @@ public class TouchImageView extends AppCompatImageView {
     // min/max zoom boundary.
     private static final float SUPER_MIN_MULTIPLIER = .75f;
     private static final float SUPER_MAX_MULTIPLIER = 1.25f;
+    private static final int DEFAULT_ZOOM_TIME = 500;
 
     // Scale of image ranges from minScale to maxScale, where minScale == 1
     // when the image is stretched to fit view.
@@ -1179,7 +1180,6 @@ public class TouchImageView extends AppCompatImageView {
     private class DoubleTapZoom implements Runnable {
 
         private long startTime;
-        private static final float ZOOM_TIME = 500;
         private float startZoom, targetZoom;
         private float bitmapX, bitmapY;
         private boolean stretchImageToSuper;
@@ -1247,7 +1247,7 @@ public class TouchImageView extends AppCompatImageView {
          */
         private float interpolate() {
             long currTime = System.currentTimeMillis();
-            float elapsed = (currTime - startTime) / ZOOM_TIME;
+            float elapsed = (currTime - startTime) / DEFAULT_ZOOM_TIME;
             elapsed = Math.min(1f, elapsed);
             return interpolator.getInterpolation(elapsed);
         }
@@ -1464,11 +1464,11 @@ public class TouchImageView extends AppCompatImageView {
      * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
      */
     public void setZoomAnimated(float scale, float focusX, float focusY) {
-        setZoomAnimated(scale, focusX, focusY, 500);
+        setZoomAnimated(scale, focusX, focusY, DEFAULT_ZOOM_TIME);
     }
 
-    public void setZoomAnimated(float scale, float focusX, float focusY, int zoomTime) {
-        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), zoomTime);
+    public void setZoomAnimated(float scale, float focusX, float focusY, int zoomTimeMs) {
+        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), zoomTimeMs);
         compatPostOnAnimation(animation);
     }
 
@@ -1480,14 +1480,14 @@ public class TouchImageView extends AppCompatImageView {
      *
      * @param listener the listener, which will be notified, once the animation ended
      */
-    public void setZoomAnimated(float scale, float focusX, float focusY, int zoomTime, OnZoomFinishedListener listener) {
-        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), zoomTime);
+    public void setZoomAnimated(float scale, float focusX, float focusY, int zoomTimeMs, OnZoomFinishedListener listener) {
+        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), zoomTimeMs);
         animation.setListener(listener);
         compatPostOnAnimation(animation);
     }
 
     public void setZoomAnimated(float scale, float focusX, float focusY, OnZoomFinishedListener listener) {
-        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), 500);
+        AnimatedZoom animation = new AnimatedZoom(scale, new PointF(focusX, focusY), DEFAULT_ZOOM_TIME);
         animation.setListener(listener);
         compatPostOnAnimation(animation);
     }
@@ -1498,19 +1498,19 @@ public class TouchImageView extends AppCompatImageView {
      */
     private class AnimatedZoom implements Runnable {
 
-        private final float zoomTime;
+        private final int zoomTimeMillis;
         private long startTime;
         private float startZoom, targetZoom;
         private PointF startFocus, targetFocus;
         private LinearInterpolator interpolator = new LinearInterpolator();
         private OnZoomFinishedListener listener;
 
-        AnimatedZoom(float targetZoom, PointF focus, int zoomTime) {
+        AnimatedZoom(float targetZoom, PointF focus, int zoomTimeMillis) {
             setState(State.ANIMATE_ZOOM);
             startTime = System.currentTimeMillis();
             this.startZoom = normalizedScale;
             this.targetZoom = targetZoom;
-            this.zoomTime = zoomTime;
+            this.zoomTimeMillis = zoomTimeMillis;
 
             // Used for translating image during zooming
             startFocus = getScrollPosition();
@@ -1543,8 +1543,7 @@ public class TouchImageView extends AppCompatImageView {
          * @return progress of the interpolation
          */
         private float interpolate() {
-            long currTime = System.currentTimeMillis();
-            float elapsed = (currTime - startTime) / zoomTime;
+            float elapsed = (System.currentTimeMillis() - startTime) / (float) zoomTimeMillis;
             elapsed = Math.min(1f, elapsed);
             return interpolator.getInterpolation(elapsed);
         }
