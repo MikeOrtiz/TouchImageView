@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updateLayoutParams
 import com.ortiz.touchview.TouchImageView
 import kotlinx.android.synthetic.main.activity_change_size.*
 import kotlin.math.max
@@ -74,11 +75,11 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
             imageChangeSize.setImageResource(images[imageIndex])
         }
 
-        if (savedInstanceState != null) {
-            scaleTypeIndex = savedInstanceState.getInt("scaleTypeIndex")
-            resizeAdjuster.setIndex(findViewById<View>(R.id.resize) as Button, savedInstanceState.getInt("resizeAdjusterIndex"))
-            rotateAdjuster.setIndex(findViewById<View>(R.id.rotate) as Button, savedInstanceState.getInt("rotateAdjusterIndex"))
-            imageIndex = savedInstanceState.getInt("imageIndex")
+        savedInstanceState?.let { savedState ->
+            scaleTypeIndex = savedState.getInt("scaleTypeIndex")
+            resizeAdjuster.setIndex(findViewById<View>(R.id.resize) as Button, savedState.getInt("resizeAdjusterIndex"))
+            rotateAdjuster.setIndex(findViewById<View>(R.id.rotate) as Button, savedState.getInt("rotateAdjusterIndex"))
+            imageIndex = savedState.getInt("imageIndex")
             imageChangeSize.setImageResource(images[imageIndex])
         }
 
@@ -87,35 +88,41 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("scaleTypeIndex", scaleTypeIndex)
-        outState.putInt("resizeAdjusterIndex", resizeAdjuster.index)
-        outState.putInt("rotateAdjusterIndex", rotateAdjuster.index)
-        outState.putInt("imageIndex", imageIndex)
+        with (outState) {
+            putInt("scaleTypeIndex", scaleTypeIndex)
+            putInt("resizeAdjusterIndex", resizeAdjuster.index)
+            putInt("rotateAdjusterIndex", rotateAdjuster.index)
+            putInt("imageIndex", imageIndex)
+        }
     }
 
     @SuppressLint("SetTextI18n")
     private fun processScaleType(scaleType: ImageView.ScaleType, resetZoom: Boolean) {
-        if (scaleType == ImageView.ScaleType.FIT_END) {
-            switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.CENTER_CROP.name + " zoom)"
-            imageChangeSize.scaleType = ImageView.ScaleType.CENTER
-            val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
-            val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
-            if (resetZoom) {
-                imageChangeSize.setZoom(max(widthRatio, heightRatio))
+        when (scaleType) {
+            ImageView.ScaleType.FIT_END -> {
+                switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.CENTER_CROP.name + " zoom)"
+                imageChangeSize.scaleType = ImageView.ScaleType.CENTER
+                val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
+                val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
+                if (resetZoom) {
+                    imageChangeSize.setZoom(max(widthRatio, heightRatio))
+                }
             }
-        } else if (scaleType == ImageView.ScaleType.FIT_START) {
-            switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.FIT_CENTER.name + " zoom)"
-            imageChangeSize.scaleType = ImageView.ScaleType.CENTER
-            val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
-            val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
-            if (resetZoom) {
-                imageChangeSize.setZoom(min(widthRatio, heightRatio))
+            ImageView.ScaleType.FIT_START -> {
+                switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.FIT_CENTER.name + " zoom)"
+                imageChangeSize.scaleType = ImageView.ScaleType.CENTER
+                val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
+                val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
+                if (resetZoom) {
+                    imageChangeSize.setZoom(min(widthRatio, heightRatio))
+                }
             }
-        } else {
-            switch_scaletype_button.text = scaleType.name
-            imageChangeSize.scaleType = scaleType
-            if (resetZoom) {
-                imageChangeSize.resetZoom()
+            else -> {
+                switch_scaletype_button.text = scaleType.name
+                imageChangeSize.scaleType = scaleType
+                if (resetZoom) {
+                    imageChangeSize.resetZoom()
+                }
             }
         }
     }
@@ -128,14 +135,14 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
         xSizeAnimator = ValueAnimator.ofInt(imageChangeSize.width, width.toInt())
         ySizeAnimator = ValueAnimator.ofInt(imageChangeSize.height, height.toInt())
         xSizeAnimator.addUpdateListener { animation ->
-            val layoutParams = imageChangeSize.layoutParams
-            layoutParams.width = animation.animatedValue as Int
-            imageChangeSize.layoutParams = layoutParams
+            imageChangeSize.updateLayoutParams {
+                this.width = animation.animatedValue as Int
+            }
         }
         ySizeAnimator.addUpdateListener { animation ->
-            val layoutParams = imageChangeSize.layoutParams
-            layoutParams.height = animation.animatedValue as Int
-            imageChangeSize.layoutParams = layoutParams
+            imageChangeSize.updateLayoutParams {
+                this.height = animation.animatedValue as Int
+            }
         }
         xSizeAnimator.duration = 200
         ySizeAnimator.duration = 200
@@ -143,7 +150,7 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
         ySizeAnimator.start()
     }
 
-    private inner class SizeAdjuster internal constructor(internal var dx: Int, internal var dy: Int) : View.OnClickListener {
+    private inner class SizeAdjuster constructor(internal var dx: Int, internal var dy: Int) : View.OnClickListener {
 
         override fun onClick(v: View) {
             val newXScale = min(0, xSizeAdjustment + dx)
