@@ -464,6 +464,10 @@ public class TouchImageView extends AppCompatImageView {
         fitImageToView();
     }
 
+    public void resetZoomAnimated() {
+        setZoomAnimated(1f, 0.5f, 0.5f);
+    }
+
     /**
      * Set zoom to the specified scale. Image will be centered by default.
      */
@@ -1494,7 +1498,7 @@ public class TouchImageView extends AppCompatImageView {
      */
     private class AnimatedZoom implements Runnable {
 
-        private final int zoomTime;
+        private final float zoomTime;
         private long startTime;
         private float startZoom, targetZoom;
         private PointF startFocus, targetFocus;
