@@ -11,13 +11,12 @@ class SwitchImageExampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_switch_image_example)
+
         // Set first image
-        //
         savedInstanceState?.getInt("index")?.let(this::index::set)
         imageSwitch.setImageResource(images[index])
-        //
+
         // Set next image with each button click
-        //
         imageSwitch.setOnClickListener {
             index = (index + 1) % images.size
             imageSwitch!!.setImageResource(images[index])
