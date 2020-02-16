@@ -1,6 +1,6 @@
 # source https://raw.githubusercontent.com/Triple-T/gradle-play-publisher/master/.github/workflows/cid.yml
 
-name: CI/CD
+name: CI Play
 
 on: [push, pull_request]
 env:
