@@ -1,4 +1,4 @@
-name: Android CI
+name: CI Android
 
 on: [push]
 
