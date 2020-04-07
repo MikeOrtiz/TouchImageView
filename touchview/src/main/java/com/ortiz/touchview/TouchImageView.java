@@ -1247,7 +1247,7 @@ public class TouchImageView extends AppCompatImageView {
          */
         private float interpolate() {
             long currTime = System.currentTimeMillis();
-            float elapsed = (currTime - startTime) / DEFAULT_ZOOM_TIME;
+            float elapsed = (currTime - startTime) / (float) DEFAULT_ZOOM_TIME;
             elapsed = Math.min(1f, elapsed);
             return interpolator.getInterpolation(elapsed);
         }
