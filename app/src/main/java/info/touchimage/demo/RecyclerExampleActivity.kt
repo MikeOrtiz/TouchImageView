@@ -2,7 +2,6 @@ package info.touchimage.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import info.touchimage.demo.custom.AdapterImages
 import kotlinx.android.synthetic.main.activity_recyclerview.*
