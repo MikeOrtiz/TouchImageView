@@ -98,7 +98,8 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     private var doubleTapListener: OnDoubleTapListener? = null
     private var userTouchListener: OnTouchListener? = null
     private var touchImageViewListener: OnTouchImageViewListener? = null
-    private fun configureImageView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
+
+    init {
         super.setClickable(true)
         orientation = resources.configuration.orientation
         mScaleDetector = ScaleGestureDetector(context, ScaleListener())
@@ -119,7 +120,7 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         setState(State.NONE)
         onDrawReady = false
         super.setOnTouchListener(PrivateOnTouchListener())
-        val attributes = context.theme.obtainStyledAttributes(attrs, R.styleable.TouchImageView, defStyleAttr, 0)
+        val attributes = context.theme.obtainStyledAttributes(attrs, R.styleable.TouchImageView, defStyle, 0)
         try {
             if (!isInEditMode) {
                 isZoomEnabled = attributes.getBoolean(R.styleable.TouchImageView_zoom_enabled, true)
@@ -829,8 +830,6 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     /**
      * Gesture Listener detects a single click or long click and passes that on
      * to the view's listener.
-     *
-     * @author Ortiz
      */
     private inner class GestureListener : SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -887,13 +886,10 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
     /**
      * Responsible for all touch events. Handles the heavy lifting of drag and also sends
      * touch events to Scale Detector and Gesture Detector.
-     *
-     * @author Ortiz
      */
     private inner class PrivateOnTouchListener : OnTouchListener {
-        //
+
         // Remember last point position for dragging
-        //
         private val last = PointF()
         override fun onTouch(v: View, event: MotionEvent): Boolean {
             if (drawable == null) {
@@ -949,8 +945,6 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
 
     /**
      * ScaleListener detects user two finger scaling and scales image.
-     *
-     * @author Ortiz
      */
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
@@ -1147,8 +1141,6 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
      * Fling launches sequential runnables which apply
      * the fling graphic to the image. The values for the translation
      * are interpolated by the Scroller.
-     *
-     * @author Ortiz
      */
     private inner class Fling internal constructor(velocityX: Int, velocityY: Int) : Runnable {
         var scroller: CompatScroller?
@@ -1374,7 +1366,4 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         const val AUTOMATIC_MIN_ZOOM = -1.0f
     }
 
-    init {
-        configureImageView(context, attrs, defStyle)
-    }
 }
