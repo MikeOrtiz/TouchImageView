@@ -161,15 +161,6 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         fitImageToView()
     }
 
-    fun setImageDrawable(drawable: Drawable?, fitImage: Boolean) {
-        imageRenderedAtLeastOnce = false
-        super.setImageDrawable(drawable)
-        if (fitImage) {
-            savePreviousImageValues()
-            fitImageToView()
-        }
-    }
-
     override fun setImageDrawable(drawable: Drawable?) {
         imageRenderedAtLeastOnce = false
         super.setImageDrawable(drawable)
