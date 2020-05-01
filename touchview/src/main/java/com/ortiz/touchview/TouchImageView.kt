@@ -828,9 +828,8 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
      */
     private inner class GestureListener : SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            return if (doubleTapListener != null) {
-                doubleTapListener!!.onSingleTapConfirmed(e)
-            } else performClick()
+            // Pass on to the OnDoubleTapListener if it is present, otherwise let the View handle the click.
+            return doubleTapListener?.onSingleTapConfirmed(e) ?: performClick()
         }
 
         override fun onLongPress(e: MotionEvent?) {
@@ -849,8 +848,9 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         override fun onDoubleTap(e: MotionEvent?): Boolean {
             var consumed = false
             if (e != null && isZoomEnabled) {
-                if (doubleTapListener != null) {
-                    consumed = doubleTapListener!!.onDoubleTap(e)
+                val currentDoubleTapListener = doubleTapListener
+                if (currentDoubleTapListener != null) {
+                    consumed = currentDoubleTapListener.onDoubleTap(e)
                 }
                 if (state == State.NONE) {
                     val maxZoomScale = if (doubleTapScale == 0f) maxScale else doubleTapScale
@@ -864,9 +864,7 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
 
         override fun onDoubleTapEvent(e: MotionEvent?): Boolean {
-            return if (doubleTapListener != null) {
-                doubleTapListener!!.onDoubleTapEvent(e)
-            } else false
+            return doubleTapListener?.onDoubleTapEvent(e) ?: false
         }
     }
 
