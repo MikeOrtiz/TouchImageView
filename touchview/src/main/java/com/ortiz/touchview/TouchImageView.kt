@@ -848,9 +848,8 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
         override fun onDoubleTap(e: MotionEvent?): Boolean {
             var consumed = false
             if (e != null && isZoomEnabled) {
-                val currentDoubleTapListener = doubleTapListener
-                if (currentDoubleTapListener != null) {
-                    consumed = currentDoubleTapListener.onDoubleTap(e)
+                doubleTapListener?.let {
+                    consumed = it.onDoubleTap(e)
                 }
                 if (state == State.NONE) {
                     val maxZoomScale = if (doubleTapScale == 0f) maxScale else doubleTapScale
