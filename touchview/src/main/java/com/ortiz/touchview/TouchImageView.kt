@@ -3,7 +3,11 @@ package com.ortiz.touchview
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build.VERSION
@@ -823,17 +827,17 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
      * to the view's listener.
      */
     private inner class GestureListener : SimpleOnGestureListener() {
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             return if (doubleTapListener != null) {
                 doubleTapListener!!.onSingleTapConfirmed(e)
             } else performClick()
         }
 
-        override fun onLongPress(e: MotionEvent) {
+        override fun onLongPress(e: MotionEvent?) {
             performLongClick()
         }
 
-        override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
             if (fling != null) {
                 //
                 // If a previous fling is still active, it should be cancelled so that two flings
@@ -846,9 +850,9 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             return super.onFling(e1, e2, velocityX, velocityY)
         }
 
-        override fun onDoubleTap(e: MotionEvent): Boolean {
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
             var consumed = false
-            if (isZoomEnabled) {
+            if (e != null && isZoomEnabled) {
                 if (doubleTapListener != null) {
                     consumed = doubleTapListener!!.onDoubleTap(e)
                 }
@@ -863,7 +867,7 @@ class TouchImageView @JvmOverloads constructor(context: Context, attrs: Attribut
             return consumed
         }
 
-        override fun onDoubleTapEvent(e: MotionEvent): Boolean {
+        override fun onDoubleTapEvent(e: MotionEvent?): Boolean {
             return if (doubleTapListener != null) {
                 doubleTapListener!!.onDoubleTapEvent(e)
             } else false
