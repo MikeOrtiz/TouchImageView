@@ -28,7 +28,7 @@ import android.widget.OverScroller
 import androidx.appcompat.widget.AppCompatImageView
 
 @Suppress("unused")
-class TouchImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : AppCompatImageView(context, attrs, defStyle) {
+open class TouchImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : AppCompatImageView(context, attrs, defStyle) {
     /**
      * Get the current zoom. This is the zoom relative to the initial
      * scale, not the original resource.
