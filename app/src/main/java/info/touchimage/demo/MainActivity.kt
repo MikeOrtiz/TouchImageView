@@ -20,5 +20,6 @@ class MainActivity : AppCompatActivity() {
         resize_button.setOnClickListener { startActivity(Intent(this@MainActivity, ChangeSizeExampleActivity::class.java)) }
         recycler_button.setOnClickListener { startActivity(Intent(this@MainActivity, RecyclerExampleActivity::class.java)) }
         animate_button.setOnClickListener { startActivity(Intent(this@MainActivity, AnimateZoomActivity::class.java)) }
+        glide_button.setOnClickListener { startActivity(Intent(this@MainActivity, GlideExampleActivity::class.java)) }
     }
 }
