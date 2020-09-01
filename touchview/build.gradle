@@ -6,7 +6,14 @@ android {
     compileSdkVersion defaultCompileSdkVersion
 
     defaultConfig {
-        minSdkVersion 14
+        gradle.startParameter.taskNames.each {
+            if (it.contains("AndroidTest") || it.contains("cAT")) {
+                minSdkVersion 21
+            } else {
+                minSdkVersion 14
+            }
+        }
+
         targetSdkVersion defaultTargetSdkVersion
         versionCode 2
         versionName "1.4.0"
@@ -26,6 +33,6 @@ android {
 }
 
 dependencies {
-    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'androidx.appcompat:appcompat:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

@@ -32,3 +32,5 @@ proguard/
 .idea/*
 !.idea/codeStyles/
 *.iml
+
+screenshots
