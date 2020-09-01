@@ -7,8 +7,17 @@ android {
 
     defaultConfig {
         applicationId "com.ortiz.touchdemo"
-        minSdkVersion 14
+
+        gradle.startParameter.taskNames.each {
+            if (it.contains("AndroidTest") || it.contains("cAT")) {
+                minSdkVersion 21
+            } else {
+                minSdkVersion 14
+            }
+        }
         targetSdkVersion defaultTargetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -35,4 +44,52 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    androidTestImplementation 'com.github.AppDevNext:Moka:0.4'
+    androidTestImplementation "androidx.test.ext:junit:1.1.2"
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
+}
+
+def adbDirectory = '/storage/emulated/0/Download' // api 28
+//def adbDirectory = '/storage/self/primary/Download' // api 21
+def reportsDirectory = "$projectDir/../screenshots/adb"
+
+def clearScreenshotsTask = task('clearScreenshots', type: Exec) {
+    println "clearScreenshotsTask"
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'rm', '-r', adbDirectory
+}
+
+def createScreenshotDirectoryTask = task('createScreenshotDirectory', type: Exec, group: 'reporting') {
+    println "createScreenshotDirectoryTask"
+    executable "${android.getAdbExe().toString()}"
+    args 'shell', 'mkdir', '-p', adbDirectory
+}
+
+def fetchScreenshotsTask = task('fetchScreenshots', type: Exec, group: 'reporting') {
+    println "fetchScreenshotsTask"
+    executable "${android.getAdbExe().toString()}"
+    args 'pull', adbDirectory + '/.', reportsDirectory
+
+    dependsOn {
+        createScreenshotDirectoryTask
+    }
+
+    doFirst {
+        new File(reportsDirectory).mkdirs()
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'connectedDebugAndroidTest') {
+        task.mustRunAfter {
+            clearScreenshotsTask
+            createScreenshotDirectoryTask
+        }
+        task.finalizedBy {
+            fetchScreenshotsTask
+        }
+    }
 }
