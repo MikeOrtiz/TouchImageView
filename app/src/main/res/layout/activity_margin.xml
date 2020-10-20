@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/nature_2"
         android:padding="16dp"
+        android:cropToPadding="true"
         android:src="@drawable/nature_1" />
 
 </LinearLayout>
