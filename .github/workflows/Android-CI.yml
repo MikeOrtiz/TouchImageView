@@ -33,7 +33,7 @@ jobs:
       - name: Run instrumentation tests
         uses: malinskiy/action-android/emulator-run-cmd@release/0.0.7
         with:
-          cmd: ./gradlew cAT
+          cmd: ./gradlew cAT --continue
           api: 28
           tag: default
           abi: x86

@@ -26,6 +26,7 @@
         <activity android:name="info.touchimage.demo.ViewPager2ExampleActivity" />
         <activity android:name="info.touchimage.demo.SwitchImageExampleActivity" />
         <activity android:name="info.touchimage.demo.GlideExampleActivity" />
+        <activity android:name="info.touchimage.demo.MarginExampleActivity" />
         <activity android:name="info.touchimage.demo.SwitchScaleTypeExampleActivity" />
         <activity android:name="info.touchimage.demo.ChangeSizeExampleActivity" />
         <activity android:name="info.touchimage.demo.RecyclerExampleActivity" />
