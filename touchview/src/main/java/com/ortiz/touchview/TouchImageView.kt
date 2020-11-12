@@ -15,6 +15,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.OnDoubleTapListener
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -99,6 +100,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     private var prevMatchViewHeight = 0f
     private var scaleDetector: ScaleGestureDetector
     private var gestureDetector: GestureDetector
+    private var rotateDetector : RotationGestureDetector? = null
     private var doubleTapListener: OnDoubleTapListener? = null
     private var userTouchListener: OnTouchListener? = null
     private var touchImageViewListener: OnTouchImageViewListener? = null
@@ -108,6 +110,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         orientation = resources.configuration.orientation
         scaleDetector = ScaleGestureDetector(context, ScaleListener())
         gestureDetector = GestureDetector(context, GestureListener())
+        rotateDetector = RotationGestureDetector(RotateListener())
         touchMatrix = Matrix()
         prevMatrix = Matrix()
         floatMatrix = FloatArray(9)
@@ -133,6 +136,13 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             // release the TypedArray so that it can be reused.
             attributes.recycle()
         }
+    }
+
+    class RotateListener : RotationGestureDetector.OnRotationGestureListener {
+        override fun onRotation(rotationDetector: RotationGestureDetector) {
+            Log.d("RotationGestureDetector", "Rotation: ${rotationDetector.angle}")
+        }
+
     }
 
     fun setRotateImageToFitScreen(rotateImageToFitScreen: Boolean) {
@@ -797,7 +807,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         this.state = state
     }
 
-    @Deprecated("")
     fun canScrollHorizontallyFroyo(direction: Int): Boolean {
         return canScrollHorizontally(direction)
     }
