@@ -97,8 +97,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     private var matchViewHeight = 0f
     private var prevMatchViewWidth = 0f
     private var prevMatchViewHeight = 0f
-    private var mScaleDetector: ScaleGestureDetector? = null
-    private var mGestureDetector: GestureDetector? = null
+    private var scaleDetector: ScaleGestureDetector
+    private var gestureDetector: GestureDetector
     private var doubleTapListener: OnDoubleTapListener? = null
     private var userTouchListener: OnTouchListener? = null
     private var touchImageViewListener: OnTouchImageViewListener? = null
@@ -106,8 +106,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     init {
         super.setClickable(true)
         orientation = resources.configuration.orientation
-        mScaleDetector = ScaleGestureDetector(context, ScaleListener())
-        mGestureDetector = GestureDetector(context, GestureListener())
+        scaleDetector = ScaleGestureDetector(context, ScaleListener())
+        gestureDetector = GestureDetector(context, GestureListener())
         touchMatrix = Matrix()
         prevMatrix = Matrix()
         floatMatrix = FloatArray(9)
@@ -885,9 +885,9 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
                 return false
             }
             if (isZoomEnabled) {
-                mScaleDetector!!.onTouchEvent(event)
+                scaleDetector.onTouchEvent(event)
             }
-            mGestureDetector!!.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
             val curr = PointF(event.x, event.y)
             if (state == State.NONE || state == State.DRAG || state == State.FLING) {
                 when (event.action) {
