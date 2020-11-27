@@ -4,27 +4,33 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ortiz.touchview.TouchImageView
-import kotlinx.android.synthetic.main.activity_single_touchimageview.*
+import info.touchimage.demo.databinding.ActivitySingleTouchimageviewBinding
 
 
 class AnimateZoomActivity : AppCompatActivity(), TouchImageView.OnZoomFinishedListener {
 
+    private lateinit var binding: ActivitySingleTouchimageviewBinding
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_single_touchimageview)
 
-        current_zoom.setOnClickListener {
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivitySingleTouchimageviewBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.currentZoom.setOnClickListener {
             when {
-                imageSingle.isZoomed -> imageSingle.resetZoomAnimated()
-                imageSingle.isZoomed.not() -> imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
+                binding.imageSingle.isZoomed -> binding.imageSingle.resetZoomAnimated()
+                binding.imageSingle.isZoomed.not() -> binding.imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     override fun onZoomFinished() {
-        scroll_position.text = "Zoom done"
+        binding.scrollPosition.text = "Zoom done"
     }
 
 }

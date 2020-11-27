@@ -4,16 +4,22 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.PagerSnapHelper
 import info.touchimage.demo.custom.AdapterImages
-import kotlinx.android.synthetic.main.activity_recyclerview.*
+import info.touchimage.demo.databinding.ActivityRecyclerviewBinding
 
 
 class RecyclerExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityRecyclerviewBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_recyclerview)
 
-        with(recycler) {
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityRecyclerviewBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        with(binding.recycler) {
             adapter = AdapterImages(images)
             PagerSnapHelper().attachToRecyclerView(this)
         }

@@ -10,7 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
 import com.ortiz.touchview.TouchImageView
-import kotlinx.android.synthetic.main.activity_change_size.*
+import info.touchimage.demo.databinding.ActivityChangeSizeBinding
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -37,6 +37,8 @@ import kotlin.math.pow
  */
 class ChangeSizeExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityChangeSizeBinding
+
     private var xSizeAnimator = ValueAnimator()
     private var ySizeAnimator = ValueAnimator()
     private var xSizeAdjustment = 0
@@ -49,30 +51,34 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_change_size)
 
-        imageChangeSize.setBackgroundColor(Color.LTGRAY)
-        imageChangeSize.minZoom = TouchImageView.AUTOMATIC_MIN_ZOOM
-        imageChangeSize.setMaxZoomRatio(6.0f)
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityChangeSizeBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        left.setOnClickListener(SizeAdjuster(-1, 0))
-        right.setOnClickListener(SizeAdjuster(1, 0))
-        up.setOnClickListener(SizeAdjuster(0, -1))
-        down.setOnClickListener(SizeAdjuster(0, 1))
+        binding.imageChangeSize.setBackgroundColor(Color.LTGRAY)
+        binding.imageChangeSize.minZoom = TouchImageView.AUTOMATIC_MIN_ZOOM
+        binding.imageChangeSize.setMaxZoomRatio(6.0f)
+
+        binding.left.setOnClickListener(SizeAdjuster(-1, 0))
+        binding.right.setOnClickListener(SizeAdjuster(1, 0))
+        binding.up.setOnClickListener(SizeAdjuster(0, -1))
+        binding.down.setOnClickListener(SizeAdjuster(0, 1))
 
         resizeAdjuster = SizeBehaviorAdjuster(false, "resize: ")
         rotateAdjuster = SizeBehaviorAdjuster(true, "rotate: ")
-        resize.setOnClickListener(resizeAdjuster)
-        rotate.setOnClickListener(rotateAdjuster)
+        binding.resize.setOnClickListener(resizeAdjuster)
+        binding.rotate.setOnClickListener(rotateAdjuster)
 
-        switch_scaletype_button.setOnClickListener {
+        binding.switchScaletypeButton.setOnClickListener {
             scaleTypeIndex = (scaleTypeIndex + 1) % scaleTypes.size
             processScaleType(scaleTypes[scaleTypeIndex], true)
         }
 
         findViewById<View>(R.id.switch_image_button).setOnClickListener {
             imageIndex = (imageIndex + 1) % images.size
-            imageChangeSize.setImageResource(images[imageIndex])
+            binding.imageChangeSize.setImageResource(images[imageIndex])
         }
 
         savedInstanceState?.let { savedState ->
@@ -80,15 +86,15 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
             resizeAdjuster.setIndex(findViewById<View>(R.id.resize) as Button, savedState.getInt("resizeAdjusterIndex"))
             rotateAdjuster.setIndex(findViewById<View>(R.id.rotate) as Button, savedState.getInt("rotateAdjusterIndex"))
             imageIndex = savedState.getInt("imageIndex")
-            imageChangeSize.setImageResource(images[imageIndex])
+            binding.imageChangeSize.setImageResource(images[imageIndex])
         }
 
-        imageChangeSize.post { processScaleType(scaleTypes[scaleTypeIndex], false) }
+        binding.imageChangeSize.post { processScaleType(scaleTypes[scaleTypeIndex], false) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        with (outState) {
+        with(outState) {
             putInt("scaleTypeIndex", scaleTypeIndex)
             putInt("resizeAdjusterIndex", resizeAdjuster.index)
             putInt("rotateAdjusterIndex", rotateAdjuster.index)
@@ -100,47 +106,47 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
     private fun processScaleType(scaleType: ImageView.ScaleType, resetZoom: Boolean) {
         when (scaleType) {
             ImageView.ScaleType.FIT_END -> {
-                switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.CENTER_CROP.name + " zoom)"
-                imageChangeSize.scaleType = ImageView.ScaleType.CENTER
-                val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
-                val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
+                binding.switchScaletypeButton.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.CENTER_CROP.name + " zoom)"
+                binding.imageChangeSize.scaleType = ImageView.ScaleType.CENTER
+                val widthRatio = binding.imageChangeSize.measuredWidth.toFloat() / binding.imageChangeSize.drawable.intrinsicWidth
+                val heightRatio = binding.imageChangeSize.measuredHeight.toFloat() / binding.imageChangeSize.drawable.intrinsicHeight
                 if (resetZoom) {
-                    imageChangeSize.setZoom(max(widthRatio, heightRatio))
+                    binding.imageChangeSize.setZoom(max(widthRatio, heightRatio))
                 }
             }
             ImageView.ScaleType.FIT_START -> {
-                switch_scaletype_button.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.FIT_CENTER.name + " zoom)"
-                imageChangeSize.scaleType = ImageView.ScaleType.CENTER
-                val widthRatio = imageChangeSize.measuredWidth.toFloat() / imageChangeSize.drawable.intrinsicWidth
-                val heightRatio = imageChangeSize.measuredHeight.toFloat() / imageChangeSize.drawable.intrinsicHeight
+                binding.switchScaletypeButton.text = ImageView.ScaleType.CENTER.name + " (with " + ImageView.ScaleType.FIT_CENTER.name + " zoom)"
+                binding.imageChangeSize.scaleType = ImageView.ScaleType.CENTER
+                val widthRatio = binding.imageChangeSize.measuredWidth.toFloat() / binding.imageChangeSize.drawable.intrinsicWidth
+                val heightRatio = binding.imageChangeSize.measuredHeight.toFloat() / binding.imageChangeSize.drawable.intrinsicHeight
                 if (resetZoom) {
-                    imageChangeSize.setZoom(min(widthRatio, heightRatio))
+                    binding.imageChangeSize.setZoom(min(widthRatio, heightRatio))
                 }
             }
             else -> {
-                switch_scaletype_button.text = scaleType.name
-                imageChangeSize.scaleType = scaleType
+                binding.switchScaletypeButton.text = scaleType.name
+                binding.imageChangeSize.scaleType = scaleType
                 if (resetZoom) {
-                    imageChangeSize.resetZoom()
+                    binding.imageChangeSize.resetZoom()
                 }
             }
         }
     }
 
     private fun adjustImageSize() {
-        val width = image_container.measuredWidth * 1.1.pow(xSizeAdjustment.toDouble())
-        val height = image_container.measuredHeight * 1.1.pow(ySizeAdjustment.toDouble())
+        val width = binding.imageContainer.measuredWidth * 1.1.pow(xSizeAdjustment.toDouble())
+        val height = binding.imageContainer.measuredHeight * 1.1.pow(ySizeAdjustment.toDouble())
         xSizeAnimator.cancel()
         ySizeAnimator.cancel()
-        xSizeAnimator = ValueAnimator.ofInt(imageChangeSize.width, width.toInt())
-        ySizeAnimator = ValueAnimator.ofInt(imageChangeSize.height, height.toInt())
+        xSizeAnimator = ValueAnimator.ofInt(binding.imageChangeSize.width, width.toInt())
+        ySizeAnimator = ValueAnimator.ofInt(binding.imageChangeSize.height, height.toInt())
         xSizeAnimator.addUpdateListener { animation ->
-            imageChangeSize.updateLayoutParams {
+            binding.imageChangeSize.updateLayoutParams {
                 this.width = animation.animatedValue as Int
             }
         }
         ySizeAnimator.addUpdateListener { animation ->
-            imageChangeSize.updateLayoutParams {
+            binding.imageChangeSize.updateLayoutParams {
                 this.height = animation.animatedValue as Int
             }
         }
@@ -150,7 +156,7 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
         ySizeAnimator.start()
     }
 
-    private inner class SizeAdjuster constructor(internal var dx: Int, internal var dy: Int) : View.OnClickListener {
+    private inner class SizeAdjuster constructor(var dx: Int, var dy: Int) : View.OnClickListener {
 
         override fun onClick(v: View) {
             val newXScale = min(0, xSizeAdjustment + dx)
@@ -164,7 +170,7 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
         }
     }
 
-    private inner class SizeBehaviorAdjuster internal constructor(private val forOrientationChanges: Boolean, private val buttonPrefix: String) : View.OnClickListener {
+    private inner class SizeBehaviorAdjuster(private val forOrientationChanges: Boolean, private val buttonPrefix: String) : View.OnClickListener {
         private val values = TouchImageView.FixedPixel.values()
         var index = 0
             private set
@@ -174,12 +180,12 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
         }
 
         @SuppressLint("SetTextI18n")
-        internal fun setIndex(b: Button, index: Int) {
+        fun setIndex(b: Button, index: Int) {
             this.index = index
             if (forOrientationChanges) {
-                imageChangeSize.orientationChangeFixedPixel = values[index]
+                binding.imageChangeSize.orientationChangeFixedPixel = values[index]
             } else {
-                imageChangeSize.viewSizeChangeFixedPixel = values[index]
+                binding.imageChangeSize.viewSizeChangeFixedPixel = values[index]
             }
             b.text = buttonPrefix + values[index].name
         }

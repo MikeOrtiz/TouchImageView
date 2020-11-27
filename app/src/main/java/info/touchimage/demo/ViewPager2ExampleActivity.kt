@@ -3,14 +3,22 @@ package info.touchimage.demo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import info.touchimage.demo.custom.AdapterImages
-import kotlinx.android.synthetic.main.activity_viewpager2_example.*
+import info.touchimage.demo.databinding.ActivityViewpager2ExampleBinding
+
 
 class ViewPager2ExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityViewpager2ExampleBinding
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_viewpager2_example)
-        view_pager2.adapter = AdapterImages(images)
+
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityViewpager2ExampleBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.viewPager2.adapter = AdapterImages(images)
     }
 
     companion object {
