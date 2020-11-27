@@ -4,21 +4,27 @@ import android.os.Bundle
 import android.widget.ImageView.ScaleType
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_switch_scaletype_example.*
+import info.touchimage.demo.databinding.ActivitySwitchScaletypeExampleBinding
 
 class SwitchScaleTypeExampleActivity : AppCompatActivity() {
 
     private var index = 0
+    private lateinit var binding: ActivitySwitchScaletypeExampleBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_switch_scaletype_example)
+
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivitySwitchScaletypeExampleBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
 
         // Set next scaleType with each button click
-        imageScale.setOnClickListener {
+        binding.imageScale.setOnClickListener {
             index = ++index % scaleTypes.size
             val currScaleType = scaleTypes[index]
-            imageScale.scaleType = currScaleType
+            binding.imageScale.scaleType = currScaleType
             Toast.makeText(this, "ScaleType: $currScaleType", Toast.LENGTH_SHORT).show()
         }
     }

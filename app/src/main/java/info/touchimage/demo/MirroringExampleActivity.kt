@@ -3,25 +3,31 @@ package info.touchimage.demo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.ortiz.touchview.TouchImageView
-import kotlinx.android.synthetic.main.activity_mirroring_example.*
+import info.touchimage.demo.databinding.ActivityMirroringExampleBinding
 
 class MirroringExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMirroringExampleBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mirroring_example)
+
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityMirroringExampleBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // Each image has an OnTouchImageViewListener which uses its own TouchImageView
         // to set the other TIV with the same zoom variables.
 
-        topImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
+        binding.topImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
             override fun onMove() {
-                bottomImage.setZoom(topImage)
+                binding.bottomImage.setZoom(binding.topImage)
             }
         })
-        bottomImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
+        binding.bottomImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
             override fun onMove() {
-                topImage.setZoom(bottomImage)
+                binding.topImage.setZoom(binding.bottomImage)
             }
         })
     }

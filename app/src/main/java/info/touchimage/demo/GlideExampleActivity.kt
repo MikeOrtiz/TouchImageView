@@ -7,20 +7,25 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import kotlinx.android.synthetic.main.activity_glide.*
+import info.touchimage.demo.databinding.ActivityGlideBinding
 
 
 class GlideExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityGlideBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_glide)
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityGlideBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         Glide.with(this)
                 .load(GLIDE_IMAGE_URL)
                 .into(object : CustomTarget<Drawable?>() {
                     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable?>?) {
-                        imageGlide.setImageDrawable(resource)
+                        binding.imageGlide.setImageDrawable(resource)
                     }
 
                     override fun onLoadCleared(@Nullable placeholder: Drawable?) = Unit

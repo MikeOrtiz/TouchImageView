@@ -7,14 +7,22 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.PagerAdapter
 import com.ortiz.touchview.TouchImageView
-import kotlinx.android.synthetic.main.activity_viewpager_example.*
+import info.touchimage.demo.databinding.ActivityViewpagerExampleBinding
+
 
 class ViewPagerExampleActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityViewpagerExampleBinding
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_viewpager_example)
-        view_pager.adapter = TouchImageAdapter()
+
+        // https://developer.android.com/topic/libraries/view-binding
+        binding = ActivityViewpagerExampleBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.viewPager.adapter = TouchImageAdapter()
     }
 
     private class TouchImageAdapter : PagerAdapter() {
