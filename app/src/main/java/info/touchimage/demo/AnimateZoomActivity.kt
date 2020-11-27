@@ -22,6 +22,7 @@ class AnimateZoomActivity : AppCompatActivity(), TouchImageView.OnZoomFinishedLi
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onZoomFinished() {
         scroll_position.text = "Zoom done"
     }
