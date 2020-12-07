@@ -25,13 +25,13 @@ jobs:
         with:
           java-version: ${{ matrix.java_version }}
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.0.7.7
+        uses: malinskiy/action-android/install-sdk@release/0.0.7
       - name: Build project
         run: ./gradlew assembleDebug
       - name: Run tests
         run: ./gradlew test
       - name: Run instrumentation tests
-        uses: hannesa2/action-android/emulator-run-cmd@0.0.7.7
+        uses: malinskiy/action-android/emulator-run-cmd@release/0.0.7
         with:
           cmd: ./gradlew cAT
           api: 28
@@ -67,7 +67,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.0.7.7
+        uses: malinskiy/action-android/install-sdk@release/0.0.7
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
