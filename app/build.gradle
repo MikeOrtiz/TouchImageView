@@ -7,13 +7,7 @@ android {
     defaultConfig {
         applicationId "com.ortiz.touchdemo"
 
-        gradle.startParameter.taskNames.each {
-            if (it.contains("AndroidTest") || it.contains("cAT")) {
-                minSdkVersion 21
-            } else {
-                minSdkVersion 14
-            }
-        }
+        minSdkVersion 21 // because of testlib Moka
         targetSdkVersion defaultTargetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
