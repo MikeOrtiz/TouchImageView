@@ -13,8 +13,9 @@ jobs:
     name: Build & Test JDK ${{ matrix.java_version }}
     runs-on: macOS-latest
     strategy:
+      fail-fast: false
       matrix:
-        java_version: [ 11.0.3 ]
+        java_version: [ 15, 16-ea ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
@@ -59,8 +60,9 @@ jobs:
     name: Check
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        java_version: [ 11.0.3 ]
+        java_version: [ 15, 16-ea ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
