@@ -899,9 +899,13 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
                     MotionEvent.ACTION_MOVE -> if (state == State.DRAG) {
                         val deltaX = curr.x - last.x
                         val deltaY = curr.y - last.y
-                        val fixTransX = getFixDragTrans(deltaX, viewWidth.toFloat(), imageWidth)
-                        val fixTransY = getFixDragTrans(deltaY, viewHeight.toFloat(), imageHeight)
-                        touchMatrix!!.postTranslate(fixTransX, fixTransY)
+                        if (false) { // TODO it needs a condition by attribute
+                            val fixTransX = getFixDragTrans(deltaX, viewWidth.toFloat(), imageWidth)
+                            val fixTransY = getFixDragTrans(deltaY, viewHeight.toFloat(), imageHeight)
+                            touchMatrix!!.postTranslate(fixTransX, fixTransY)
+                        } else {
+                            touchMatrix!!.postTranslate(deltaX, deltaY )
+                        }
                         fixTrans()
                         last[curr.x] = curr.y
                     }
