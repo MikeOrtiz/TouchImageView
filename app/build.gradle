@@ -6,6 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.ortiz.touchdemo"
+        versionCode getGitCommitCount()
+        versionName getTag()
 
         minSdkVersion 21 // because of testlib Moka
         targetSdkVersion defaultTargetSdkVersion
