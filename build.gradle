@@ -23,3 +23,30 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
+
+static def getTag() {
+    def tagVersion = "$System.env.VERSION"
+    if (tagVersion == "null") {
+        // with local un-commited changes a -DIRTY is added
+        def processChanges = "git diff-index --name-only HEAD --".execute()
+        def dirty = ""
+        if (!processChanges.text.toString().trim().isEmpty())
+            dirty = "-DIRTY"
+
+        def process = "git describe --tags".execute()
+        tagVersion = process.text.toString().trim() + dirty
+    } else {
+        def tagVersionToken = tagVersion.split("/")
+        if (tagVersionToken.size() > 2)
+            tagVersion = tagVersionToken[2]
+        else
+            tagVersion = tagVersionToken[0]
+    }
+    return tagVersion
+}
+
+@SuppressWarnings('unused')
+static def getGitCommitCount() {
+    def process = "git rev-list HEAD --count".execute()
+    return process.text.toInteger()
+}

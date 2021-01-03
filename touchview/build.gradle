@@ -14,9 +14,11 @@ android {
         }
 
         targetSdkVersion defaultTargetSdkVersion
-        versionCode 2
-        versionName "1.4.0"
+        versionCode getGitCommitCount()
+        versionName getTag()
+        buildConfigField "String", 'VERSION', "\"" + versionName + "\""
     }
+
     buildTypes {
         release {
             minifyEnabled false
