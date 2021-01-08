@@ -9,7 +9,7 @@ android {
         versionCode getGitCommitCount()
         versionName getTag()
 
-        minSdkVersion 21 // because of testlib Moka
+        minSdkVersion 21 // because of testLib Moka
         targetSdkVersion defaultTargetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

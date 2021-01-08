@@ -24,10 +24,11 @@ allprojects {
     }
 }
 
+@SuppressWarnings('unused')
 static def getTag() {
     def tagVersion = "$System.env.VERSION"
     if (tagVersion == "null") {
-        // with local un-commited changes a -DIRTY is added
+        // with local un-committed changes a -DIRTY is added
         def processChanges = "git diff-index --name-only HEAD --".execute()
         def dirty = ""
         if (!processChanges.text.toString().trim().isEmpty())
