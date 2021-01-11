@@ -38,19 +38,19 @@ jobs:
           tag: default
           abi: x86
       - name: Archive Espresso results
-        uses: actions/upload-artifact@v2.2.1
+        uses: actions/upload-artifact@v2.2.2
         if: ${{ always() }}
         with:
           name: TouchImage-Espresso-report
           path: app/build/reports/androidTests/connected
       - name: Save logcat output
-        uses: actions/upload-artifact@v2.2.1
+        uses: actions/upload-artifact@v2.2.2
         if: failure()
         with:
           name: TouchImage-logcat
           path: artifacts/logcat.log
       - name: Archive screenshots
-        uses: actions/upload-artifact@v2.2.1
+        uses: actions/upload-artifact@v2.2.2
         with:
           name: TouchImage-Screenshots
           path: screenshots/adb
@@ -74,7 +74,7 @@ jobs:
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
-        uses: actions/upload-artifact@v2.2.1
+        uses: actions/upload-artifact@v2.2.2
         if: ${{ always() }}
         with:
           name: TouchImage-Lint-report
