@@ -3,11 +3,7 @@ package com.ortiz.touchview
 import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.PointF
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build.VERSION
@@ -103,6 +99,10 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     private var userTouchListener: OnTouchListener? = null
     private var touchImageViewListener: OnTouchImageViewListener? = null
 
+    interface OnTouchImageViewListener {
+        fun onMove()
+    }
+
     init {
         super.setClickable(true)
         orientation = resources.configuration.orientation
@@ -185,18 +185,14 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         } else {
             touchScaleType = type
             if (onDrawReady) {
-                //
                 // If the image is already rendered, scaleType has been called programmatically
                 // and the TouchImageView should be updated with the new scaleType.
-                //
                 setZoom(this)
             }
         }
     }
 
-    override fun getScaleType(): ScaleType {
-        return touchScaleType!!
-    }
+    override fun getScaleType() = touchScaleType!!
 
     /**
      * Returns false if image is in initial, unzoomed state. False, otherwise.
@@ -299,13 +295,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     /**
-     * Get the max zoom multiplier.
-     *
-     * @return max zoom multiplier.
-     */
-    /**
      * Set the max zoom multiplier to a constant. Default value: 3.
-     *
+     * @return max zoom multiplier.
      */
     var maxZoom: Float
         get() = maxScale
@@ -329,13 +320,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     /**
-     * Get the min zoom multiplier.
-     *
-     * @return min zoom multiplier.
-     */// CENTER_CROP
-    /**
      * Set the min zoom multiplier. Default value: 1.
-     *
+     * @return min zoom multiplier.
      */
     var minZoom: Float
         get() = minScale
@@ -367,9 +353,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             superMinScale = SUPER_MIN_MULTIPLIER * minScale
         }
 
-    /**
-     * Reset zoom and translation to initial state.
-     */
+    // Reset zoom and translation to initial state.
     fun resetZoom() {
         currentZoom = 1f
         fitImageToView()
@@ -379,9 +363,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         setZoomAnimated(1f, 0.5f, 0.5f)
     }
 
-    /**
-     * Set zoom to the specified scale. Image will be centered by default.
-     */
+    // Set zoom to the specified scale. Image will be centered by default.
     fun setZoom(scale: Float) {
         setZoom(scale, 0.5f, 0.5f)
     }
@@ -403,11 +385,10 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
      * corner of the image would be (0, 0). And the bottom right corner would be (1, 1).
      */
     fun setZoom(scale: Float, focusX: Float, focusY: Float, scaleType: ScaleType?) {
-        //
+
         // setZoom can be called before the image is on the screen, but at this point,
         // image and view sizes have not yet been calculated in onMeasure. Thus, we should
         // delay calling setZoom until the view has been measured.
-        //
         if (!onDrawReady) {
             delayedZoomVariables = ZoomVariables(scale, focusX, focusY, scaleType)
             return
@@ -580,7 +561,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        //
         // Fit content within view.
         //
         // onMeasure may be called multiple times for each layout change, including orientation
@@ -596,7 +576,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         // repeated computations, and making irreversible changes (e.g. making the View temporarily too
         // big or too small, thus making the current zoom fall outside of an automatically-changing
         // minZoom and maxZoom).
-        //
         viewWidth = w
         viewHeight = h
         fitImageToView()
@@ -609,7 +588,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
      * 3. On rotation (onSaveInstanceState, then onRestoreInstanceState, then onMeasure).
      * 4. When the view is resized (onMeasure).
      * 5. When the zoom is reset (resetZoom).
-     *
      *
      * In cases 2, 3 and 4, we try to maintain the zoom state and position as directed by
      * orientationChangeFixedPixel or viewSizeChangeFixedPixel (if there is an existing zoom state
@@ -639,9 +617,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         val drawableWidth = getDrawableWidth(drawable)
         val drawableHeight = getDrawableHeight(drawable)
 
-        //
         // Scale image for view
-        //
         var scaleX = viewWidth.toFloat() / drawableWidth
         var scaleY = viewHeight.toFloat() / drawableHeight
         when (touchScaleType) {
@@ -667,10 +643,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
                 scaleY = Math.min(scaleX, scaleY)
                 scaleX = scaleY
             }
-            ScaleType.FIT_XY -> {
-            }
-            else -> {
-            }
+            ScaleType.FIT_XY -> Unit
+            else -> Unit
         }
 
         // Put the image's center in the right place.
@@ -730,18 +704,14 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         imageMatrix = touchMatrix
     }
 
-    /**
-     * Set view dimensions based on layout params
-     */
+    // Set view dimensions based on layout params
     private fun setViewSize(mode: Int, size: Int, drawableWidth: Int): Int {
-        val viewSize: Int
-        viewSize = when (mode) {
+        return when (mode) {
             MeasureSpec.EXACTLY -> size
             MeasureSpec.AT_MOST -> Math.min(drawableWidth, size)
             MeasureSpec.UNSPECIFIED -> drawableWidth
             else -> size
         }
-        return viewSize
     }
 
     /**
@@ -759,36 +729,27 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
      */
     private fun newTranslationAfterChange(trans: Float, prevImageSize: Float, imageSize: Float, prevViewSize: Int, viewSize: Int, drawableSize: Int, sizeChangeFixedPixel: FixedPixel?): Float {
         return if (imageSize < viewSize) {
-            //
             // The width/height of image is less than the view's width/height. Center it.
-            //
             (viewSize - drawableSize * floatMatrix!![Matrix.MSCALE_X]) * 0.5f
         } else if (trans > 0) {
-            //
             // The image is larger than the view, but was not before the view changed. Center it.
-            //
             -((imageSize - viewSize) * 0.5f)
         } else {
-            //
             // Where is the pixel in the View that we are keeping stable, as a fraction of the
             // width/height of the View?
-            //
             var fixedPixelPositionInView = 0.5f // CENTER
             if (sizeChangeFixedPixel == FixedPixel.BOTTOM_RIGHT) {
                 fixedPixelPositionInView = 1.0f
             } else if (sizeChangeFixedPixel == FixedPixel.TOP_LEFT) {
                 fixedPixelPositionInView = 0.0f
             }
-            //
             // Where is the pixel in the Image that we are keeping stable, as a fraction of the
             // width/height of the Image?
-            //
             val fixedPixelPositionInImage = (-trans + fixedPixelPositionInView * prevViewSize) / prevImageSize
-            //
+
             // Here's what the new translation should be so that, after whatever change triggered
             // this function to be called, the pixel at fixedPixelPositionInView of the View is
             // still the pixel at fixedPixelPositionInImage of the image.
-            //
             -(fixedPixelPositionInImage * imageSize - viewSize * fixedPixelPositionInView)
         }
     }
@@ -840,8 +801,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             // If a previous fling is still active, it should be cancelled so that two flings
             // are not run simultaneously.
             fling?.cancelFling()
-            fling = Fling(velocityX.toInt(), velocityY.toInt())
-                    .also { compatPostOnAnimation(it) }
+            fling = Fling(velocityX.toInt(), velocityY.toInt()).also { compatPostOnAnimation(it) }
             return super.onFling(e1, e2, velocityX, velocityY)
         }
 
@@ -865,10 +825,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         override fun onDoubleTapEvent(e: MotionEvent?): Boolean {
             return doubleTapListener?.onDoubleTapEvent(e) ?: false
         }
-    }
-
-    interface OnTouchImageViewListener {
-        fun onMove()
     }
 
     /**
@@ -1283,7 +1239,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
      * AnimatedZoom calls a series of runnables which apply
      * an animated zoom to the specified target focus at the specified zoom level.
      */
-    private inner class AnimatedZoom internal constructor(targetZoom: Float, focus: PointF, zoomTimeMillis: Int) : Runnable {
+    private inner class AnimatedZoom(targetZoom: Float, focus: PointF, zoomTimeMillis: Int) : Runnable {
         private val zoomTimeMillis: Int
         private val startTime: Long
         private val startZoom: Float
@@ -1339,18 +1295,13 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     companion object {
-        private const val DEBUG = "DEBUG"
-
-        // SuperMin and SuperMax multipliers. Determine how much the image can be
-        // zoomed below or above the zoom boundaries, before animating back to the
-        // min/max zoom boundary.
+        // SuperMin and SuperMax multipliers. Determine how much the image can be zoomed below or above the zoom boundaries,
+        // before animating back to the min/max zoom boundary.
         private const val SUPER_MIN_MULTIPLIER = .75f
         private const val SUPER_MAX_MULTIPLIER = 1.25f
         private const val DEFAULT_ZOOM_TIME = 500
 
-        /**
-         * If setMinZoom(AUTOMATIC_MIN_ZOOM), then we'll set the min scale to include the whole image.
-         */
+        // If setMinZoom(AUTOMATIC_MIN_ZOOM), then we'll set the min scale to include the whole image.
         const val AUTOMATIC_MIN_ZOOM = -1.0f
     }
 
