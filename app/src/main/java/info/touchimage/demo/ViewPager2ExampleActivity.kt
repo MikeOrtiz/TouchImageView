@@ -19,6 +19,9 @@ class ViewPager2ExampleActivity : AppCompatActivity() {
         setContentView(view)
 
         binding.viewPager2.adapter = AdapterImages(images)
+        binding.bottomSheetFileInfos.setOnTouchListener { v, event ->
+            true
+        }
     }
 
     companion object {
