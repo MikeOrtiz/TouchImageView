@@ -26,6 +26,9 @@ class AnimateZoomActivity : AppCompatActivity(), TouchImageView.OnZoomFinishedLi
                 binding.imageSingle.isZoomed.not() -> binding.imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
             }
         }
+
+        // It's not needed, but help to see if it proper centers on bigger screens (or smaller images)
+        binding.imageSingle.setZoom(1.1f, 0f, 0f)
     }
 
     @SuppressLint("SetTextI18n")
