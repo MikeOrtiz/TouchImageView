@@ -405,8 +405,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         resetZoom()
         scaleImage(scale.toDouble(), viewWidth / 2.toFloat(), viewHeight / 2.toFloat(), true)
         touchMatrix!!.getValues(floatMatrix)
-        floatMatrix!![Matrix.MTRANS_X] = -(focusX * imageWidth - viewWidth * 0.5f)
-        floatMatrix!![Matrix.MTRANS_Y] = -(focusY * imageHeight - viewHeight * 0.5f)
+        floatMatrix!![Matrix.MTRANS_X] = (viewWidth - matchViewWidth) / 2 - focusX * (scale - 1) * matchViewWidth
+        floatMatrix!![Matrix.MTRANS_Y] = (viewHeight - matchViewHeight) / 2 - focusY * (scale - 1) * matchViewHeight
         touchMatrix!!.setValues(floatMatrix)
         fixTrans()
         savePreviousImageValues()
