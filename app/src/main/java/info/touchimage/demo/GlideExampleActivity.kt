@@ -21,6 +21,8 @@ class GlideExampleActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        binding.imageGlide.maxHeight
+
         Glide.with(this)
                 .load(GLIDE_IMAGE_URL)
                 .into(object : CustomTarget<Drawable?>() {

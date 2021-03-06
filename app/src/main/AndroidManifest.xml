@@ -30,5 +30,6 @@
         <activity android:name="info.touchimage.demo.ChangeSizeExampleActivity" />
         <activity android:name="info.touchimage.demo.RecyclerExampleActivity" />
         <activity android:name="info.touchimage.demo.AnimateZoomActivity" />
+        <activity android:name="info.touchimage.demo.MainActivity325" />
     </application>
 </manifest>

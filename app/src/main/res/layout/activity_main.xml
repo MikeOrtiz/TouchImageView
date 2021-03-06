@@ -64,4 +64,10 @@
         android:layout_height="wrap_content"
         android:text="Glide" />
 
+    <Button
+        android:id="@+id/issue325Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Issue 325" />
+
 </LinearLayout>

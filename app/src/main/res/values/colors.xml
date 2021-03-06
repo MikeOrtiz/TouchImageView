@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="brown_light">#cc7b35</color>
     <color name="brown">#945824</color>
+
+    <color name="colorPrimary325">#008577</color>
+    <color name="colorPrimaryDark325">#00574B</color>
+    <color name="colorAccent325">#D81B60</color>
 </resources>
