@@ -11,6 +11,9 @@
     <string name="switch_image_example">Switch Image Example</string>
     <string name="switch_scaletype_example">Switch ScaleType Example</string>
     <string name="resize_button_example">Resize Example</string>
+    <string name="recyclerview_and_zoom">RecyclerView and zoom</string>
+    <string name="animate_zoom">Animate zoom</string>
+    <string name="glide">Glide</string>
 
     <string name="get_scroll_position">getScrollPosition():</string>
     <string name="get_zoomed_rect">getZoomedRect():</string>
@@ -19,4 +22,5 @@
     <string name="swipe_viewpager">Swipe left or right to test ViewPager.</string>
     <string name="switch_image_text">Click TouchImageView to cycle through image resources. Note that the zoom state is maintained.</string>
     <string name="switch_scaletype_text">Click TouchImageView to cycle through supported ScaleTypes.</string>
+    <string name="rounded_corners_example">Rounded corners</string>
 </resources>
