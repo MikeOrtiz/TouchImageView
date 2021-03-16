@@ -109,4 +109,11 @@ class MainSmokeTest {
         Intents.intended(hasComponent(GlideExampleActivity::class.java.name))
         Screenshot.takeScreenshot("testGlide")
     }
+
+    @Test
+    fun makeScreenshotOfShapedImage() {
+        Espresso.onView(withId(R.id.shaped_image_button)).perform(ViewActions.click())
+        Intents.intended(hasComponent(ShapedExampleActivity::class.java.name))
+        Screenshot.takeScreenshot("testShapedImage")
+    }
 }
