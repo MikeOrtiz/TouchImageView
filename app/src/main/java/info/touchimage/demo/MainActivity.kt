@@ -28,5 +28,6 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerButton.setOnClickListener { startActivity(Intent(this@MainActivity, RecyclerExampleActivity::class.java)) }
         binding.animateButton.setOnClickListener { startActivity(Intent(this@MainActivity, AnimateZoomActivity::class.java)) }
         binding.glideButton.setOnClickListener { startActivity(Intent(this@MainActivity, GlideExampleActivity::class.java)) }
+        binding.shapedImageButton.setOnClickListener { startActivity(Intent(this@MainActivity, ShapedExampleActivity::class.java)) }
     }
 }

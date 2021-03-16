@@ -1,67 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/single_touchimageview_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/single_touchimageview" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/viewpager_example_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/viewpager_example" />
+        <Button
+            android:id="@+id/single_touchimageview_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/single_touchimageview" />
 
-    <Button
-        android:id="@+id/viewpager2_example_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/viewpager2_example" />
+        <Button
+            android:id="@+id/viewpager_example_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/viewpager_example" />
 
-    <Button
-        android:id="@+id/mirror_touchimageview_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mirror_touchimageview" />
+        <Button
+            android:id="@+id/viewpager2_example_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/viewpager2_example" />
 
-    <Button
-        android:id="@+id/switch_image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/switch_image_example" />
+        <Button
+            android:id="@+id/mirror_touchimageview_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mirror_touchimageview" />
 
-    <Button
-        android:id="@+id/switch_scaletype_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/switch_scaletype_example" />
+        <Button
+            android:id="@+id/switch_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_image_example" />
 
-    <Button
-        android:id="@+id/resize_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/resize_button_example" />
+        <Button
+            android:id="@+id/switch_scaletype_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_scaletype_example" />
 
-    <Button
-        android:id="@+id/recycler_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RecyclerView and zoom" />
+        <Button
+            android:id="@+id/resize_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resize_button_example" />
 
-    <Button
-        android:id="@+id/animate_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Animate zoom" />
+        <Button
+            android:id="@+id/recycler_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recyclerview_and_zoom" />
 
-    <Button
-        android:id="@+id/glide_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Glide" />
+        <Button
+            android:id="@+id/animate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/animate_zoom" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/glide_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/glide" />
+
+        <Button
+            android:id="@+id/shaped_image_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rounded_corners_example" />
+
+    </LinearLayout>
+</ScrollView>
