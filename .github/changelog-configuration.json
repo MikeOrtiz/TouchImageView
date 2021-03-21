@@ -1,0 +1,28 @@
+{
+  "categories": [
+    {
+      "title": "## 🚀 Features",
+      "labels": [
+        "feature",
+        "enhancement"
+      ]
+    },
+    {
+      "title": "## 🐛 Fixes",
+      "labels": [
+        "fix",
+        "bug"
+      ]
+    },
+    {
+      "title": "## 💬 Maintenance",
+      "labels": [
+        "maintenance"
+      ]
+    }
+  ],
+  "sort": "ASC",
+  "template": "${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}}\n   - PR: #${{NUMBER}}",
+  "empty_template": "- no changes"
+}
