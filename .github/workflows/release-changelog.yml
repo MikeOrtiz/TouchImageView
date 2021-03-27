@@ -34,11 +34,15 @@ jobs:
         env:
           VERSION: ${{ github.ref }}
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          name: ${{ github.event.release.tag_name }}
+          name: ${{ steps.get_version.outputs.VERSION }}
           body: ${{steps.github_release.outputs.changelog}}
           files: touchview/build/outputs/aar/touchview-release.aar
         env:
