@@ -40,7 +40,6 @@ jobs:
           tag_name: ${{ github.ref }}
           name: ${{ github.ref }}
           body: ${{steps.github_release.outputs.changelog}}
-          with:
-            files: "touchview/build/output/aar/touchview-release.aar"
+          files: touchview/build/outputs/aar/touchview-release.aar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
