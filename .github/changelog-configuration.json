@@ -17,7 +17,9 @@
     {
       "title": "## 💬 Maintenance",
       "labels": [
-        "maintenance"
+        "maintenance",
+        "dependencies",
+        "gradle-wrapper"
       ]
     }
   ],
