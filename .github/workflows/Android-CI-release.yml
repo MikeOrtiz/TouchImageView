@@ -3,7 +3,7 @@ name: Changelog vs Release
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   release:
