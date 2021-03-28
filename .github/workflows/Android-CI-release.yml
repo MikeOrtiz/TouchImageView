@@ -36,8 +36,12 @@ jobs:
           VERSION: ${{ github.ref }}
 
       - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+        id: tagger
+        uses: jimschubert/query-tag-action@v2
+        with:
+          skip-unshallow: 'true'
+          abbrev: false
+          commit-ish: HEAD
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
