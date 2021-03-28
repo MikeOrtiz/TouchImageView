@@ -47,7 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref }}
-          name: ${{ steps.get_version.outputs.VERSION }}
+          name: ${{steps.tagger.outputs.tag}}
           body: ${{steps.github_release.outputs.changelog}}
           files: touchview/build/outputs/aar/touchview-release.aar
         env:
