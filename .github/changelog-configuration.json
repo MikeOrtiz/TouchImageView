@@ -17,11 +17,13 @@
     {
       "title": "## 💬 Maintenance",
       "labels": [
-        "maintenance",
-        "dependencies",
-        "gradle-wrapper"
+        "maintenance"
       ]
     }
+  ],
+  "ignore_labels": [
+    "dependencies",
+    "gradle-wrapper"
   ],
   "sort": "ASC",
   "template": "${{CHANGELOG}}",
