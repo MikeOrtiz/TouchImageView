@@ -1,8 +1,12 @@
 package info.touchimage.demo
 
 import android.annotation.SuppressLint
+import android.graphics.PointF
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.ortiz.touchview.OnTouchCoordinatesListener
 import com.ortiz.touchview.OnTouchImageViewListener
 import info.touchimage.demo.databinding.ActivitySingleTouchimageviewBinding
 import java.text.DecimalFormat
@@ -38,5 +42,11 @@ class SingleTouchImageViewActivity : AppCompatActivity() {
             }
         }
         )
+
+        binding.imageSingle.setOnTouchCoordinatesListener(object: OnTouchCoordinatesListener {
+            override fun onTouchCoordinate(view: View, event: MotionEvent, bitmapPoint: PointF) {
+                binding.touchCoordinates.text = "touch coordinates x=${bitmapPoint.x} y=${bitmapPoint.y}"
+            }
+        })
     }
 }
