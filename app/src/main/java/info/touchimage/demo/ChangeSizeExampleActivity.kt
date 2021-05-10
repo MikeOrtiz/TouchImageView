@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
+import com.ortiz.touchview.FixedPixel
 import com.ortiz.touchview.TouchImageView
 import info.touchimage.demo.databinding.ActivityChangeSizeBinding
 import kotlin.math.max
@@ -171,7 +172,7 @@ class ChangeSizeExampleActivity : AppCompatActivity() {
     }
 
     private inner class SizeBehaviorAdjuster(private val forOrientationChanges: Boolean, private val buttonPrefix: String) : View.OnClickListener {
-        private val values = TouchImageView.FixedPixel.values()
+        private val values = FixedPixel.values()
         var index = 0
             private set
 

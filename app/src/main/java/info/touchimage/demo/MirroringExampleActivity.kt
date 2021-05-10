@@ -2,7 +2,7 @@ package info.touchimage.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ortiz.touchview.TouchImageView
+import com.ortiz.touchview.OnTouchImageViewListener
 import info.touchimage.demo.databinding.ActivityMirroringExampleBinding
 
 class MirroringExampleActivity : AppCompatActivity() {
@@ -20,12 +20,12 @@ class MirroringExampleActivity : AppCompatActivity() {
         // Each image has an OnTouchImageViewListener which uses its own TouchImageView
         // to set the other TIV with the same zoom variables.
 
-        binding.topImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
+        binding.topImage.setOnTouchImageViewListener(object : OnTouchImageViewListener {
             override fun onMove() {
                 binding.bottomImage.setZoom(binding.topImage)
             }
         })
-        binding.bottomImage.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
+        binding.bottomImage.setOnTouchImageViewListener(object : OnTouchImageViewListener {
             override fun onMove() {
                 binding.topImage.setZoom(binding.bottomImage)
             }
