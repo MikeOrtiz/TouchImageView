@@ -87,6 +87,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     private var prevMatchViewHeight = 0f
     private var scaleDetector: ScaleGestureDetector
     private var gestureDetector: GestureDetector
+    private var touchCoordinatesListener: OnTouchCoordinatesListener? = null
     private var doubleTapListener: OnDoubleTapListener? = null
     private var userTouchListener: OnTouchListener? = null
     private var touchImageViewListener: OnTouchImageViewListener? = null
@@ -137,6 +138,10 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
 
     fun setOnDoubleTapListener(onDoubleTapListener: OnDoubleTapListener) {
         doubleTapListener = onDoubleTapListener
+    }
+
+    fun setOnTouchCoordinatesListener(onTouchCoordinatesListener: OnTouchCoordinatesListener) {
+        touchCoordinatesListener = onTouchCoordinatesListener
     }
 
     override fun setImageResource(resId: Int) {
@@ -865,6 +870,11 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> setState(ImageActionState.NONE)
                 }
+            }
+
+            touchCoordinatesListener?.let {
+                val bitmapPoint = transformCoordTouchToBitmap(event.x, event.y, true)
+                it.onTouchCoordinate(v, event, bitmapPoint)
             }
 
             imageMatrix = touchMatrix
