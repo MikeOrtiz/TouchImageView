@@ -3,7 +3,7 @@ package info.touchimage.demo
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ortiz.touchview.TouchImageView
+import com.ortiz.touchview.OnTouchImageViewListener
 import info.touchimage.demo.databinding.ActivitySingleTouchimageviewBinding
 import java.text.DecimalFormat
 
@@ -25,7 +25,7 @@ class SingleTouchImageViewActivity : AppCompatActivity() {
         val df = DecimalFormat("#.##")
 
         // Set the OnTouchImageViewListener which updates edit texts with zoom and scroll diagnostics.
-        binding.imageSingle.setOnTouchImageViewListener(object : TouchImageView.OnTouchImageViewListener {
+        binding.imageSingle.setOnTouchImageViewListener(object : OnTouchImageViewListener {
             override fun onMove() {
                 val point = binding.imageSingle.scrollPosition
                 val rect = binding.imageSingle.zoomedRect

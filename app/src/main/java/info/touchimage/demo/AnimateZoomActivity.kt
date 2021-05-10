@@ -3,11 +3,11 @@ package info.touchimage.demo
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ortiz.touchview.TouchImageView
+import com.ortiz.touchview.OnZoomFinishedListener
 import info.touchimage.demo.databinding.ActivitySingleTouchimageviewBinding
 
 
-class AnimateZoomActivity : AppCompatActivity(), TouchImageView.OnZoomFinishedListener {
+class AnimateZoomActivity : AppCompatActivity(), OnZoomFinishedListener {
 
     private lateinit var binding: ActivitySingleTouchimageviewBinding
 
