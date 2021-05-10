@@ -5,13 +5,7 @@ android {
     compileSdkVersion defaultCompileSdkVersion
 
     defaultConfig {
-        gradle.startParameter.taskNames.each {
-            if (it.contains("AndroidTest") || it.contains("cAT")) {
-                minSdkVersion 21
-            } else {
-                minSdkVersion 14
-            }
-        }
+        minSdkVersion 14
 
         targetSdkVersion defaultTargetSdkVersion
         versionCode getGitCommitCount()
