@@ -14,7 +14,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        java_version: [ 11.0.3 ]
+        java_version: [ 8, 11 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
@@ -26,13 +26,13 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
       - name: Install Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.1.0
+        uses: malinskiy/action-android/install-sdk@release/0.1.2
       - name: Build project
         run: ./gradlew assembleDebug
       - name: Run tests
         run: ./gradlew test
       - name: Run instrumentation tests
-        uses: malinskiy/action-android/emulator-run-cmd@release/0.1.0
+        uses: malinskiy/action-android/emulator-run-cmd@release/0.1.2
         with:
           cmd: ./gradlew :app:cAT
           api: 28
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java_version: [ 11.0.3 ]
+        java_version: [ 11 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
@@ -72,7 +72,7 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
       - name: Install Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.1.0
+        uses: malinskiy/action-android/install-sdk@release/0.1.2
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
