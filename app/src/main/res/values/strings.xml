@@ -23,4 +23,5 @@
     <string name="swipe_viewpager">Swipe left or right to test ViewPager.</string>
     <string name="switch_image_text">Click TouchImageView to cycle through image resources. Note that the zoom state is maintained.</string>
     <string name="switch_scaletype_text">Click TouchImageView to cycle through supported ScaleTypes.</string>
+    <string name="loaded">loaded</string>
 </resources>

@@ -1,7 +1,10 @@
 package info.touchimage.demo
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -21,16 +24,22 @@ class GlideExampleActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val start = System.currentTimeMillis()
+
         Glide.with(this)
-                .load(GLIDE_IMAGE_URL)
-                .into(object : CustomTarget<Drawable?>() {
-                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable?>?) {
-                        binding.imageGlide.setImageDrawable(resource)
-                    }
+            .load(GLIDE_IMAGE_URL)
+            .into(object : CustomTarget<Drawable?>() {
+                @SuppressLint("SetTextI18n")
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable?>?) {
+                    binding.imageGlide.setImageDrawable(resource)
+                    binding.textLoaded.visibility = View.VISIBLE
+                    binding.textLoaded.text = getString(R.string.loaded) + " within ${System.currentTimeMillis() - start} ms"
+                    Log.d("GlideExampleActivity", binding.textLoaded.text as String)
+                }
 
-                    override fun onLoadCleared(@Nullable placeholder: Drawable?) = Unit
+                override fun onLoadCleared(@Nullable placeholder: Drawable?) = Unit
 
-                })
+            })
     }
 
     companion object {
