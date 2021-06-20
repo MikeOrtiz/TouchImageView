@@ -3,13 +3,16 @@ package info.touchimage.demo
 import android.Manifest
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.moka.lib.assertions.WaitingAssertion
 import com.moka.utils.Screenshot
+import org.hamcrest.CoreMatchers.containsString
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -103,10 +106,12 @@ class MainSmokeTest {
     }
 
     @Test
-    @Ignore("Error performing 'single click' on view 'Animations or transitions are enabled on the target device.")
     fun testGlide() {
         Espresso.onView(withId(R.id.glide_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(GlideExampleActivity::class.java.name))
+
+        WaitingAssertion.checkAssertion(R.id.textLoaded, isDisplayed(), 1500)
+        Espresso.onView(withId(R.id.textLoaded)).check( matches(withText(containsString(" ms"))))
         Screenshot.takeScreenshot("testGlide")
     }
 
