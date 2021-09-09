@@ -1,3 +1,5 @@
+jdk:
+  - openjdk11
 install:
   - ./gradlew :touchview:build :touchview:publishToMavenLocal -x :touchview:test
   - find . -name "*.aar"
