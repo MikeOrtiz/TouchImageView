@@ -599,9 +599,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         if (drawable == null || drawable.intrinsicWidth == 0 || drawable.intrinsicHeight == 0) {
             return
         }
-        if (touchMatrix == null || prevMatrix == null) {
-            return
-        }
         if (userSpecifiedMinScale == AUTOMATIC_MIN_ZOOM) {
             minZoom = AUTOMATIC_MIN_ZOOM
             if (currentZoom < minScale) {
