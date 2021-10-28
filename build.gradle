@@ -16,8 +16,8 @@ buildscript {
 println "Gradle uses Java ${Jvm.current()}"
 
 ext {
-    defaultTargetSdkVersion = 30
-    defaultCompileSdkVersion = 30
+    defaultTargetSdkVersion = 31
+    defaultCompileSdkVersion = 31
 }
 
 allprojects {
