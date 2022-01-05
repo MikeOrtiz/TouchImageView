@@ -11,8 +11,6 @@ android {
         minSdkVersion 14
 
         targetSdkVersion defaultTargetSdkVersion
-        versionCode getGitCommitCount()
-        versionName getTag()
         buildConfigField "String", 'VERSION', "\"" + versionName + "\""
     }
 
