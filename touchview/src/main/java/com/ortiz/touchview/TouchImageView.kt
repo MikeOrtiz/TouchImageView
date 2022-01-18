@@ -128,7 +128,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         isRotateImageToFitScreen = rotateImageToFitScreen
     }
 
-    override fun setOnTouchListener(onTouchListener: OnTouchListener) {
+    override fun setOnTouchListener(onTouchListener: OnTouchListener?) {
         userTouchListener = onTouchListener
     }
 
@@ -151,7 +151,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         fitImageToView()
     }
 
-    override fun setImageBitmap(bm: Bitmap) {
+    override fun setImageBitmap(bm: Bitmap?) {
         imageRenderedAtLeastOnce = false
         super.setImageBitmap(bm)
         savePreviousImageValues()
