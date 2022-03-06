@@ -8,7 +8,7 @@ android {
     compileSdkVersion defaultCompileSdkVersion
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16
 
         targetSdkVersion defaultTargetSdkVersion
         buildConfigField "String", 'VERSION', "\"" + versionName + "\""
