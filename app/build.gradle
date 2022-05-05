@@ -36,7 +36,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'com.github.bumptech.glide:glide:4.13.1'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
 
     androidTestImplementation 'com.github.AppDevNext:Moka:1.1'
     androidTestImplementation "androidx.test.ext:junit:1.1.3"
