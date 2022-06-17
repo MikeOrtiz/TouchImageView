@@ -27,11 +27,11 @@ class TouchSyncActivity : AppCompatActivity() {
         })
 
         // Works
-        //  val img = getBitmap(this, R.drawable.ic_baseline_aspect_ratio_24)
+        val img = getBitmap(this, R.drawable.ic_baseline_aspect_ratio_24)
 
         /** HERE IS THE PROBLEM **/
         // Does not work (after zooming in, dinosaur head is unreachable)
-        val img = getBitmap(this, R.drawable.corgosaurus)
+//        val img = getBitmap(this, R.drawable.corgosaurus)
         binding.touchImage2.setImageBitmap(img)
 
         // Also does not work (after zooming in, dinosaur head is unreachable)
