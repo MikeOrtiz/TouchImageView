@@ -1,13 +1,10 @@
 package com.ortiz.touchview
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -1175,13 +1172,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
 
     }
 
-    @TargetApi(VERSION_CODES.JELLY_BEAN)
     private fun compatPostOnAnimation(runnable: Runnable) {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            postOnAnimation(runnable)
-        } else {
-            postDelayed(runnable, 1000 / 60.toLong())
-        }
+        postOnAnimation(runnable)
     }
 
     /**
