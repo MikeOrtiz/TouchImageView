@@ -595,6 +595,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         if (drawable == null || drawable.intrinsicWidth == 0 || drawable.intrinsicHeight == 0) {
             return
         }
+        @Suppress("SENSELESS_COMPARISON")
         if (touchMatrix == null || prevMatrix == null) {
             return
         }
