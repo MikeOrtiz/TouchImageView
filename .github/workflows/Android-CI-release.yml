@@ -14,14 +14,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@main
-        with:
-          configuration: ".github/changelog-configuration.json"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v3
         with:
@@ -45,11 +37,11 @@ jobs:
           commit-ish: HEAD
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v0.1.14
         with:
           tag_name: ${{steps.tagger.outputs.tag}}
           name: ${{steps.tagger.outputs.tag}}
-          body: ${{steps.github_release.outputs.changelog}}
+          generate_release_notes: true
           files: touchview/build/outputs/aar/touchview-release.aar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
