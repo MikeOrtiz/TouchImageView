@@ -525,7 +525,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val drawable = drawable
         if (drawable == null || drawable.intrinsicWidth == 0 || drawable.intrinsicHeight == 0) {
-            setMeasuredDimension(0, 0)
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec))
             return
         }
         val drawableWidth = getDrawableWidth(drawable)
