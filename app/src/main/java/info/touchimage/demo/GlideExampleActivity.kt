@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -37,7 +36,7 @@ class GlideExampleActivity : AppCompatActivity() {
                     Log.d("GlideExampleActivity", binding.textLoaded.text as String)
                 }
 
-                override fun onLoadCleared(@Nullable placeholder: Drawable?) = Unit
+                override fun onLoadCleared(placeholder: Drawable?) = Unit
 
             })
     }
