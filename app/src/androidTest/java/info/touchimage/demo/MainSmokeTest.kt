@@ -1,31 +1,29 @@
 package info.touchimage.demo
 
-import android.Manifest
+import androidx.test.core.app.takeScreenshot
+import androidx.test.core.graphics.writeToTestStorage
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.GrantPermissionRule
 import com.moka.lib.assertions.WaitingAssertion
-import com.moka.utils.Screenshot
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.*
+import org.junit.rules.TestName
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainSmokeTest {
 
     @get:Rule
-    var activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
+    val activityScenarioRule = activityScenarioRule<MainActivity>()
 
     @get:Rule
-    val grantPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE)
+    var nameRule = TestName()
 
     @Before
     fun setUp() {
@@ -39,70 +37,80 @@ class MainSmokeTest {
 
     @Test
     fun smokeTestSimplyStart() {
-        Screenshot.takeScreenshot("Start")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testSingleTouch() {
         Espresso.onView(withId(R.id.single_touchimageview_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SingleTouchImageViewActivity::class.java.name))
-        Screenshot.takeScreenshot("testSingleTouch")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testViewPager() {
         Espresso.onView(withId(R.id.viewpager_example_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ViewPagerExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testViewPager")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testView2Pager() {
         Espresso.onView(withId(R.id.viewpager2_example_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ViewPager2ExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testView2Pager")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testMirroring() {
         Espresso.onView(withId(R.id.mirror_touchimageview_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(MirroringExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testMirroring")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testSwitchImage() {
         Espresso.onView(withId(R.id.switch_image_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SwitchImageExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testSwitchImage")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testSwitchScale() {
         Espresso.onView(withId(R.id.switch_scaletype_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SwitchScaleTypeExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testSwitchScale")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testChangeSize() {
         Espresso.onView(withId(R.id.resize_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ChangeSizeExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testChangeSize")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testRecycler() {
         Espresso.onView(withId(R.id.recycler_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(RecyclerExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testRecycler")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun testAnimateZoom() {
         Espresso.onView(withId(R.id.animate_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(AnimateZoomActivity::class.java.name))
-        Screenshot.takeScreenshot("testAnimateZoom")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
@@ -112,13 +120,15 @@ class MainSmokeTest {
 
         WaitingAssertion.checkAssertion(R.id.textLoaded, isDisplayed(), 1500)
         Espresso.onView(withId(R.id.textLoaded)).check( matches(withText(containsString(" ms"))))
-        Screenshot.takeScreenshot("testGlide")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
     @Test
     fun makeScreenshotOfShapedImage() {
         Espresso.onView(withId(R.id.shaped_image_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ShapedExampleActivity::class.java.name))
-        Screenshot.takeScreenshot("testShapedImage")
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 }
