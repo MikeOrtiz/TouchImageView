@@ -81,4 +81,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: TouchImage-Lint-report
-          path: app/build/reports/lint-results.html
+          path: app/build/reports/lint-results*.html
