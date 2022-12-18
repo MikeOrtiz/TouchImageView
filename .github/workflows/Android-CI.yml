@@ -45,14 +45,9 @@ jobs:
         with:
           name: TouchImage-Espresso-report
           path: app/build/reports/androidTests/connected
-      - name: Save logcat output
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: TouchImage-logcat
-          path: artifacts/logcat.log
       - name: Archive screenshots
         uses: actions/upload-artifact@v3
+        if: ${{ always() }}
         with:
           name: TouchImage-Screenshots
           path: screenshots/adb
