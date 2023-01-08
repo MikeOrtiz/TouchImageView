@@ -6,6 +6,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import info.touchimage.demo.utils.MultiTouchDownEvent
 import info.touchimage.demo.utils.TouchAction
 import org.junit.Rule
 import org.junit.Test
@@ -31,4 +32,15 @@ class TouchTest {
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch2")
     }
 
+    @Test
+    fun testMultiTouch() {
+        val touchList: Array<Pair<Float, Float>> = listOf(
+            Pair(4f, 8f),
+            Pair(40f, 80f),
+            Pair(30f, 70f)
+        ).toTypedArray()
+        onView(withId(R.id.imageSingle)).perform(MultiTouchDownEvent(touchList))
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
+    }
 }
