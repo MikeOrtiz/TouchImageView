@@ -20,10 +20,12 @@ class AnimateZoomActivity : AppCompatActivity(), OnZoomFinishedListener {
         val view = binding.root
         setContentView(view)
 
+        binding.imageSingle.setImageResource(R.drawable.numbers)
+
         binding.currentZoom.setOnClickListener {
             when {
                 binding.imageSingle.isZoomed -> binding.imageSingle.resetZoomAnimated()
-                binding.imageSingle.isZoomed.not() -> binding.imageSingle.setZoomAnimated(0.9f, 0.5f, 0f, this)
+                binding.imageSingle.isZoomed.not() -> binding.imageSingle.setZoomAnimated(3f, 0.75f, 0.75f, this)
             }
         }
 
