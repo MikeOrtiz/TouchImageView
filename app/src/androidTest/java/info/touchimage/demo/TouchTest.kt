@@ -28,9 +28,10 @@ class TouchTest {
     @Test
     fun testSingleTouch() {
         onView(withId(R.id.imageSingle)).perform(TouchAction(4f, 8f))
-        takeScreenshot()
+        onView(withId(R.id.imageSingle)).captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch1")
         onView(withId(R.id.imageSingle)).perform(TouchAction(40f, 80f))
+        Thread.sleep(300)
         takeScreenshot()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch2")
     }
