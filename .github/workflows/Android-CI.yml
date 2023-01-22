@@ -43,14 +43,17 @@ jobs:
         uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
-          name: TouchImage-Espresso-report
+          name: Touch-Espresso-report
           path: app/build/reports/androidTests/connected
+          if-no-files-found: error
       - name: Archive screenshots
-        uses: actions/upload-artifact@v3
         if: ${{ always() }}
+        uses: actions/upload-artifact@v3
         with:
-          name: TouchImage-Screenshots
-          path: screenshots/adb
+          name: Touch-Screenshots
+          path: |
+            app/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected
+            app/build/outputs/androidTest-results/connected
   Check:
     name: Check
     runs-on: ubuntu-latest
