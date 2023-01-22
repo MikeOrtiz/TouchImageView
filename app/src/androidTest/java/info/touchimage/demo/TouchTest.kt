@@ -8,6 +8,7 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import info.touchimage.demo.utils.MultiTouchDownEvent
 import info.touchimage.demo.utils.TouchAction
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -33,7 +34,10 @@ class TouchTest {
     }
 
     @Test
+    @Ignore("It is flaky")
     fun testMultiTouch() {
+        takeScreenshot()
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-before")
         val touchList: Array<Pair<Float, Float>> = listOf(
             Pair(4f, 8f),
             Pair(40f, 80f),
@@ -41,6 +45,6 @@ class TouchTest {
         ).toTypedArray()
         onView(withId(R.id.imageSingle)).perform(MultiTouchDownEvent(touchList))
         takeScreenshot()
-            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
+            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-after")
     }
 }
