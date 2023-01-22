@@ -1,6 +1,5 @@
 package info.touchimage.demo
 
-import androidx.test.core.app.takeScreenshot
 import androidx.test.core.graphics.writeToTestStorage
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
@@ -8,6 +7,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.moka.lib.assertions.WaitingAssertion
@@ -37,7 +37,8 @@ class MainSmokeTest {
 
     @Test
     fun smokeTestSimplyStart() {
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -45,7 +46,8 @@ class MainSmokeTest {
     fun testSingleTouch() {
         Espresso.onView(withId(R.id.single_touchimageview_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SingleTouchImageViewActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -53,7 +55,8 @@ class MainSmokeTest {
     fun testViewPager() {
         Espresso.onView(withId(R.id.viewpager_example_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ViewPagerExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -61,7 +64,8 @@ class MainSmokeTest {
     fun testView2Pager() {
         Espresso.onView(withId(R.id.viewpager2_example_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ViewPager2ExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -69,7 +73,8 @@ class MainSmokeTest {
     fun testMirroring() {
         Espresso.onView(withId(R.id.mirror_touchimageview_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(MirroringExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -77,7 +82,8 @@ class MainSmokeTest {
     fun testSwitchImage() {
         Espresso.onView(withId(R.id.switch_image_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SwitchImageExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -85,7 +91,8 @@ class MainSmokeTest {
     fun testSwitchScale() {
         Espresso.onView(withId(R.id.switch_scaletype_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(SwitchScaleTypeExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -93,7 +100,8 @@ class MainSmokeTest {
     fun testChangeSize() {
         Espresso.onView(withId(R.id.resize_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ChangeSizeExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -101,7 +109,8 @@ class MainSmokeTest {
     fun testRecycler() {
         Espresso.onView(withId(R.id.recycler_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(RecyclerExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -109,7 +118,8 @@ class MainSmokeTest {
     fun testAnimateZoom() {
         Espresso.onView(withId(R.id.animate_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(AnimateZoomActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -120,7 +130,8 @@ class MainSmokeTest {
 
         WaitingAssertion.checkAssertion(R.id.textLoaded, isDisplayed(), 1500)
         Espresso.onView(withId(R.id.textLoaded)).check( matches(withText(containsString(" ms"))))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 
@@ -128,7 +139,8 @@ class MainSmokeTest {
     fun makeScreenshotOfShapedImage() {
         Espresso.onView(withId(R.id.shaped_image_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ShapedExampleActivity::class.java.name))
-        takeScreenshot()
+        Espresso.onView(isRoot())
+            .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
     }
 }
