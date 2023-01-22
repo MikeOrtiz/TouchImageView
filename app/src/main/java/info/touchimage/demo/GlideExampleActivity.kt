@@ -32,8 +32,9 @@ class GlideExampleActivity : AppCompatActivity() {
                 override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable?>?) {
                     binding.imageGlide.setImageDrawable(resource)
                     binding.textLoaded.visibility = View.VISIBLE
-                    binding.textLoaded.text = getString(R.string.loaded) + " within ${System.currentTimeMillis() - start} ms"
-                    Log.d("GlideExampleActivity", binding.textLoaded.text as String)
+                    val loadTime = System.currentTimeMillis() - start
+                    binding.textLoaded.text = getString(R.string.loaded) + " within <ignored> ms"
+                    Log.d("GlideExampleActivity", loadTime.toString() + "ms")
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) = Unit
