@@ -100,6 +100,7 @@ class MainSmokeTest {
     fun testChangeSize() {
         Espresso.onView(withId(R.id.resize_button)).perform(ViewActions.click())
         Intents.intended(hasComponent(ChangeSizeExampleActivity::class.java.name))
+        Thread.sleep(500)
         Espresso.onView(isRoot())
             .captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}")
