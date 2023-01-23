@@ -32,7 +32,7 @@ class TouchTest {
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch1")
         onView(withId(R.id.imageSingle)).perform(TouchAction(40f, 80f))
         Thread.sleep(300)
-        takeScreenshot()
+        onView(withId(R.id.imageSingle)).captureToBitmap()
             .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch2")
     }
 
