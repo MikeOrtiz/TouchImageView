@@ -42,6 +42,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     private var touchMatrix: Matrix
     private var prevMatrix: Matrix
     var isZoomEnabled = false
+    var isSuperZoomEnabled = true
     private var isRotateImageToFitScreen = false
 
     var orientationChangeFixedPixel: FixedPixel? = FixedPixel.CENTER
@@ -392,7 +393,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             setScaleType(scaleType!!)
         }
         resetZoom()
-        scaleImage(scale.toDouble(), viewWidth / 2.toFloat(), viewHeight / 2.toFloat(), true)
+        scaleImage(scale.toDouble(), viewWidth / 2.toFloat(), viewHeight / 2.toFloat(), isSuperZoomEnabled)
         touchMatrix.getValues(floatMatrix)
         floatMatrix[Matrix.MTRANS_X] = -(focusX * imageWidth - viewWidth * 0.5f)
         floatMatrix[Matrix.MTRANS_Y] = -(focusY * imageHeight - viewHeight * 0.5f)
@@ -897,7 +898,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         }
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            scaleImage(detector.scaleFactor.toDouble(), detector.focusX, detector.focusY, true)
+            scaleImage(detector.scaleFactor.toDouble(), detector.focusX, detector.focusY, isSuperZoomEnabled)
 
             // OnTouchImageViewListener is set: TouchImageView pinch zoomed by user.
             touchImageViewListener?.onMove()
@@ -917,7 +918,7 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
                 animateToZoomBoundary = true
             }
             if (animateToZoomBoundary) {
-                val doubleTap = DoubleTapZoom(targetZoom, (viewWidth / 2).toFloat(), (viewHeight / 2).toFloat(), true)
+                val doubleTap = DoubleTapZoom(targetZoom, (viewWidth / 2).toFloat(), (viewHeight / 2).toFloat(), isSuperZoomEnabled)
                 compatPostOnAnimation(doubleTap)
             }
         }
