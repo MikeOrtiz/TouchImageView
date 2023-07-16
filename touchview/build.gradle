@@ -9,6 +9,12 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+        aarMetadata {
+            minCompileSdk = 28
+        }
+        testFixtures {
+            enable = true
+        }
 
         targetSdkVersion defaultTargetSdkVersion
         buildConfigField "String", 'VERSION', "\"" + versionName + "\""
@@ -22,19 +28,15 @@ android {
     }
     namespace 'com.ortiz.touchview'
 
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+
 }
 
 dependencies {
     api 'androidx.appcompat:appcompat:1.6.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-            }
-        }
-    }
 }
