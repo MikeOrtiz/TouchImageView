@@ -1,4 +1,4 @@
-name: Changelog vs Release
+name: Release with changelog
 
 on:
   push:
