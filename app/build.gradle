@@ -28,8 +28,12 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'info.touchimage.demo'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 
+    namespace 'info.touchimage.demo'
 }
 
 dependencies {
