@@ -5,8 +5,6 @@ plugins {
 }
 
 android {
-    compileSdkVersion defaultCompileSdkVersion
-
     defaultConfig {
         minSdkVersion 16
         aarMetadata {
@@ -16,6 +14,7 @@ android {
             enable = true
         }
 
+        compileSdk defaultCompileSdkVersion
         targetSdkVersion defaultTargetSdkVersion
         buildConfigField "String", 'VERSION', "\"" + versionName + "\""
     }
