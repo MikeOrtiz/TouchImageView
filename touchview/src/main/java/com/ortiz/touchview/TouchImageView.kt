@@ -763,11 +763,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         this.imageActionState = imageActionState
     }
 
-    @Deprecated("")
-    fun canScrollHorizontallyFroyo(direction: Int): Boolean {
-        return canScrollHorizontally(direction)
-    }
-
     override fun canScrollHorizontally(direction: Int): Boolean {
         touchMatrix.getValues(floatMatrix)
         val x = floatMatrix[Matrix.MTRANS_X]
