@@ -8,7 +8,7 @@ on:
 
 jobs:
   buildTest:
-    name: Build & Test
+    name: Espresso
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
