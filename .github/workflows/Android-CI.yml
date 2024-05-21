@@ -5,15 +5,14 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 jobs:
   buildTest:
-    name: Build & Test JDK ${{ matrix.java_version }}
-    runs-on: macOS-13
+    name: Build & Test
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ macOS-13 ]
         java_version: [ 17 ]
     steps:
       - name: Checkout
@@ -72,9 +71,10 @@ jobs:
             screenshotDiffs
   Check:
     name: Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ ubuntu-latest ]
         java_version: [ 17 ]
     steps:
       - name: Checkout
