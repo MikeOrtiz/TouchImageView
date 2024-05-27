@@ -28,13 +28,13 @@ jobs:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.1.16.7
+        uses: hannesa2/action-android/install-sdk@0.1.16.9
       - name: Build project
         run: ./gradlew assembleDebug
       - name: Run tests
         run: ./gradlew test
       - name: Run instrumentation tests
-        uses: hannesa2/action-android/emulator-run-cmd@0.1.16.7
+        uses: hannesa2/action-android/emulator-run-cmd@0.1.16.9
         with:
           cmd: ./gradlew :app:cAT
           api: 28
@@ -88,7 +88,7 @@ jobs:
           java-version: ${{ matrix.java_version }}
       - uses: gradle/actions/wrapper-validation@v3.3.2
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.1.16.7
+        uses: hannesa2/action-android/install-sdk@0.1.16.9
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
