@@ -227,8 +227,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     public override fun onSaveInstanceState(): Parcelable? {
+        super.onSaveInstanceState()
         val bundle = Bundle()
-        bundle.putParcelable(STATE, super.onSaveInstanceState())
         bundle.putInt("orientation", orientation)
         bundle.putFloat("saveScale", currentZoom)
         bundle.putFloat("matchViewHeight", matchViewHeight)
@@ -266,7 +266,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             if (orientation != oldOrientation) {
                 orientationJustChanged = true
             }
-            super.onRestoreInstanceState(state.getParcelable(STATE))
             return
         }
         super.onRestoreInstanceState(state)
@@ -1277,7 +1276,6 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     companion object {
-        private const val STATE = "instanceState"
         // SuperMin and SuperMax multipliers. Determine how much the image can be zoomed below or above the zoom boundaries,
         // before animating back to the min/max zoom boundary.
         private const val SUPER_MIN_MULTIPLIER = .75f
