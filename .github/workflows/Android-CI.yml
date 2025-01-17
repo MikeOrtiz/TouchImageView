@@ -61,7 +61,7 @@ jobs:
         run: |
           ls -ls app/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected
           cp app/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/emulator\(AVD\)\ -\ 9/* screenshotsToCompare
-          ./screenShotCompare.sh
+          ./screenShotScript/screenShotCompare.sh
       - name: Archive screenshots diffs
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
@@ -81,6 +81,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v4
         with:
