@@ -13,6 +13,10 @@ jobs:
     strategy:
       matrix:
         os: [ macOS-13 ]
+        api: [ 28 ]
+        tag: [ default ]
+        abi: [ x86 ]
+        emulatorApi: [ 9 ]
         java_version: [ 17 ]
     steps:
       - name: Checkout
@@ -37,9 +41,9 @@ jobs:
         uses: hannesa2/action-android/emulator-run-cmd@0.1.16.7
         with:
           cmd: ./gradlew :app:cAT
-          api: 28
-          tag: default
-          abi: x86
+          api: ${{ matrix.api }}
+          tag: ${{ matrix.tag }}
+          abi: ${{ matrix.abi }}
           cmdOptions: -noaudio -no-boot-anim -no-window
           bootTimeout: 720
           disableAnimations: true
@@ -89,6 +93,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
       - name: Install JDK ${{ matrix.java_version }}
         uses: actions/setup-java@v4
         with:
