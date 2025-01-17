@@ -15,7 +15,7 @@ jobs:
         os: [ macOS-13 ]
         api: [ 28 ]
         tag: [ default ]
-        abi: [ x86 ]
+        abi: [ x86_64 ]
         java_version: [ 17 ]
     steps:
       - name: Checkout
