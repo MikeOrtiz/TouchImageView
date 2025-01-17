@@ -5,5 +5,7 @@ set -x
 ./git-diff-image/install.sh
 GIT_DIFF_IMAGE_OUTPUT_DIR=$diffFiles git diff-image
 
+ls -la $diffFiles
+
 # set error when diffs are there
 [ "$(ls -A $diffFiles)" ] && exit 1 || exit 0
