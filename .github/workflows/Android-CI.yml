@@ -69,6 +69,13 @@ jobs:
           name: Touch-Screenshots-diffs
           path: |
             screenshotDiffs
+      - name: Show git status
+        if: ${{ always() }}
+        run: |
+          git add screenshotsToCompare
+          # git add screenshotsToCompare ${{ matrix.emulatorApi }}
+          git status
+          [ "$(git status -s -uno)" ] && exit 1 || exit 0
   Check:
     name: Check
     runs-on: ${{ matrix.os }}
