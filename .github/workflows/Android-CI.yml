@@ -16,7 +16,6 @@ jobs:
         api: [ 28 ]
         tag: [ default ]
         abi: [ x86 ]
-        emulatorApi: [ 9 ]
         java_version: [ 17 ]
     steps:
       - name: Checkout
@@ -78,7 +77,6 @@ jobs:
         if: ${{ always() }}
         run: |
           git add screenshotsToCompare
-          # git add screenshotsToCompare ${{ matrix.emulatorApi }}
           git status
           [ "$(git status -s -uno)" ] && exit 1 || exit 0
   Check:
