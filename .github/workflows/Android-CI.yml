@@ -43,7 +43,7 @@ jobs:
           api: ${{ matrix.api }}
           tag: ${{ matrix.tag }}
           abi: ${{ matrix.abi }}
-          cmdOptions: -noaudio -no-boot-anim -no-window
+          cmdOptions: -noaudio -no-boot-anim -no-window -metrics-to-console
           bootTimeout: 720
           disableAnimations: true
       - name: Archive Espresso results
