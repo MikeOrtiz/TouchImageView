@@ -1,10 +1,11 @@
 package info.touchimage.demo
 
+import android.graphics.Bitmap
 import androidx.test.core.graphics.writeToTestStorage
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.captureToBitmap
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import info.touchimage.demo.utils.MultiTouchDownEvent
@@ -27,20 +28,19 @@ class TouchTest {
     @Test
     fun testSingleTouch() {
         onView(withId(R.id.imageSingle)).perform(TouchAction(4f, 8f))
-        onView(withId(R.id.imageSingle)).captureToBitmap()
-            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch1")
+        onView(ViewMatchers.isRoot())
+            .perform(captureToBitmap { bitmap: Bitmap -> bitmap.writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch1") })
         onView(withId(R.id.imageSingle)).perform(TouchAction(40f, 80f))
         Thread.sleep(300)
-        onView(withId(R.id.imageSingle)).captureToBitmap()
-            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch2")
+        onView(ViewMatchers.isRoot())
+            .perform(captureToBitmap { bitmap: Bitmap -> bitmap.writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-touch2") })
     }
 
     @Test
     @Ignore("It is flaky")
     fun testMultiTouch() {
         onView(ViewMatchers.isRoot())
-            .captureToBitmap()
-            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-before")
+            .perform(captureToBitmap { bitmap: Bitmap -> bitmap.writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-before") })
         val touchList: Array<Pair<Float, Float>> = listOf(
             Pair(4f, 8f),
             Pair(40f, 80f),
@@ -48,7 +48,6 @@ class TouchTest {
         ).toTypedArray()
         onView(withId(R.id.imageSingle)).perform(MultiTouchDownEvent(touchList))
         onView(ViewMatchers.isRoot())
-            .captureToBitmap()
-            .writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-after")
+            .perform(captureToBitmap { bitmap: Bitmap -> bitmap.writeToTestStorage("${javaClass.simpleName}_${nameRule.methodName}-after") })
     }
 }
