@@ -1,5 +1,4 @@
 [![](https://jitpack.io/v/MikeOrtiz/TouchImageView.svg)](https://jitpack.io/#hannesa2/TouchImageView)
-[<img src="https://api.gitsponsors.com/api/badge/img?id=2407497" height="20">](https://api.gitsponsors.com/api/badge/link?p=YnVlT24nPLp+9uoJ/UF+pnzA1Kd/RW674OjhD1d98WjGBHwrTk9BByu/zt++4tyPM4kaZhCUiQbRAVX93K/WOeILhud7plbOcY83t6BlWlAvIObK/Ca+JxkUcDpkvPb2f4D8L9TbqBnnzoaYdjhQaw==)
 
 # TouchImageView for Android
 
