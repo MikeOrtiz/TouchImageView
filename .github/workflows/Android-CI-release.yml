@@ -21,7 +21,7 @@ jobs:
           java-version: 17
 
       - name: Install Android SDK
-        uses: malinskiy/action-android/install-sdk@release/0.1.4
+        uses: malinskiy/action-android/install-sdk@release/0.1.7
 
       - name: Build project
         run: ./gradlew assembleRelease
