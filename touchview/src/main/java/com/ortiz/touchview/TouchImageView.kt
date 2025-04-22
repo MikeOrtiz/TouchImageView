@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -257,15 +256,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             prevViewHeight = state.getInt("viewHeight")
             prevViewWidth = state.getInt("viewWidth")
             imageRenderedAtLeastOnce = state.getBoolean("imageRendered")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                viewSizeChangeFixedPixel = state.getSerializable("viewSizeChangeFixedPixel", FixedPixel::class.java)
-                orientationChangeFixedPixel = state.getSerializable("orientationChangeFixedPixel", FixedPixel::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                viewSizeChangeFixedPixel = state.getSerializable("viewSizeChangeFixedPixel") as FixedPixel?
-                @Suppress("DEPRECATION")
-                orientationChangeFixedPixel = state.getSerializable("orientationChangeFixedPixel") as FixedPixel?
-            }
+            viewSizeChangeFixedPixel = BundleCompat.getSerializable(state, "viewSizeChangeFixedPixel", FixedPixel::class.java)
+            orientationChangeFixedPixel = BundleCompat.getSerializable(state, "orientationChangeFixedPixel", FixedPixel::class.java)
             val oldOrientation = state.getInt("orientation")
             if (orientation != oldOrientation) {
                 orientationJustChanged = true
