@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -20,6 +19,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.OverScroller
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -226,25 +227,27 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         }
     }
 
-    public override fun onSaveInstanceState(): Parcelable? {
-        super.onSaveInstanceState()
-        val bundle = Bundle()
-        bundle.putInt("orientation", orientation)
-        bundle.putFloat("saveScale", currentZoom)
-        bundle.putFloat("matchViewHeight", matchViewHeight)
-        bundle.putFloat("matchViewWidth", matchViewWidth)
-        bundle.putInt("viewWidth", viewWidth)
-        bundle.putInt("viewHeight", viewHeight)
+    public override fun onSaveInstanceState(): Parcelable {
         touchMatrix.getValues(floatMatrix)
-        bundle.putFloatArray("matrix", floatMatrix)
-        bundle.putBoolean("imageRendered", imageRenderedAtLeastOnce)
-        bundle.putSerializable("viewSizeChangeFixedPixel", viewSizeChangeFixedPixel)
-        bundle.putSerializable("orientationChangeFixedPixel", orientationChangeFixedPixel)
-        return bundle
+
+        return bundleOf(
+            "parent" to super.onSaveInstanceState(),
+            "orientation" to orientation,
+            "saveScale" to currentZoom,
+            "matchViewHeight" to matchViewHeight,
+            "matchViewWidth" to matchViewWidth,
+            "viewWidth" to viewWidth,
+            "viewHeight" to viewHeight,
+            "matrix" to floatMatrix,
+            "imageRendered" to imageRenderedAtLeastOnce,
+            "viewSizeChangeFixedPixel" to viewSizeChangeFixedPixel,
+            "orientationChangeFixedPixel" to orientationChangeFixedPixel
+        )
     }
 
     public override fun onRestoreInstanceState(state: Parcelable) {
         if (state is Bundle) {
+            super.onRestoreInstanceState(BundleCompat.getParcelable(state, "parent", Parcelable::class.java))
             currentZoom = state.getFloat("saveScale")
             floatMatrix = state.getFloatArray("matrix")!!
             prevMatrix.setValues(floatMatrix)
@@ -253,15 +256,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             prevViewHeight = state.getInt("viewHeight")
             prevViewWidth = state.getInt("viewWidth")
             imageRenderedAtLeastOnce = state.getBoolean("imageRendered")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                viewSizeChangeFixedPixel = state.getSerializable("viewSizeChangeFixedPixel", FixedPixel::class.java)
-                orientationChangeFixedPixel = state.getSerializable("orientationChangeFixedPixel", FixedPixel::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                viewSizeChangeFixedPixel = state.getSerializable("viewSizeChangeFixedPixel") as FixedPixel?
-                @Suppress("DEPRECATION")
-                orientationChangeFixedPixel = state.getSerializable("orientationChangeFixedPixel") as FixedPixel?
-            }
+            viewSizeChangeFixedPixel = BundleCompat.getSerializable(state, "viewSizeChangeFixedPixel", FixedPixel::class.java)
+            orientationChangeFixedPixel = BundleCompat.getSerializable(state, "orientationChangeFixedPixel", FixedPixel::class.java)
             val oldOrientation = state.getInt("orientation")
             if (orientation != oldOrientation) {
                 orientationJustChanged = true
