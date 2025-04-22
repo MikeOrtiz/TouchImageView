@@ -548,12 +548,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
             savePreviousImageValues()
         }
 
-        // Image view width, height must consider padding
-        val width = totalViewWidth - paddingLeft - paddingRight
-        val height = totalViewHeight - paddingTop - paddingBottom
-
         // Set view dimensions
-        setMeasuredDimension(width, height)
+        setMeasuredDimension(totalViewWidth, totalViewHeight)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -574,8 +570,8 @@ open class TouchImageView @JvmOverloads constructor(context: Context, attrs: Att
         // repeated computations, and making irreversible changes (e.g. making the View temporarily too
         // big or too small, thus making the current zoom fall outside of an automatically-changing
         // minZoom and maxZoom).
-        viewWidth = w
-        viewHeight = h
+        viewWidth = w - paddingRight -paddingLeft
+        viewHeight = h - paddingTop - paddingBottom
         fitImageToView()
     }
 
