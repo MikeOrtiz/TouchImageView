@@ -6,6 +6,9 @@
 
 TouchImageView extends ImageView and supports all of ImageView’s functionality. In addition, TouchImageView adds pinch zoom, dragging, fling, double tap zoom functionality and other animation polish. The intention is for TouchImageView to  mirror as closely as possible the functionality of zoomable images in Gallery apps.
 
+## Project status: maintenance mode
+Issues are ignored, but pull requests are not. If you need to get something done, submit a PR!
+
 ## Download 
 Repository available on https://jitpack.io/#MikeOrtiz/TouchImageView
 
