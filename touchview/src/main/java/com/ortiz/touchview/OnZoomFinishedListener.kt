@@ -1,5 +1,5 @@
 package com.ortiz.touchview
 
-interface OnZoomFinishedListener {
+fun interface OnZoomFinishedListener {
     fun onZoomFinished()
 }

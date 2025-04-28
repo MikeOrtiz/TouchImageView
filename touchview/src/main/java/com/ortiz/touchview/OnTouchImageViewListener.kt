@@ -1,5 +1,5 @@
 package com.ortiz.touchview
 
-interface OnTouchImageViewListener {
+fun interface OnTouchImageViewListener {
     fun onMove()
 }
