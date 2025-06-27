@@ -1,14 +1,14 @@
 import org.gradle.internal.jvm.Jvm
 
 buildscript {
-    ext.kotlin_version = '2.2.0'
+    ext.kotlin_version = "2.2.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.10.0'
+        classpath "com.android.tools.build:gradle:8.10.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -24,11 +24,11 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url "https://jitpack.io" }
     }
 }
 
-@SuppressWarnings('unused')
+@SuppressWarnings("unused")
 static def getTag() {
     def tagVersion = "$System.env.VERSION"
     if (tagVersion == "null") {
@@ -50,7 +50,7 @@ static def getTag() {
     return tagVersion
 }
 
-@SuppressWarnings('unused')
+@SuppressWarnings("unused")
 static def getGitCommitCount() {
     def process = "git rev-list HEAD --count".execute()
     return process.text.toInteger()

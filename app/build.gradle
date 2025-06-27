@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id "com.android.application"
+    id "kotlin-android"
 }
 
 android {
@@ -14,13 +14,13 @@ android {
         targetSdkVersion defaultTargetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments useTestStorageService: 'true'
+        testInstrumentationRunnerArguments useTestStorageService: "true"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt"
         }
     }
 
@@ -32,21 +32,21 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    namespace 'info.touchimage.demo'
+    namespace "info.touchimage.demo"
 }
 
 dependencies {
-    implementation project(':touchview')
-    implementation 'androidx.core:core-ktx:1.16.0'
+    implementation project(":touchview")
+    implementation "androidx.core:core-ktx:1.16.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation "androidx.recyclerview:recyclerview:1.4.0"
     implementation "androidx.viewpager2:viewpager2:1.1.0"
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation "com.github.bumptech.glide:glide:4.16.0"
 
-    androidTestImplementation 'com.github.AppDevNext:Moka:1.7'
+    androidTestImplementation "com.github.AppDevNext:Moka:1.7"
     androidTestImplementation "androidx.test.ext:junit-ktx:1.2.1"
     androidTestImplementation "com.github.AppDevNext.Logcat:LogcatCoreLib:3.3.1"
     androidTestUtil "androidx.test.services:test-services:1.5.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
+    androidTestImplementation "androidx.test.espresso:espresso-intents:3.6.1"
 }
