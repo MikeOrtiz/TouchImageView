@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    api "androidx.appcompat:appcompat:1.7.0"
+    api "androidx.appcompat:appcompat:1.7.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
