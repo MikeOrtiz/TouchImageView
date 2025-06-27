@@ -1,1 +1,2 @@
-include ':app', ':touchview'
+include ":app"
+include ":touchview"
