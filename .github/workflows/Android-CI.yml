@@ -35,7 +35,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y exiftool imagemagick xdg-utils libimage-exiftool-perl zsh jq xorg
       #          brew install exiftool imagemagick
       - name: Install JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
@@ -104,7 +104,7 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Install JDK ${{ matrix.java_version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
