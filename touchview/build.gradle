@@ -14,7 +14,7 @@ android {
             enable = true
         }
 
-        compileSdk defaultCompileSdkVersion
+        compileSdk = defaultCompileSdkVersion
         targetSdkVersion defaultTargetSdkVersion
         buildConfigField "String", "VERSION", "\"" + versionName + "\""
     }
