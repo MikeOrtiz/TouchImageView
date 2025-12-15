@@ -56,7 +56,7 @@ jobs:
           bootTimeout: 720
           disableAnimations: true
       - name: Archive Espresso results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: Touch-Espresso-report
@@ -64,7 +64,7 @@ jobs:
           if-no-files-found: error
       - name: Archive screenshots
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Touch-Screenshots
           path: |
@@ -79,7 +79,7 @@ jobs:
           ./screenShotCompare.sh
       - name: Archive screenshots diffs
         if: ${{ always() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Touch-Screenshots-diffs
           path: |
@@ -114,7 +114,7 @@ jobs:
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: TouchImage-Lint-report
