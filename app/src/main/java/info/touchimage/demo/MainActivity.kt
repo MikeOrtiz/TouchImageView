@@ -29,5 +29,6 @@ class MainActivity : AppCompatActivity() {
         binding.animateButton.setOnClickListener { startActivity(Intent(this@MainActivity, AnimateZoomActivity::class.java)) }
         binding.glideButton.setOnClickListener { startActivity(Intent(this@MainActivity, GlideExampleActivity::class.java)) }
         binding.shapedImageButton.setOnClickListener { startActivity(Intent(this@MainActivity, ShapedExampleActivity::class.java)) }
+        binding.touchSync.setOnClickListener { startActivity(Intent(this@MainActivity, TouchSyncActivity::class.java)) }
     }
 }

@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="brown_light">#cc7b35</color>
     <color name="brown">#945824</color>
+
+    <color name="purple_200">#FFBB86FC</color>
 </resources>
