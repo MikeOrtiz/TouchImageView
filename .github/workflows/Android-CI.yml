@@ -108,7 +108,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java_version }}
-      - uses: gradle/actions/wrapper-validation@v6.2.0
+      - uses: gradle/actions/wrapper-validation@v6.3.0
       - name: Install Android SDK
         uses: hannesa2/action-android/install-sdk@0.17.0
       - name: Code checks
