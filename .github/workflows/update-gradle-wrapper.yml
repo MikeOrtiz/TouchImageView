@@ -13,7 +13,7 @@ jobs:
       - name: Install JDK
         uses: actions/setup-java@v5
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 17
       - name: Update Gradle Wrapper
         uses: gradle-update/update-gradle-wrapper-action@v2
