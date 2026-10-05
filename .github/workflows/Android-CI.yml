@@ -40,13 +40,13 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java_version }}
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.17.0
+        uses: hannesa2/action-android/install-sdk@0.18.1
       - name: Build project
         run: ./gradlew assembleDebug
       - name: Run tests
         run: ./gradlew test
       - name: Run instrumentation tests
-        uses: hannesa2/action-android/emulator-run-cmd@0.17.0
+        uses: hannesa2/action-android/emulator-run-cmd@0.18.1
         with:
           cmd: ./gradlew :app:cAT
           api: ${{ matrix.api }}
@@ -110,7 +110,7 @@ jobs:
           java-version: ${{ matrix.java_version }}
       - uses: gradle/actions/wrapper-validation@v6.3.0
       - name: Install Android SDK
-        uses: hannesa2/action-android/install-sdk@0.17.0
+        uses: hannesa2/action-android/install-sdk@0.18.1
       - name: Code checks
         run: ./gradlew check
       - name: Archive Lint report
