@@ -3,14 +3,15 @@ plugins {
 }
 
 android {
+    namespace "info.touchimage.demo"
     defaultConfig {
         applicationId "com.ortiz.touchdemo"
         versionCode getGitCommitCount()
         versionName getTag()
 
         minSdkVersion 21 // because of testLib Moka
-        compileSdk = defaultCompileSdkVersion
-        targetSdkVersion defaultTargetSdkVersion
+        compileSdk = 37
+        targetSdkVersion 37
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments useTestStorageService: "true"
@@ -29,8 +30,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
-    namespace "info.touchimage.demo"
 }
 
 dependencies {

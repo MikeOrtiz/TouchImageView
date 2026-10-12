@@ -16,7 +16,7 @@ android {
             enable = true
         }
 
-        compileSdk = 36
+        compileSdk = 37
     }
 
     buildTypes {
