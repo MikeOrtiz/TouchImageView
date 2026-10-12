@@ -9,7 +9,7 @@ android {
         versionCode getGitCommitCount()
         versionName getTag()
 
-        minSdkVersion 21 // because of testLib Moka
+        minSdkVersion 23
         compileSdk = 37
         targetSdkVersion 37
 
